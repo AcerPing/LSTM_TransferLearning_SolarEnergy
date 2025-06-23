@@ -1,0 +1,18 @@
+{
+    "out_dir": "Solar Energy Result",
+    "seed": 1234,
+    "train_ratio": 0.8,
+    "train_mode": "pre-train",
+    "gpu": false,
+    "nb_epochs": 500,
+    "nb_batch": 20,
+    "noise_var": 0.0001,
+    "valid_ratio": 0.2,
+    "freeze": false,
+    "train_verbose": 1,
+    "MAE Loss": 0.06718142030483988,
+    "MSE Loss": 0.006613023916873778,
+    "RMSE Loss": 0.08132050120894348,
+    "R2 Score": 0.9092490523596282,
+    "Learning Rate": 3.906249901319825e-07
+}

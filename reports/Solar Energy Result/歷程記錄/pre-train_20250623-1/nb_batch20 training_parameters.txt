@@ -1,0 +1,35 @@
+
+[2025-06-23 14:05:54]
+訓練資料集 Plant1第一號發電機組 時的參數：
+Data Size (data_size): 3264
+Number of Batches (args['nb_batch']): 20
+Batch Size (bsize): 128
+Sequence Length (period): 5
+
+[2025-06-23 14:20:15]
+訓練資料集 Plant1第一號發電機組 時的參數：
+Data Size (data_size): 3264
+Number of Batches (args['nb_batch']): 20
+Batch Size (bsize): 8
+Sequence Length (period): 5
+
+[2025-06-23 14:56:35]
+訓練資料集 Plant1第一號發電機組 時的參數：
+Data Size (data_size): 3264
+Number of Batches (args['nb_batch']): 20
+Batch Size (bsize): 128
+Sequence Length (period): 5
+
+[2025-06-23 14:59:28]
+訓練資料集 Plant1第一號發電機組 時的參數：
+Data Size (data_size): 3264
+Number of Batches (args['nb_batch']): 20
+Batch Size (bsize): 128
+Sequence Length (period): 5
+
+[2025-06-23 15:00:11]
+訓練資料集 Plant1第一號發電機組 時的參數：
+Data Size (data_size): 3264
+Number of Batches (args['nb_batch']): 20
+Batch Size (bsize): 128
+Sequence Length (period): 5
