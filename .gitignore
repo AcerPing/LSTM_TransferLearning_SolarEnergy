@@ -1,0 +1,11 @@
+*.swp # Vim 編輯器產生的 暫存交換檔（swap file），通常在開檔時自動建立，意外中斷會殘留。
+._* # macOS 系統產生的隱藏檔案（AppleDouble format），用來儲存 Finder metadata，例如 Spotlight 或 icon 位置等。
+.DS_Store # macOS Finder 自動產生的檔案，用來記錄檔案排序與檢視設定。
+node_modules # 如果用 Node.js 開發，這是 npm 安裝的所有套件資料夾。
+.sass-cache # SASS 或 Compass 編譯後的快取資料夾。
+
+--------------------------------------------
+
+transfer-learning-LSTM-master.zip
+df_kwh_adjusted.csv
+solar_AL.txt

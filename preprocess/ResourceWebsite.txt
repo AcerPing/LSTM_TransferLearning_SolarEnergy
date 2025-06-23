@@ -1,0 +1,20 @@
+【Solar Power Generation Data】
+https://www.kaggle.com/datasets/anikannal/solar-power-generation-data/data?select=Plant_1_Generation_Data.csv
+
+參考程式
+〔主要〕
+1.) SPG LSTM prediction
+https://www.kaggle.com/code/wilsonlin55555/spg-lstm-prediction
+2.) A_LSTM_POWER
+https://www.kaggle.com/code/aliwannous2021/a-lstm-power
+〔次要〕
+3.) Solar power generation forecast using different ML
+https://www.kaggle.com/code/vinayjshetty/solar-power-generation-forecast-using-different-ml
+4.) EDA & Condition Monitoring: Solar Power Plant
+https://www.kaggle.com/code/paule404/eda-condition-monitoring-solar-power-plant
+5.) Anomaly detection LSTM vs Isolation Forest
+https://www.kaggle.com/code/carlos1916/anomaly-detection-lstm-vs-isolation-forest/notebook
+6.) Forecasting Solar Power: XGBoost vs LSTM
+https://www.kaggle.com/code/joshmoore0/forecasting-solar-power-xgboost-vs-lstm
+7.) How to manage a solar power plant
+https://www.kaggle.com/code/virosky/how-to-manage-a-solar-power-plant
