@@ -139,21 +139,16 @@ def save_mse(y_test_time: np.array, y_pred_test_time: np.array, out_dir: str, mo
     mae_loss = mae(y_test_time, y_pred_test_time) # 計算平均絕對誤差
     r2 = r2_score(y_test_time, y_pred_test_time)  # R-squared指標，反映模型解釋目標變數變異程度的能力。
 
-    # 實例化 (Keras/TensorFlow 提供的指標，需要定義對象。)
-    mape_loss = np.mean(np.abs((y_test_time - y_pred_test_time) / y_test_time)) * 100 # MAPE
-    msle_loss = np.mean(np.square(np.log1p(y_test_time) - np.log1p(y_pred_test_time))) # MSLE
-
     with open(path.join(out_dir, 'log.txt'), 'w') as f: # 寫入文件
         f.write('MAE預測誤差值 : {:.6f}\n'.format(mae_loss))
         f.write('MSE預測誤差值 : {:.6f}\n'.format(mse_loss))
         f.write('RMSE預測誤差值 : {:.6f}\n'.format(rmse_loss))        
-        f.write('MAPE預測誤差值 : {:.6f}\n'.format(mape_loss))
-        f.write('MSLE預測誤差值 : {:.6f}\n'.format(msle_loss))
         f.write('R2 Score : {:.6f}\n'.format(r2))
         f.write('=' * 65 + '\n')
         if model:
             model.summary(print_fn=lambda x: f.write(x + '\n')) # 將模型摘要資訊寫入文件。
-    return mse_loss, rmse_loss, mae_loss, mape_loss, msle_loss, r2
+            
+    return mse_loss, rmse_loss, mae_loss, r2
 
 
 # 殘差圖（Residual Plot）
