@@ -1,8 +1,10 @@
 import random
 import argparse # 解析命令列參數
 import json
-from os import path, getcwd, makedirs, environ, listdir
 import shutil
+import os
+from os import path, getcwd, makedirs, environ, listdir
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1" # ! 不要初始化GPU裝置，避免 CUDA、cuDNN 相容性問題。
 
 import tensorflow as tf
 import numpy as np
@@ -31,37 +33,27 @@ def parse_arguments():
         description='Time-Series Regression by LSTM through transfer learning') # 表示該程式的用途是透過遷移學習使用 LSTM 進行時間序列回歸分析。
     
     # for dataset path
-    ap.add_argument('--out-dir', '-o', default='result',
-                    type=str, help='path for output directory') # 指定輸出目錄的路徑，預設值為 result。
+    ap.add_argument('--out-dir', '-o', default='result', type=str, help='path for output directory') # 指定輸出目錄的路徑，預設值為 result。
     
     # for model
-    ap.add_argument('--seed', type=int, default=1234,
-                    help='seed value for random value, (default : 1234)') # 確保隨機操作（如資料分割、模型初始化等）在每次執行中一致，方便實驗重現性。
-    ap.add_argument('--train-ratio', default=0.8, type=float,
-                    help='percentage of train data to be loaded (default : 0.8)') # 指定訓練集比例為 0.8（即 80%）。數據集會依據此比例分割為訓練集和測試集或驗證集。
+    ap.add_argument('--seed', type=int, default=1234, help='seed value for random value, (default : 1234)') # 確保隨機操作（如資料分割、模型初始化等）在每次執行中一致，方便實驗重現性。
+    ap.add_argument('--train-ratio', default=0.8, type=float, help='percentage of train data to be loaded (default : 0.8)') # 指定訓練集比例為 0.8（即 80%）。數據集會依據此比例分割為訓練集和測試集或驗證集。
 
     # for training
     ap.add_argument('--train-mode', '-m', default='pre-train', type=str,
                     help='"pre-train", "transfer-learning", "without-transfer-learning", "comparison"\
                             "ensemble", "bagging", "noise-injection", "score" (default : pre-train)') # 設定模式
-    ap.add_argument('--gpu', action='store_true',
-                    help='whether to do calculations on gpu machines (default : False)') # 是否啟用GPU加速
-    ap.add_argument('--nb-epochs', '-e', default=1, type=int,
-                    help='training epochs for the model (default : 1)') # 設定訓練的epoch。（epoch是完整地使用所有訓練數據訓練模型的一次過程。）
-    ap.add_argument('--nb-batch', default=20, type=int,
-                    help='number of batches in training (default : 20)') # 設定訓練過程中的批次數量，預設為 20。 批次大小（batch size） = 總訓練樣本數量 ÷ 批次數量（nb-batch）
+    ap.add_argument('--gpu', action='store_true', help='whether to do calculations on gpu machines (default : False)') # 是否啟用GPU加速
+    ap.add_argument('--nb-epochs', '-e', default=1, type=int, help='training epochs for the model (default : 1)') # 設定訓練的epoch。（epoch是完整地使用所有訓練數據訓練模型的一次過程。）
+    ap.add_argument('--nb-batch', default=20, type=int, help='number of batches in training (default : 20)') # 設定訓練過程中的批次數量，預設為 20。 批次大小（batch size） = 總訓練樣本數量 ÷ 批次數量（nb-batch）
     # ap.add_argument('--nb-subset', default=10, type=int,
     #                 help='number of data subset in bootstrapping (default : 10)') # 在bootstrapping中(即Bagging集成式學習)設定資料子集的數量。EX. 生成 10 個不同的訓練子集。
-    ap.add_argument('--noise-var', default=0.0001, type=float,
-                    help='variance of noise in noise injection (default : 0.0001)') # 在噪聲注入中設定噪聲的變異數。
-    ap.add_argument('--valid-ratio', default=0.2, type=float,
-                    help='ratio of validation data in train data (default : 0.2)') # 在訓練資料中設定驗證資料的比例。
-    ap.add_argument('--freeze', action='store_true', 
-                    help='whether to freeze transferred weights in transfer learning (default : False)') # 在遷移學習中凍結已轉移的權重。
+    ap.add_argument('--noise-var', default=0.0001, type=float, help='variance of noise in noise injection (default : 0.0001)') # 在噪聲注入中設定噪聲的變異數。
+    ap.add_argument('--valid-ratio', default=0.2, type=float, help='ratio of validation data in train data (default : 0.2)') # 在訓練資料中設定驗證資料的比例。
+    ap.add_argument('--freeze', action='store_true', help='whether to freeze transferred weights in transfer learning (default : False)') # 在遷移學習中凍結已轉移的權重。
 
     # for output
-    ap.add_argument('--train-verbose', default=1, type=int,
-                    help='whether to show the learning process (default : 1)') # 設定訓練過程中的輸出詳盡程度。
+    ap.add_argument('--train-verbose', default=1, type=int, help='whether to show the learning process (default : 1)') # 設定訓練過程中的輸出詳盡程度。
     args = vars(ap.parse_args())
     return args
     
@@ -81,8 +73,8 @@ def save_arguments(args, out_dir): # 旨在將參數字典 args 以 JSON 格式�
 
 def make_callbacks(file_path, save_csv=True):
     reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, verbose=1, patience=4, min_lr=1e-7) # 降低學習率，以促進模型更好地收斂。
-    model_checkpoint = ModelCheckpoint(filepath=file_path, monitor='val_loss', save_best_only=True) # 保存最佳模型。 # -- save_weights_only = True,
-    early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True) 
+    model_checkpoint = ModelCheckpoint(filepath=file_path, monitor='val_loss', save_best_only=True, verbose=1) # 保存最佳模型。 # -- save_weights_only = True,
+    early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True, verbose=1) 
     if not save_csv:
         return [reduce_lr, model_checkpoint, early_stopping]
     csv_logger = CSVLogger(path.join(path.dirname(file_path), 'epoch_log.csv')) # 將每個訓練週期的損失和評估指標記錄到 CSV 文件中
@@ -127,7 +119,7 @@ def main():
             print(f'\nX_train : {X_train.shape[0]}')
             print(f'\nX_valid : {X_valid.shape[0]}')
             print(f'切分比例: {args["valid_ratio"]}')
-            print(f'period:{period}, args["nb_batch"]: {args["nb_batch"]}')
+            print(f'period:{period}') # , args["nb_batch"]: {args["nb_batch"]}
             
             # construct the model
             file_path = path.join(write_result_out_dir, 'best_model.hdf5') # 指定模型的保存路徑
@@ -154,12 +146,10 @@ def main():
             y_test = y_test[-len(y_test_pred):] # 將y_test的長度調整為與 y_test_pred（模型預測值）的長度一致，確保在進行計算和可視化時，兩者長度相符。
             save_prediction_plot(y_test, y_test_pred, write_result_out_dir) # 繪製y_test與y_test_pred的對比圖，展示預測值與實際值的偏差 (折線圖)
             save_yy_plot(y_test, y_test_pred, write_result_out_dir) # 繪製y_test與y_test_pred的對比圖，展示預測值與實際值的偏差 (散點圖)
-            mse_score, rmse_loss, mae_loss, mape_loss, msle_loss, r2 = save_mse(y_test, y_test_pred, write_result_out_dir, model=model) # 計算y_test和y_test_pred之間的均方誤差（MSE）分數，同時將模型摘要資訊寫入文件。
+            mse_score, rmse_loss, mae_loss, r2 = save_mse(y_test, y_test_pred, write_result_out_dir, model=model) # 計算y_test和y_test_pred之間的均方誤差（MSE）分數，同時將模型摘要資訊寫入文件。
             args["MAE Loss"] = mae_loss
             args["MSE Loss"] = mse_score
             args["RMSE Loss"] = rmse_loss
-            args["MAPE Loss"] = mape_loss
-            args["MSLE Loss"] = msle_loss
             args["R2 Score"] = r2
             Learning_Rate = model.optimizer.get_config()["learning_rate"] # 取得最終學習率
             args["Learning Rate"] = Learning_Rate
@@ -458,3 +448,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    print('----------- Complete! -----------')
