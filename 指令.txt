@@ -15,4 +15,4 @@
   python main.py --out-dir IoTpond_Result --seed 1234 --train-ratio 0.8 --time-window 1000 --train-mode comparison --gpu --nb-epochs 100 --nb-batch 20 --train-verbose 1
   
 【範例. Solar Energy】
-python main.py  --out-dir 'Solar Energy Result' --train-mode pre-train --gpu --nb-epochs 500
+python main.py  --out-dir 'Solar Energy Result' --train-mode pre-train --nb-epochs 500 # --gpu
