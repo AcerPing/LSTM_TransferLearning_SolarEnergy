@@ -1,0 +1,31 @@
+MAE¹w´ú»~®t­È : 0.065239
+MSE¹w´ú»~®t­È : 0.008842
+RMSE¹w´ú»~®t­È : 0.094029
+R2 Score : 0.875671
+=================================================================
+Model: "model"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ input_1 (InputLayer)        [(None, 5, 5)]            0         
+                                                                 
+ time_distributed (TimeDistr  (None, 5, 10)            60        
+ ibuted)                                                         
+                                                                 
+ lstm (LSTM)                 (None, 5, 60)             17040     
+                                                                 
+ batch_normalization (BatchN  (None, 5, 60)            240       
+ ormalization)                                                   
+                                                                 
+ lstm_1 (LSTM)               (None, 60)                29040     
+                                                                 
+ batch_normalization_1 (Batc  (None, 60)               240       
+ hNormalization)                                                 
+                                                                 
+ dense_1 (Dense)             (None, 1)                 61        
+                                                                 
+=================================================================
+Total params: 46,681
+Trainable params: 46,441
+Non-trainable params: 240
+_________________________________________________________________
