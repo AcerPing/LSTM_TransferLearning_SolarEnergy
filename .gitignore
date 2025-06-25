@@ -9,3 +9,9 @@ node_modules # 如果用 Node.js 開發，這是 npm 安裝的所有套件資料
 transfer-learning-LSTM-master.zip
 df_kwh_adjusted.csv
 solar_AL.txt
+reports/__pycache__/output.cpython-37.pyc
+reports/__pycache__/util.cpython-37.pyc
+utils/__pycache__/data_io.cpython-37.pyc
+utils/__pycache__/model.cpython-37.pyc
+utils/__pycache__/save.cpython-37.pyc
+reports/__pycache__/Metrics_Comparison.cpython-37.pyc

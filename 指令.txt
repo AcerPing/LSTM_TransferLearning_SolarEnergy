@@ -16,3 +16,7 @@
   
 【範例. Solar Energy】
 python main.py  --out-dir 'Solar Energy Result' --train-mode pre-train --nb-epochs 500 # --gpu
+python main.py  --out-dir 'Solar Energy Result' --train-mode without-transfer-learning --nb-epochs 500
+python main.py  --out-dir 'Solar Energy Result' --train-mode transfer-learning --nb-epochs 500 
+python main.py  --out-dir 'Solar Energy Result' --train-mode transfer-learning --freeze --nb-epochs 500 
+python main.py --out-dir 'Solar Energy Result' --train-mode comparison
