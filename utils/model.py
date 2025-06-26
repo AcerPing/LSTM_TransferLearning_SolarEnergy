@@ -126,21 +126,12 @@ def build_model(input_shape: tuple, # 模型的輸入形狀(timesteps, features)
 
     # 調整優化器&學習率。
     if pre_model:
-        # 定義每個數據集的學習率。預訓練模型的微調通常需要更小的學習率。
-        dataset_learning_rates = {
-            'FishAquaponics_IoTpond2': 1e-5,  # 針對 IoTpond2
-            'FishAquaponics_IoTpond3': 1e-4,  # 針對 IoTpond3
-            'FishAquaponics_IoTpond4': 1e-4,  # 針對 IoTpond4
-        }
-        current_dataset = write_result_out_dir.split(os.sep)[-1]  # 根據系統路徑分隔符分割路徑，取得最後一個路徑部分。
-        init_learning_rate = dataset_learning_rates.get(current_dataset, 1e-4)  # 默認學習率為 1e-4
+        # 通常需要更小的學習率；微調時若學習率太大，會導致破壞原本從預訓練模型學到的通用知識。
+        init_learning_rate = 3e-5  # 比原先低一個數量級
     else:
-        # 其它
-        dataset_learning_rates = {
-            'FishAquaponics_IoTpond3': 1e-5,  # 針對 IoTpond3
-        }
-        current_dataset = write_result_out_dir.split(os.sep)[-1]  # 根據系統路徑分隔符分割路徑，取得最後一個路徑部分。
-        init_learning_rate = dataset_learning_rates.get(current_dataset, 1e-4)  # 默認學習率為 1e-4，適合大多數模型的初始訓練。
+        # 不是遷移學習的狀況
+        init_learning_rate = 1e-4
+    
     print(f'初始學習率: {init_learning_rate}')
     Adam_optimizer = Adam(learning_rate=init_learning_rate) # 標準Adam優化器
     print(f'優化器參數: {Adam_optimizer.get_config()}')
