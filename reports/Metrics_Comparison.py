@@ -32,14 +32,6 @@ def metrics_comparison(out_dir, train_mode):
         "Transferred RMSE": [],
         "Baseline RMSE": [],
         "RMSE Improvement": [],
-        # MAPE
-        "Transferred MAPE": [],
-        "Baseline MAPE": [],
-        "MAPE Improvement": [],
-        # MSLE
-        "Transferred MSLE": [],
-        "Baseline MSLE": [],
-        "MSLE Improvement": [],
         # R2 Score
         "Transferred R2": [],
         "Baseline R2": [],
@@ -62,16 +54,10 @@ def metrics_comparison(out_dir, train_mode):
                 elif re.match(r"^RMSE預測誤差值\s*:", line):
                     base_rmse = float(line.split(':')[1].strip()) # 提取RMSE值，並將其轉換為浮點數。
                     baseline_metrics["RMSE"] = base_rmse
-                elif re.match(r"^MAPE預測誤差值\s*:", line):
-                    base_mape = float(line.split(':')[1].strip()) # 提取MAPE值，並將其轉換為浮點數。
-                    baseline_metrics["MAPE"] = base_mape
-                elif re.match(r"^MSLE預測誤差值\s*:", line):
-                    base_msle = float(line.split(':')[1].strip()) # 提取MSLE值，並將其轉換為浮點數。
-                    baseline_metrics["MSLE"] = base_msle
                 elif re.match(r"^R2 Score\s*:", line):
                     r2 = float(line.split(':')[1].strip()) # 提取R2 Score值，並將其轉換為浮點數。   
                     baseline_metrics["R2"] = r2
-        print(f'{target}: (MSE: {base_mse}, RMSE: {base_rmse}, MAE: {base_mae}, MAPE: {base_mape}, MALE: {base_msle}, R2 Score: {r2})')
+        print(f'{target}: (MSE: {base_mse}, RMSE: {base_rmse}, MAE: {base_mae}, R2 Score: {r2})')
         
         # fetch results as row(1×sources) with transfer learning (獲取遷移學習的metrics預測誤差值)
         for source in source_dir:
@@ -89,19 +75,13 @@ def metrics_comparison(out_dir, train_mode):
                     elif re.match(r"^RMSE預測誤差值\s*:", line):
                         rmse = float(line.split(':')[1].strip()) # 提取RMSE值，並將其轉換為浮點數。
                         transferred_metrics["RMSE"] = rmse
-                    elif re.match(r"^MAPE預測誤差值\s*:", line):
-                        mape = float(line.split(':')[1].strip()) # 提取MAPE值，並將其轉換為浮點數。
-                        transferred_metrics["MAPE"] = mape
-                    elif re.match(r"^MSLE預測誤差值\s*:", line):
-                        msle = float(line.split(':')[1].strip()) # 提取MSLE值，並將其轉換為浮點數。
-                        transferred_metrics["MSLE"] = msle
                     elif re.match(r"^R2 Score\s*:", line):
                         r2 = float(line.split(':')[1].strip()) # 提取R2 Score值，並將其轉換為浮點數。
                         transferred_metrics["R2"] = r2
                 print('{}:{:.1f} ({})'.format(source, (1 - mse / base_mse) * 100, mse)) # 計算相對改進(MSE改進百分比)：（1 - mse / base_mse） * 100 （百分比）。
                 
             results["Dataset"].append(f"{target} ({source})")
-            for metric in ["MAE", "MSE", "RMSE", "MAPE", "MSLE", "R2"]:
+            for metric in ["MAE", "MSE", "RMSE", "R2"]:
                 results[f"Transferred {metric}"].append(transferred_metrics.get(metric, None))
                 results[f"Baseline {metric}"].append(baseline_metrics.get(metric, None))
                 if metric in ["R2"]: # R2 的改進計算方式
