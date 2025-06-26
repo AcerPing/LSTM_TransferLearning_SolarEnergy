@@ -300,7 +300,11 @@ def main():
             # clear memory up (清理記憶體)
             keras.backend.clear_session()
             print('\n' * 2 + '-' * 140 + '\n' * 2)
-    
+
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
     
     elif args["train_mode"] == 'comparison': # 比較 Transfer-Learning遷移學習 vs. Without-Transfer-Learning不使用遷移學習
         out_dir, train_mode = write_out_dir, args["train_mode"]
@@ -309,88 +313,118 @@ def main():
         MAE_Improvement(out_dir, train_mode) # 比較MAE
         dataset_idx_vs_improvement(out_dir, train_mode) # 'DTW'
     
-    
-    elif args["train_mode"] == 'ensemble': # 使用ensemble整體學習。通過聚合、以平均的方式來得到最終預測結果
-        
-        for target in listdir('dataset/target'):    
-            
-            # make output directory
-            TL_model_dir = path.join(write_out_dir, args["train_mode"], target, 'model')
-            makedirs(TL_model_dir, exist_ok=True) # 建立目標目錄（如果不存在） 
-            
-            # 將transfer-learning (Unfreeze)的模型複製搬移到ensemble底下的model資料夾
-            source_dir = path.join(write_out_dir,'transfer-learning (Unfreeze)', target) # 獲取模型來源資料夾
-            for TL_model in listdir(source_dir):
-                src_path = path.join(source_dir, TL_model, f'{TL_model}_transferred_best_model.hdf5')
-                if path.isfile(src_path): # 檢查是否是檔案再執行複製
-                    shutil.copy(src_path, TL_model_dir) # 複製檔案到目標資料夾（覆蓋既有檔案）
-                    print(f"已複製: {src_path} -> {TL_model_dir}")
-            print("模型複製完成。")
-                    
-            # ensemble整體學習 預測與評估。
-            period = 1440 # period：表示時間步數（time steps），即模型一次看多少步的歷史數據來進行預測。下採樣後將資料降為成每分鐘一個數據點，以 1 天 = 1440 分鐘進行觀察。
-            start_ensemble (period, write_out_dir=path.join(write_out_dir, args["train_mode"]))
-            keras.backend.clear_session() # 清理記憶體
-            print('\n' * 2 + '-' * 140 + '\n' * 2)        
-        
 
-    # elif args["train_mode"] == 'bagging': # 使用Bagging集成式學習。通過對數據集進行多次重抽樣，生成多個訓練子集，並在這些子集上訓練多個模型，最終通過聚合來提升預測穩定性。如隨機森林算法。
-    
-    #     for target in listdir('dataset/target'):
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+    # elif args["train_mode"] == 'ensemble': # 使用ensemble整體學習。通過聚合、以平均的方式來得到最終預測結果
+        
+    #     for target in listdir('dataset/target'):    
             
     #         # make output directory
-    #         write_result_out_dir = path.join(write_out_dir, args["train_mode"], target)
-    #         makedirs(write_result_out_dir, exist_ok=True)
-
-    #         # load dataset (加載數據集)
-    #         data_dir_path = path.join('dataset', 'target', target)
-    #         X_train, y_train, X_test, y_test = \
-    #             read_data_from_dataset(data_dir_path)
-    #         period = 1440 # period：表示時間步數（time steps），即模型一次看多少步的歷史數據來進行預測。下採樣後將資料降為成每分鐘一個數據點，以 1 天 = 1440 分鐘進行觀察。
-
-            # # make subsets (計算最佳區塊長度並生成訓練子集)
-            # b_star = optimal_block_length(y_train) # 計算最佳的區塊長度（b_star），然後使用該長度來生成適合時間依賴性的數據子集。
-            # b_star_cb = math.ceil(b_star[0].b_star_cb) # 向上取整，確保區塊長度為整數。
-            # print(f'optimal block length for circular bootstrap = {b_star_cb}')
-            # subsets_y_train = circular_block_bootstrap(y_train, block_length=b_star_cb,
-            #                                            replications=args["nb_subset"], replace=True) # 根據計算出的區塊長度，對 y_train 進行 nb_subset 次重抽樣，生成多個子集。
-            # subsets_X_train = []
-            # for i in range(X_train.shape[1]): # 對X_train的每個特徵使用相同的方法進行 Circular Block Bootstrap 重抽樣，生成多個 X_train 子集，並重新排列以匹配模型輸入格式。
-            #     np.random.seed(0) # 確保重現性
-            #     X_cb = circular_block_bootstrap(X_train[:, i], block_length=b_star_cb,
-            #                                     replications=args["nb_subset"], replace=True) # 對每個特徵資料進行重抽樣，生成多個子集，並將結果儲存到 subsets_X_train 列表中。
-            #     subsets_X_train.append(X_cb)
-            # # 1.) 對每個特徵進行重抽樣，因此len(subsets_X_train)長度為特徵數，而每個元素的形狀為(nb_subset, n_samples)。即 subsets_X_train 列表的結構是 [n_features個元素，每個元素的形狀是(nb_subset, n_samples)]。
-            # subsets_X_train = np.array(subsets_X_train) # 2.) 轉換為NumPy陣列，變成3D陣列，形狀為(n_features, nb_subset, n_samples)。
-            # subsets_X_train = subsets_X_train.transpose(1, 2, 0) # 3.) 使用transpose轉置方法調整其形狀，使其符合模型輸入的格式。形狀變為 (nb_subset子集數量, n_samples樣本數, n_features特徵數)
-
-            # # train the model for each subset (對每個子集訓練模型)
-            # model_dir = path.join(write_result_out_dir, 'model')
-            # makedirs(model_dir, exist_ok=True)
-            # for i_subset, (i_X_train, i_y_train) in enumerate(zip(subsets_X_train, subsets_y_train)): # 當對subsets_X_train進行迭代時，每次取出的i_X_train的形狀是(n_samples, n_features)
-                
-            #     print(f'i_X_train.shape, i_y_train.shape: {i_X_train.shape, i_y_train.shape}')
-                
-            #     i_X_train, i_X_valid, i_y_train, i_y_valid = \
-            #         train_test_split(i_X_train, i_y_train, test_size=args["valid_ratio"], shuffle=False) # 每個子集分成訓練集和驗證集。
-                
-            #     # construct the model (每個子集將會訓練一個模型，這些模型最終將被集合使用，以增加預測的穩定性和泛化能力。)
-            #     file_path = path.join(model_dir, f'{target}_best_model_{i_subset}.hdf5')
-            #     callbacks = make_callbacks(file_path, save_csv=False)
-            #     input_shape = (period, i_X_train.shape[1])  # subsets_X_train.shape[2] is number of variable，因此i_X_train.shape[1] 對應的是特徵數，即 n_features。
-            #     print(f'input_shape: {input_shape}')
-            #     model = build_model(input_shape, args["gpu"], write_result_out_dir, savefig=False)
-
-            #     # train the model
-            #     bsize = len(i_y_train) // args["nb_batch"]
-            #     RTG = ReccurentTrainingGenerator(i_X_train, i_y_train, batch_size=bsize, timesteps=period, delay=1) # 生成訓練數據，以批次形式提供給模型。
-            #     RVG = ReccurentTrainingGenerator(i_X_valid, i_y_valid, batch_size=bsize, timesteps=period, delay=1) # 生成驗證數據，以批次形式提供給模型。
-            #     Record_args_while_training(write_out_dir, args["train_mode"], target, args['nb_batch'], bsize, period, data_size=(len(y_train) + len(y_test)))
-            #     H = model.fit_generator(RTG, validation_data=RVG, epochs=args["nb_epochs"], verbose=1, callbacks=callbacks) # 訓練模型
+    #         TL_model_dir = path.join(write_out_dir, args["train_mode"], target, 'model')
+    #         makedirs(TL_model_dir, exist_ok=True) # 建立目標目錄（如果不存在） 
             
-            # keras.backend.clear_session() # 清理記憶體
-            # print('\n' * 2 + '-' * 140 + '\n' * 2)
+    #         # 將transfer-learning (Unfreeze)的模型複製搬移到ensemble底下的model資料夾
+    #         source_dir = path.join(write_out_dir,'transfer-learning (Unfreeze)', target) # 獲取模型來源資料夾
+    #         for TL_model in listdir(source_dir):
+    #             src_path = path.join(source_dir, TL_model, f'{TL_model}_transferred_best_model.hdf5')
+    #             if path.isfile(src_path): # 檢查是否是檔案再執行複製
+    #                 shutil.copy(src_path, TL_model_dir) # 複製檔案到目標資料夾（覆蓋既有檔案）
+    #                 print(f"已複製: {src_path} -> {TL_model_dir}")
+    #         print("模型複製完成。")
+                    
+    #         # ensemble整體學習 預測與評估。
+    #         period = 1440 # period：表示時間步數（time steps），即模型一次看多少步的歷史數據來進行預測。下採樣後將資料降為成每分鐘一個數據點，以 1 天 = 1440 分鐘進行觀察。
+    #         start_ensemble (period, write_out_dir=path.join(write_out_dir, args["train_mode"]))
+    #         keras.backend.clear_session() # 清理記憶體
+    #         print('\n' * 2 + '-' * 140 + '\n' * 2)      
 
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+    elif args["train_mode"] == 'analysis': # 使用指定的模型權重，預測資料，並輸出結果。
+        
+        source = r'Plant1第一號發電機組'
+        data_dir_path = path.join('dataset', 'source', source)
+        
+        write_result_out_dir = path.join(write_out_dir, args["train_mode"], source)
+        makedirs(write_result_out_dir, exist_ok=True)
+        print(f'Output Directory: {write_result_out_dir}')
+
+        X_train, y_train, X_test, y_test = read_data_from_dataset(data_dir_path) # 讀取'X_train', 'y_train', 'X_test', 'y_test'資料
+        X_train = np.concatenate((X_train, X_test), axis=0)
+        y_train = np.concatenate((y_train, y_test), axis=0)
+
+        model_file_path = path.join(write_out_dir, 'pre-train', 'Plant1第一號發電機組', 'best_model.hdf5') # --調整參數
+        print(f'Using Model Name: {model_file_path}')
+        best_model = load_model(model_file_path, custom_objects={'rmse': rmse})
+        period = 5
+        RPG = ReccurentPredictingGenerator(X_train, batch_size=1, timesteps=period) # --調整參數
+        
+        y_train_pred = best_model.predict_generator(RPG)
+        y_train = y_train[-len(y_train_pred):] 
+        print(f'y_train_pred.shape: {y_train_pred.shape}')
+        print(f'y_train.shape: {y_train.shape}')
+        df_output = pd.DataFrame({
+            'True': y_train.flatten(),
+            'Predicted': y_train_pred.flatten(),
+        })
+        output_csv_path = path.join(write_result_out_dir, 'pred_vs_true.csv') # 設定輸出路徑
+        df_output.to_csv(output_csv_path, index=False)
+        print(f'CSV 儲存成功：{output_csv_path}')
+
+        residuals = y_train.flatten() - y_train_pred.flatten()
+
+        # 計算 Residual 與 標記高估樣本
+        feature_names = ['TIME_SIN', 'TIME_COS', 'IRRADIATION', 'AMBIENT_TEMPERATURE', 'MODULE_TEMPERATURE']
+        df_analysis = pd.DataFrame(X_train[-len(y_train_pred):], columns=feature_names)
+        df_analysis['residual'] = residuals
+        df_analysis['is_overestimate'] = df_analysis['residual'] < 0  # 預測過高
+        df_analysis.to_csv( path.join(write_result_out_dir, 'Residual Analysis.csv'), index=False)
+        print(f"[分析資料儲存] {path.join(write_result_out_dir, 'Residual Analysis.csv')}")
+
+        # ================================
+        # 方法 1：儲存每個特徵的箱型圖
+        # ================================
+        for col in feature_names:
+            plt.figure(figsize=(6, 4))
+            sns.boxplot(data=df_analysis, x='is_overestimate', y=col)
+            plt.title(f'Feature: {col} | Overestimate vs Underestimate')
+            plt.xlabel('Overestimated (True/False)')
+            plt.ylabel(col)
+            plt.savefig(path.join(write_result_out_dir, f'{col}_boxplot.png'), bbox_inches='tight')
+            # plt.show()
+            plt.close()
+            print(f'[圖表儲存] {col}_boxplot.png')
+        
+        # ================================
+        # 方法 2：計算平均差異並輸出為 CSV
+        # ================================
+        over = df_analysis[df_analysis['is_overestimate']]
+        under = df_analysis[~df_analysis['is_overestimate']]
+
+        diff_df = pd.DataFrame({
+            'Feature': feature_names,
+            'Mean_Overestimate': over[feature_names].mean().values,
+            'Mean_Underestimate': under[feature_names].mean().values,
+            'Difference': (over[feature_names].mean() - under[feature_names].mean()).values
+        })
+
+        diff_df['abs_diff'] = diff_df['Difference'].abs()
+        diff_df.sort_values('abs_diff', ascending=False, inplace=True)
+        # diff_df.drop(columns='abs_diff', inplace=True) 
+        print(diff_df) # 特徵在高估樣本中是否顯著偏大或偏小
+        csv_path = path.join(write_result_out_dir, 'residual_difference_summary.csv')
+        diff_df.to_csv(csv_path, index=False) # 儲存為 CSV
+
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        
     
     elif args["train_mode"] == 'noise-injection': # 添加隨機噪聲來訓練模型，使模型在訓練過程中遇到更多的數據變化，減少過擬合並提高模型對測試數據的泛化能力。
 
