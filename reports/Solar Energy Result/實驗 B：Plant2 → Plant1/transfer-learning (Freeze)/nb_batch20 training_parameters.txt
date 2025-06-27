@@ -1,0 +1,7 @@
+
+[2025-06-27 17:51:38]
+訓練資料集 Plant1第一號發電機組 時的參數：
+Data Size (data_size): 3264
+Number of Batches (args['nb_batch']): 20
+Batch Size (bsize): 128
+Sequence Length (period): 5
