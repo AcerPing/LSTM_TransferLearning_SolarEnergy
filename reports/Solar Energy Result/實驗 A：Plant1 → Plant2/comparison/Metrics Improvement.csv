@@ -1,0 +1,13 @@
+,Plant2第二號發電機組 (Plant1第一號發電機組)
+Transferred MAE,0.066247
+Baseline MAE,0.117158
+MAE Improvement,43.45%
+Transferred MSE,0.009959
+Baseline MSE,0.017191
+MSE Improvement,42.07%
+Transferred RMSE,0.099795
+Baseline RMSE,0.131113
+RMSE Improvement,23.89%
+Transferred R2,0.82326
+Baseline R2,0.694926
+R2 Improvement,0.12833399999999995

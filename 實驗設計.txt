@@ -1,0 +1,5 @@
+◆ 實驗 A：Plant1 → Plant2
+以Plant1作為Pre-Train，而Plant2作為Target。
+
+◆ 實驗 B：Plant2 → Plant1
+以Plant2作為Pre-Train，而Plant1作為Target。
