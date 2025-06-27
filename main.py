@@ -4,6 +4,9 @@ import json
 import shutil
 import os
 from os import path, getcwd, makedirs, environ, listdir
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1" # ! 不要初始化GPU裝置，避免 CUDA、cuDNN 相容性問題。
 
 import tensorflow as tf
@@ -41,9 +44,9 @@ def parse_arguments():
 
     # for training
     ap.add_argument('--train-mode', '-m', default='pre-train', type=str,
-                    help='"pre-train", "transfer-learning", "without-transfer-learning", "comparison"\
-                            "ensemble", "bagging", "noise-injection", "score" (default : pre-train)') # 設定模式
-    ap.add_argument('--gpu', action='store_true', help='whether to do calculations on gpu machines (default : False)') # 是否啟用GPU加速
+                    help='"pre-train", "transfer-learning", "without-transfer-learning", "comparison", "ensemble", "analysis" \
+                            "bagging", "noise-injection",  (default : pre-train)') # 設定模式
+    ap.add_argument('--gpu', action='store_true', help='whether to do calculations on gpu machines (default : False)') # 是否啟用GPU加速 # ! 因TensorFlow版本套件，暫不啟用GPU。
     ap.add_argument('--nb-epochs', '-e', default=1, type=int, help='training epochs for the model (default : 1)') # 設定訓練的epoch。（epoch是完整地使用所有訓練數據訓練模型的一次過程。）
     ap.add_argument('--nb-batch', default=20, type=int, help='number of batches in training (default : 20)') # 設定訓練過程中的批次數量，預設為 20。 批次大小（batch size） = 總訓練樣本數量 ÷ 批次數量（nb-batch）
     # ap.add_argument('--nb-subset', default=10, type=int,
@@ -348,18 +351,15 @@ def main():
 
     elif args["train_mode"] == 'analysis': # 使用指定的模型權重，預測資料，並輸出結果。
         
-        source = r'Plant1第一號發電機組'
-        data_dir_path = path.join('dataset', 'source', source)
-        
+        source = r'（TransferLearning遷移學習）Plant2第二號發電機組'
         write_result_out_dir = path.join(write_out_dir, args["train_mode"], source)
-        makedirs(write_result_out_dir, exist_ok=True)
         print(f'Output Directory: {write_result_out_dir}')
 
-        X_train, y_train, X_test, y_test = read_data_from_dataset(data_dir_path) # 讀取'X_train', 'y_train', 'X_test', 'y_test'資料
+        X_train, y_train, X_test, y_test = read_data_from_dataset(write_result_out_dir) # 讀取'X_train', 'y_train', 'X_test', 'y_test'資料
         X_train = np.concatenate((X_train, X_test), axis=0)
         y_train = np.concatenate((y_train, y_test), axis=0)
 
-        model_file_path = path.join(write_out_dir, 'pre-train', 'Plant1第一號發電機組', 'best_model.hdf5') # --調整參數
+        model_file_path = path.join(write_result_out_dir, 'Plant1第一號發電機組_transferred_best_model.hdf5') # --調整參數 # best_model.hdf5
         print(f'Using Model Name: {model_file_path}')
         best_model = load_model(model_file_path, custom_objects={'rmse': rmse})
         period = 5
