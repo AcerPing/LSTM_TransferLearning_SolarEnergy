@@ -163,7 +163,11 @@ def main():
             # clear memory up (清理記憶體並保存參數)
             keras.backend.clear_session() # 清理記憶體，釋放模型佔用的資源。
             print('\n' * 2 + '-' * 140 + '\n' * 2)
-    
+
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
     elif args["train_mode"] == 'transfer-learning': # 使用遷移學習來訓練模型，從預訓練模型中提取權重並應用於新數據集。
         
@@ -189,17 +193,17 @@ def main():
                     
                 # load dataset (加載目標數據集)
                 data_dir_path = f'dataset/target/{target}'
-                X_train, y_train, X_test, y_test = \
-                    read_data_from_dataset(data_dir_path)
-                period = 1440 # period：表示時間步數（time steps），即模型一次看多少步的歷史數據來進行預測。下採樣後將資料降為成每分鐘一個數據點，以 1 天 = 1440 分鐘進行觀察。 
-                X_train, X_valid, y_train, y_valid = \
-                    train_test_split(X_train, y_train, test_size=args["valid_ratio"], shuffle=False) # 將訓練集分割為訓練和驗證。
+                X_train, y_train, X_test, y_test = read_data_from_dataset(data_dir_path)
+                period = 5 # period：表示時間步數（time steps），即模型一次看多少步的歷史數據來進行預測。
+                           # 使用前 60 分鐘的數據作為輸入 (X 陣列)，並以第75分鐘的DAILY_YIELD數據作為對應的輸出。
+                           # 每 15 分鐘紀錄一筆數據，因此period設定為5
+                X_train, X_valid, y_train, y_valid = train_test_split(X_train, y_train, test_size=args["valid_ratio"], shuffle=False) # 將訓練集分割為訓練和驗證。
                 print(f'\nTarget dataset : {target}')
                 print(f'\nSource dataset : {source}')
                 print(f'\nX_train : {X_train.shape[0]}')
                 print(f'\nX_valid : {X_valid.shape[0]}')
                 print(f'\nX_test : {X_test.shape[0]}')
-                print(f'period:{period}, args["nb_batch"]: {args["nb_batch"]}')
+                print(f'period:{period}') # , args["nb_batch"]: {args["nb_batch"]}
                 
                 # construct the model (構建並編譯模型)
                 pre_model = load_model(pre_model_path, custom_objects={'rmse': rmse}) # 加載預訓練模型的權重。
@@ -210,7 +214,8 @@ def main():
                 model = build_model(input_shape, args["gpu"], write_result_out_dir, pre_model=pre_model, freeze=args["freeze"]) # 構建遷移學習模型 # freeze參數決定是否凍結預訓練模型的層，以避免在遷移學習中微調它們。
         
                 # train the model (訓練模型)
-                bsize = len(y_train) // args["nb_batch"] # 計算批次大小batch_size # --min
+                bsize = 128 # len(y_train) // args["nb_batch"] # 計算批次大小batch_size # --min
+                            # 調小 Batch Size，提升權重更新的靈敏度，並幫助模型適應新的資料特徵分佈。
                 print(f'計算批次大小batch_size: {bsize}')
                 RTG = ReccurentTrainingGenerator(X_train, y_train, batch_size=bsize, timesteps=period, delay=1) # 生成訓練數據，以批次形式提供給模型。
                 RVG = ReccurentTrainingGenerator(X_valid, y_valid, batch_size=bsize, timesteps=period, delay=1) # 生成驗證數據，以批次形式提供給模型。
@@ -227,12 +232,10 @@ def main():
                 y_test = y_test[-len(y_test_pred):] # 將y_test的長度調整為與 y_test_pred（模型預測值）的長度一致，確保在進行計算和可視化時，兩者長度相符。。
                 save_prediction_plot(y_test, y_test_pred, write_result_out_dir) # 繪製y_test與y_test_pred的對比圖，展示預測值與實際值的偏差 (折線圖)
                 save_yy_plot(y_test, y_test_pred, write_result_out_dir) # 繪製y_test與y_test_pred的對比圖，展示預測值與實際值的偏差 (散點圖)
-                mse_score, rmse_loss, mae_loss, mape_loss, msle_loss, r2 = save_mse(y_test, y_test_pred, write_result_out_dir, model=best_model) # 計算y_test和y_test_pred之間的均方誤差（MSE）分數，同時將模型摘要資訊寫入文件。
+                mse_score, rmse_loss, mae_loss, r2 = save_mse(y_test, y_test_pred, write_result_out_dir, model=best_model) # 計算y_test和y_test_pred之間的均方誤差（MSE）分數，同時將模型摘要資訊寫入文件。
                 args["MAE Loss"] = mae_loss
                 args["MSE Loss"] = mse_score
                 args["RMSE Loss"] = rmse_loss
-                args["MAPE Loss"] = mape_loss
-                args["MSLE Loss"] = msle_loss
                 args["R2 Score"] = r2
                 save_arguments(args, write_result_out_dir) # 保存本次訓練或測試的所有參數設定及結果。
                 ResidualPlot(y_test, y_test_pred, write_result_out_dir)
@@ -241,7 +244,11 @@ def main():
                 # clear memory up (清理記憶體並保存參數)
                 keras.backend.clear_session() # 釋放記憶體
                 print('\n' * 2 + '-' * 140 + '\n' * 2)
-    
+
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
     elif args["train_mode"] == 'without-transfer-learning': # 不使用遷移學習
 
@@ -253,16 +260,16 @@ def main():
 
             # load dataset (加載數據集並分割為訓練和驗證集)
             data_dir_path = path.join('dataset', 'target', target)
-            X_train, y_train, X_test, y_test = \
-                read_data_from_dataset(data_dir_path) # 讀取'X_train', 'y_train', 'X_test', 'y_test'資料
-            period = 1440 # period：表示時間步數（time steps），即模型一次看多少步的歷史數據來進行預測。下採樣後將資料降為成每分鐘一個數據點，以 1 天 = 1440 分鐘進行觀察。
-            X_train, X_valid, y_train, y_valid =  \
-                train_test_split(X_train, y_train, test_size=args["valid_ratio"], shuffle=False) # 不隨機打亂數據 (shuffle=False)
+            X_train, y_train, X_test, y_test = read_data_from_dataset(data_dir_path) # 讀取'X_train', 'y_train', 'X_test', 'y_test'資料
+            period = 5 # period：表示時間步數（time steps），即模型一次看多少步的歷史數據來進行預測。
+                       # 使用前 60 分鐘的數據作為輸入 (X 陣列)，並以第75分鐘的DAILY_YIELD數據作為對應的輸出。
+                       # 每 15 分鐘紀錄一筆數據，因此period設定為5
+            X_train, X_valid, y_train, y_valid = train_test_split(X_train, y_train, test_size=args["valid_ratio"], shuffle=False) # 不隨機打亂數據 (shuffle=False)
             print(f'\nTarget dataset : {target}')
             print(f'\nX_train : {X_train.shape[0]}')
             print(f'\nX_valid : {X_valid.shape[0]}')
             print(f'\nX_test : {X_test.shape[0]}')
-            print(f'period:{period}, args["nb_batch"]: {args["nb_batch"]}')
+            print(f'period:{period}') # , args["nb_batch"]: {args["nb_batch"]}
             
             # construct the model (構建模型)
             file_path = path.join(write_result_out_dir, 'best_model.hdf5')
@@ -271,7 +278,7 @@ def main():
             model = build_model(input_shape, args["gpu"], write_result_out_dir)
             
             # train the model (訓練模型)
-            bsize = len(y_train) // args["nb_batch"] # 計算批次大小batch_size # --min
+            bsize = 128 # len(y_train) // args["nb_batch"] # 計算批次大小batch_size # --min
             print(f'計算批次大小batch_size: {bsize}')
             RTG = ReccurentTrainingGenerator(X_train, y_train, batch_size=bsize, timesteps=period, delay=1) # 生成訓練數據，以批次形式提供給模型。
             RVG = ReccurentTrainingGenerator(X_valid, y_valid, batch_size=bsize, timesteps=period, delay=1) # 生成驗證數據，以批次形式提供給模型。
@@ -289,12 +296,10 @@ def main():
             y_test = y_test[-len(y_test_pred):] # 將y_test的長度調整為與 y_test_pred（模型預測值）的長度一致，確保在進行計算和可視化時，兩者長度相符。
             save_prediction_plot(y_test, y_test_pred, write_result_out_dir) # 繪製y_test與y_test_pred的對比圖，展示預測值與實際值的偏差 (折線圖)
             save_yy_plot(y_test, y_test_pred, write_result_out_dir) # 繪製y_test與y_test_pred的對比圖，展示預測值與實際值的偏差 (散點圖)
-            mse_score, rmse_loss, mae_loss, mape_loss, msle_loss, r2 = save_mse(y_test, y_test_pred, write_result_out_dir, model=best_model) # 計算y_test和y_test_pred之間的均方誤差（MSE）分數，
+            mse_score, rmse_loss, mae_loss, r2 = save_mse(y_test, y_test_pred, write_result_out_dir, model=best_model) # 計算y_test和y_test_pred之間的均方誤差（MSE）分數，
             args["MAE Loss"] = mae_loss
             args["MSE Loss"] = mse_score
             args["RMSE Loss"] = rmse_loss
-            args["MAPE Loss"] = mape_loss
-            args["MSLE Loss"] = msle_loss
             args["R2 Score"] = r2
             save_arguments(args, write_result_out_dir) # 保存本次訓練或測試的所有參數設定及結果。
             ResidualPlot(y_test, y_test_pred, write_result_out_dir)
@@ -339,7 +344,7 @@ def main():
     #         print("模型複製完成。")
                     
     #         # ensemble整體學習 預測與評估。
-    #         period = 1440 # period：表示時間步數（time steps），即模型一次看多少步的歷史數據來進行預測。下採樣後將資料降為成每分鐘一個數據點，以 1 天 = 1440 分鐘進行觀察。
+    #         period = 5 # period：表示時間步數（time steps），即模型一次看多少步的歷史數據來進行預測。
     #         start_ensemble (period, write_out_dir=path.join(write_out_dir, args["train_mode"]))
     #         keras.backend.clear_session() # 清理記憶體
     #         print('\n' * 2 + '-' * 140 + '\n' * 2)      
@@ -438,7 +443,7 @@ def main():
             data_dir_path = path.join('dataset', 'target', target)
             X_train, y_train, X_test, y_test = \
                 read_data_from_dataset(data_dir_path)
-            period = 1440 # period：表示時間步數（time steps），即模型一次看多少步的歷史數據來進行預測。下採樣後將資料降為成每分鐘一個數據點，以 1 天 = 1440 分鐘進行觀察。
+            period = 5 # period：表示時間步數（time steps），即模型一次看多少步的歷史數據來進行預測。
             X_train, X_valid, y_train, y_valid =  \
                 train_test_split(X_train, y_train, test_size=args["valid_ratio"], shuffle=False) # 將訓練數據劃分為訓練集和驗證集。
             print(f'\nTarget dataset : {target}')
