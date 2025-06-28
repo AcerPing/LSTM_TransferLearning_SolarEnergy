@@ -160,7 +160,7 @@ def decompose_time_series(x):
     for period in tqdm(range(1, step + 1)):
         # 使用 seasonal_decompose 分解時間序列
         decompose_result = sm.tsa.seasonal_decompose(pd.Series(x), period=period, model='additive', extrapolate_trend='freq')
-        print(len(np.where(decompose_result.resid < 0)[0]))
+        # print(len(np.where(decompose_result.resid < 0)[0]))
         score = np.sum(np.abs(decompose_result.resid)) # 用殘差的絕對值總和作為「分解好不好」的指標
                                                        # 越小越好 → 表示殘差越小，趨勢和季節性越能解釋原始數據。
 

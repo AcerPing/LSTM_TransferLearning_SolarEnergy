@@ -20,7 +20,8 @@ from utils.model import build_model, rmse
 from utils.data_io import (
     read_data_from_dataset,
     ReccurentTrainingGenerator,
-    ReccurentPredictingGenerator
+    ReccurentPredictingGenerator,
+    decompose_time_series
 )
 from utils.save import save_lr_curve, save_prediction_plot, save_yy_plot, save_mse, ResidualPlot, ErrorHistogram
 from utils.device import limit_gpu_memory # 限制 TensorFlow 對 GPU 記憶體的預留或使用量。
@@ -117,6 +118,32 @@ def main():
             # 這個資料集（source domain）只是用來初始化權重。模型表現如何，不是我們關心的；而是它「能否幫助另一個資料集」更快收斂、準確預測。
             X_train = np.concatenate((X_train, X_test), axis=0)  # > no need for test data when pre-training
             y_train = np.concatenate((y_train, y_test), axis=0)  # > no need for test data when pre-training
+            
+            decomp_result, best_period = decompose_time_series(y_train) # 針對 y_train 做 time series decomposition
+            trend = decomp_result["trend"]
+            seasonal = decomp_result["period"]
+            resid = decomp_result["resid"]
+
+            plt.figure(figsize=(12, 8))
+            # 趨勢
+            plt.subplot(3, 1, 1)
+            plt.plot(trend)
+            plt.title("Trend")
+            # 季節
+            plt.subplot(3, 1, 2)
+            plt.plot(seasonal)
+            plt.title("Seasonal")
+            # 殘差
+            plt.subplot(3, 1, 3)
+            plt.plot(resid)
+            plt.title("Residual")
+
+            plt.tight_layout()
+            plt.show()
+            print(f"Decomposition 結果最佳 period: {best_period}")
+            # period = best_period # 要不要用 best_period？
+            # print(f"決定使用 period={period}")
+            
             X_train, X_valid, y_train, y_valid = train_test_split(X_train, y_train, test_size=args["valid_ratio"], shuffle=False) # 不隨機打亂數據 (shuffle=False)
             print(f'\nSource dataset : {source}')
             print(f'\nX_train : {X_train.shape[0]}')
