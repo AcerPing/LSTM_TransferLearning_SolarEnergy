@@ -150,19 +150,25 @@ class ReccurentPredictingGenerator(Sequence): # 生成遞歸神經網路（如 L
 
 
 def decompose_time_series(x):
-    
-    step = len(x) // 10
-    best_score = np.inf
+    '''
+    時間序列分解 (Time Series Decomposition), 把原始序列 x 拆解成 趨勢 (Trend)、季節性 (Seasonal / Period)、殘差 (Residual)。
+    並且自動找到最適合的週期(period)
+    '''
+    step = len(x) // 10 # 設定最大週期範圍，最多要測試的 period 是總長度的十分之一，避免 period 設太大 → 不穩定。
+    best_score = np.inf # 用正無限大初始化，用來存放目前找到的最佳 score (愈小愈好)
     print('decomposing time series data ・・・・・')
     for period in tqdm(range(1, step + 1)):
+        # 使用 seasonal_decompose 分解時間序列
         decompose_result = sm.tsa.seasonal_decompose(pd.Series(x), period=period, model='additive', extrapolate_trend='freq')
         print(len(np.where(decompose_result.resid < 0)[0]))
-        score = np.sum(np.abs(decompose_result.resid))
+        score = np.sum(np.abs(decompose_result.resid)) # 用殘差的絕對值總和作為「分解好不好」的指標
+                                                       # 越小越好 → 表示殘差越小，趨勢和季節性越能解釋原始數據。
 
-        if score < best_score:
+        if score < best_score: # 更新最佳 period
             best_period = period
             best_score = score
     print(f'best period : {best_period}')
+    #  最後再用最佳 period 分解一次，確保輸出的分解結果是最佳 period。
     decompose_result = sm.tsa.seasonal_decompose(pd.Series(x), period=best_period, model='additive', extrapolate_trend='freq')
 
     x = {'trend': decompose_result.trend, 'period': decompose_result.seasonal, 'resid': decompose_result.resid}
