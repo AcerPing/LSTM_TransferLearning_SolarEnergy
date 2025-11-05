@@ -127,7 +127,7 @@ def build_model(input_shape: tuple, # 模型的輸入形狀(timesteps, features)
     # 調整優化器&學習率。
     if pre_model:
         # 通常需要更小的學習率；微調時若學習率太大，會導致破壞原本從預訓練模型學到的通用知識。
-        init_learning_rate = 3e-5  # 比原先低一個數量級
+        init_learning_rate = 1e-5  # 比原先低一個數量級
     else:
         # 不是遷移學習的狀況
         init_learning_rate = 1e-4
