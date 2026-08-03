@@ -1,0 +1,30 @@
+﻿Solar LSTM 階段零查核紀錄
+建立時間：2026-07-20 16:28:14
+
+【已確認】
+1. 實驗 A：Plant1 → Plant2
+2. 實驗 B：Plant2 → Plant1
+3. Source 使用 80% Training / 20% Testing
+4. Target 使用 20% Training / 80% Testing
+5. dataset 與 preprocess pickle SHA256 完全一致
+6. 八組主 checkpoint 未發現混檔
+7. feature scaler 與 target scaler 分開
+8. Train / Validation / Test 依時間順序切分
+
+【重大問題】
+1. scaler 在完整 3264 筆資料上 fit，存在 test leakage
+2. scaler 未保存
+3. 未執行 inverse transform
+4. 舊 metrics 為 normalized scale
+5. prediction target alignment 錯一個 15 分鐘時間步
+6. 實驗 A Freeze batch size 與其他組不同
+7. 實驗 A TL initial LR 與目前 model.py 不一致
+8. 實驗 B 無逐筆 prediction CSV
+
+【處理原則】
+1. 舊結果保留為 legacy reference
+2. 不覆寫舊 checkpoint、metrics、圖片與 pickle
+3. 正式復現重新建立 training-only scaler
+4. 修正 horizon=1 的 target alignment
+5. inverse transform 後計算 original-scale MAE、MSE、RMSE、R²
+6. 公平比較統一 target split、batch size、scaler 與測試區間

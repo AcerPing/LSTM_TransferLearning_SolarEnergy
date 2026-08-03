@@ -15,3 +15,5 @@ utils/__pycache__/data_io.cpython-37.pyc
 utils/__pycache__/model.cpython-37.pyc
 utils/__pycache__/save.cpython-37.pyc
 reports/__pycache__/Metrics_Comparison.cpython-37.pyc
+reports/Solar Energy Result/實驗 A：Plant1 → Plant2/歷程記錄/transfer-learning (Unfreeze)__Batch=128&LR=1e-5_20250624/Plant2第二號發電機組/Plant1第一號發電機組/Plant2第二號發電機組 Learning Curve.png
+reports/Solar Energy Result/實驗 A：Plant1 → Plant2/歷程記錄/transfer-learning (Unfreeze)_Batch=64&LR=1e-5_20250624-1/Plant2第二號發電機組/Plant1第一號發電機組/Plant2第二號發電機組 Learning Curve.png
