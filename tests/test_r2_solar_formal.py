@@ -397,6 +397,128 @@ class SolarR2FormalContractTests(unittest.TestCase):
         self.assertFalse(checkpoint.save_weights_only)
         self.assertEqual((early.monitor, early.patience, early.restore_best_weights), ("val_loss", 10, True))
 
+    def test_12a_formal_checkpoint_uses_epoch_token(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            pattern = formal.formal_checkpoint_pattern(Path(temporary))
+            callbacks = formal.make_formal_callbacks(pattern)
+        reduce_lr, checkpoint, early = callbacks
+        self.assertEqual(pattern.name, "checkpoint_epoch_{epoch:04d}.hdf5")
+        self.assertIn("{epoch:04d}", checkpoint.filepath)
+        self.assertNotEqual(Path(checkpoint.filepath).name, "best_model.hdf5")
+        self.assertEqual(checkpoint.monitor, "val_loss")
+        self.assertTrue(checkpoint.save_best_only)
+        self.assertFalse(checkpoint.save_weights_only)
+        self.assertEqual(
+            (reduce_lr.monitor, reduce_lr.factor, reduce_lr.patience, reduce_lr.min_lr),
+            ("val_loss", 0.5, 4, 1e-7),
+        )
+        self.assertEqual(
+            (early.monitor, early.patience, early.restore_best_weights),
+            ("val_loss", 10, True),
+        )
+
+    def test_12b_lifecycle_selects_minimum_val_loss_checkpoint(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            method_dir = Path(temporary) / "source" / "pretrain"
+            model = SimpleNamespace(
+                optimizer=SimpleNamespace(
+                    learning_rate=tf.Variable(1e-4, dtype=tf.float32)
+                )
+            )
+            named_training = NamedSequenceSplit(
+                "training",
+                np.zeros((1, 5, 5)),
+                np.zeros(1),
+            )
+            named_validation = NamedSequenceSplit(
+                "validation",
+                np.zeros((1, 5, 5)),
+                np.zeros(1),
+            )
+            role_data = SimpleNamespace(
+                training=SimpleNamespace(named=named_training),
+                validation=SimpleNamespace(named=named_validation),
+            )
+
+            def fake_fit(fit_model, **kwargs):
+                checkpoint = kwargs["callbacks"][1]
+                observer = kwargs["callbacks"][-1]
+                observer.set_model(fit_model)
+                for epoch in range(3):
+                    observer.on_epoch_begin(epoch, {})
+                for epoch in (1, 2):
+                    path = Path(checkpoint.filepath.format(epoch=epoch))
+                    path.write_bytes(f"checkpoint-{epoch}".encode("ascii"))
+                return SimpleNamespace(
+                    history={
+                        "loss": [3.0, 2.0, 1.0],
+                        "val_loss": [3.0, 1.0, 2.0],
+                    }
+                )
+
+            with (
+                patch.object(formal, "fit_train_validation", side_effect=fake_fit),
+                patch.object(formal, "_write_history_and_plot", return_value={}),
+            ):
+                result = formal.train_lifecycle(
+                    method="source_pretrain",
+                    model=model,
+                    role_data=role_data,
+                    method_dir=method_dir,
+                )
+            self.assertEqual(result.summary["best_epoch"], 2)
+            self.assertEqual(
+                result.checkpoint_path.name,
+                "checkpoint_epoch_0002.hdf5",
+            )
+            self.assertTrue(result.checkpoint_path.is_file())
+            self.assertTrue((method_dir / "checkpoint_epoch_0001.hdf5").is_file())
+            self.assertFalse((method_dir / "best_model.hdf5").exists())
+
+    def test_12c_reload_uses_lifecycle_selected_checkpoint(self):
+        selected = Path("run/source/pretrain/checkpoint_epoch_0042.hdf5")
+        lifecycle = {
+            "source_pretrain": SimpleNamespace(checkpoint_path=selected),
+        }
+        sentinel = object()
+        with patch.object(
+            formal,
+            "reload_best_checkpoint",
+            return_value=sentinel,
+        ) as reload:
+            self.assertIs(
+                formal.reload_lifecycle_checkpoint(lifecycle, "source_pretrain"),
+                sentinel,
+            )
+        reload.assert_called_once_with(selected)
+
+    def test_12d_source_tl_and_final_reload_use_selected_lifecycle(self):
+        source = inspect.getsource(formal.run_formal)
+        self.assertGreaterEqual(
+            source.count(
+                'reload_lifecycle_checkpoint(lifecycle, "source_pretrain")'
+            ),
+            2,
+        )
+        self.assertIn(
+            "method: reload_lifecycle_checkpoint(lifecycle, method)",
+            source,
+        )
+        self.assertNotIn("reload_best_checkpoint(paths.source_pretrain)", source)
+
+    def test_12e_checkpoint_namespaces_remain_independent(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            parents = [
+                path.parent
+                for path in checkpoint_paths(temporary).as_dict().values()
+            ]
+            patterns = [formal.formal_checkpoint_pattern(path) for path in parents]
+        self.assertEqual(len(patterns), 4)
+        self.assertEqual(len(set(patterns)), 4)
+        self.assertTrue(
+            all(path.name == formal.FORMAL_CHECKPOINT_TEMPLATE for path in patterns)
+        )
+
     def test_13_checkpoint_paths_unique(self):
         with tempfile.TemporaryDirectory() as temporary:
             paths = checkpoint_paths(temporary).as_dict()
@@ -553,6 +675,75 @@ class SolarR2FormalContractTests(unittest.TestCase):
                 formal.sha256_file(path),
                 "683dcf990976ecdb7db3b6a53bf9626dc19aafc5b8e052042b9be6b7f2d99af4",
             )
+
+    def test_29a_manifest_records_selected_checkpoint_provenance(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            run_root = Path(temporary).resolve()
+            checkpoint = (
+                run_root
+                / "target"
+                / "without_tl"
+                / "checkpoint_epoch_0017.hdf5"
+            )
+            checkpoint.parent.mkdir(parents=True)
+            checkpoint.write_bytes(b"selected-best")
+            result = formal.LifecycleResult(
+                method="without_tl",
+                model=object(),
+                method_dir=checkpoint.parent,
+                checkpoint_path=checkpoint,
+                history_frame=pd.DataFrame(),
+                summary={"best_epoch": 17, "epochs_completed": 28},
+            )
+            record = formal.checkpoint_manifest_record(result, run_root)
+        self.assertEqual(
+            record["path"],
+            "target/without_tl/checkpoint_epoch_0017.hdf5",
+        )
+        self.assertEqual(record["size_bytes"], len(b"selected-best"))
+        self.assertEqual(record["sha256"], formal.hashlib.sha256(b"selected-best").hexdigest())
+        self.assertEqual(record["best_epoch"], 17)
+        self.assertEqual(record["epochs_completed"], 28)
+
+    def test_29b_manifest_target_column_does_not_collide_with_target_splits(self):
+        source = SimpleNamespace(
+            training=self._formal_split("source", "training"),
+            validation=self._formal_split("source", "validation"),
+            metadata=SimpleNamespace(scaler_manifest={}),
+            checksums={},
+        )
+        target = SimpleNamespace(
+            training=self._formal_split("target", "training"),
+            validation=self._formal_split("target", "validation"),
+            metadata=SimpleNamespace(scaler_manifest={}),
+            checksums={},
+        )
+        provenance = {
+            "commit": "abc",
+            "branch": "test",
+            "dirty": False,
+            "status_porcelain": [],
+            "critical_dirty": False,
+            "critical_dirty_paths": [],
+            "unrelated_dirty": False,
+            "unrelated_dirty_paths": [],
+        }
+        with (
+            patch.object(formal, "collect_source_hashes", return_value={}),
+            patch.object(formal.tf.config, "list_physical_devices", return_value=[]),
+        ):
+            manifest = formal._initial_manifest(
+                "20260814T010203Z_seed1234",
+                1234,
+                provenance,
+                source,
+                target,
+            )
+        contract = manifest["data_contract"]
+        self.assertEqual(contract["target_column"], formal.TARGET_COLUMN)
+        self.assertIsInstance(contract["target"], dict)
+        self.assertIn("training", contract["target"])
+        self.assertIn("validation", contract["target"])
 
     def test_30_failure_manifest_preservation(self):
         with tempfile.TemporaryDirectory() as temporary:

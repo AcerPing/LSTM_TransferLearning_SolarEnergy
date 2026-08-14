@@ -27,7 +27,7 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 from keras import backend as K
-from keras.callbacks import Callback
+from keras.callbacks import Callback, EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 from sklearn.metrics import (
     mean_absolute_error,
     mean_squared_error,
@@ -75,7 +75,6 @@ from r2_helpers.solar_runtime import (  # noqa: E402
     configure_reproducibility,
     evaluate_test,
     fit_train_validation,
-    make_r2_callbacks,
     reload_best_checkpoint,
     validate_transferred_weights,
 )
@@ -85,6 +84,7 @@ FORMAL_EXPERIMENT = "A"
 FORMAL_DEVICE = "cpu"
 FORMAL_SEED = 1234
 FORMAL_MAX_EPOCHS = 500
+FORMAL_CHECKPOINT_TEMPLATE = "checkpoint_epoch_{epoch:04d}.hdf5"
 FORMAL_METHODS = (
     "source_pretrain",
     "without_tl",
@@ -618,6 +618,46 @@ def _write_history_and_plot(frame: pd.DataFrame, method_dir: Path) -> dict[str, 
     return artifact_records((history_path, plot_path), method_dir)
 
 
+def formal_checkpoint_pattern(method_dir: Path | str) -> Path:
+    return Path(method_dir) / FORMAL_CHECKPOINT_TEMPLATE
+
+
+def selected_checkpoint_path(method_dir: Path | str, best_epoch: int) -> Path:
+    _require(best_epoch >= 1, "Best epoch must be 1-based")
+    return Path(method_dir) / FORMAL_CHECKPOINT_TEMPLATE.format(epoch=best_epoch)
+
+
+def make_formal_callbacks(checkpoint_pattern: Path | str) -> tuple[Any, ...]:
+    """Create the unchanged callback protocol with unique improvement paths."""
+
+    destination = Path(checkpoint_pattern)
+    _require(
+        destination.name == FORMAL_CHECKPOINT_TEMPLATE,
+        "Formal checkpoint path must contain the epoch token",
+    )
+    reduce_lr = ReduceLROnPlateau(
+        monitor="val_loss",
+        factor=0.5,
+        patience=4,
+        min_lr=1e-7,
+        verbose=1,
+    )
+    checkpoint = ModelCheckpoint(
+        filepath=str(destination),
+        monitor="val_loss",
+        save_best_only=True,
+        save_weights_only=False,
+        verbose=1,
+    )
+    early_stopping = EarlyStopping(
+        monitor="val_loss",
+        patience=10,
+        restore_best_weights=True,
+        verbose=1,
+    )
+    return reduce_lr, checkpoint, early_stopping
+
+
 def train_lifecycle(
     *,
     method: str,
@@ -630,8 +670,8 @@ def train_lifecycle(
     _require(max_epochs == FORMAL_MAX_EPOCHS, "Formal max_epochs must remain 500")
     _require(not method_dir.exists(), f"Method output already exists: {method_dir}")
     method_dir.mkdir(parents=True, exist_ok=False)
-    checkpoint_path = method_dir / "best_model.hdf5"
-    callbacks = list(make_r2_callbacks(checkpoint_path))
+    checkpoint_pattern = formal_checkpoint_pattern(method_dir)
+    callbacks = list(make_formal_callbacks(checkpoint_pattern))
     observer = LearningRateObserver()
     callbacks.append(observer)
     history = fit_train_validation(
@@ -644,6 +684,7 @@ def train_lifecycle(
     )
     history_frame = build_history_frame(history, observer.learning_rates)
     summary = summarize_history(history_frame, callbacks[2], max_epochs=max_epochs)
+    checkpoint_path = selected_checkpoint_path(method_dir, int(summary["best_epoch"]))
     _require(checkpoint_path.is_file(), f"Best checkpoint not produced: {checkpoint_path}")
     _require(checkpoint_path.stat().st_size > 0, f"Best checkpoint is empty: {checkpoint_path}")
     artifacts = _write_history_and_plot(history_frame, method_dir)
@@ -664,6 +705,31 @@ def train_lifecycle(
         history_frame=history_frame,
         summary=summary,
     )
+
+
+def reload_lifecycle_checkpoint(
+    lifecycles: Mapping[str, LifecycleResult],
+    method: str,
+) -> ReloadedCheckpointModel:
+    _require(method in lifecycles, f"Lifecycle not completed: {method}")
+    return reload_best_checkpoint(lifecycles[method].checkpoint_path)
+
+
+def checkpoint_manifest_record(
+    result: LifecycleResult,
+    run_root: Path | str,
+) -> dict[str, Any]:
+    root = Path(run_root).resolve()
+    checkpoint = result.checkpoint_path.resolve()
+    _require(_is_within(checkpoint, root), "Selected checkpoint is outside formal run root")
+    _require(checkpoint.is_file(), f"Selected checkpoint not found: {checkpoint}")
+    return {
+        "path": checkpoint.relative_to(root).as_posix(),
+        "size_bytes": checkpoint.stat().st_size,
+        "sha256": sha256_file(checkpoint),
+        "best_epoch": int(result.summary["best_epoch"]),
+        "epochs_completed": int(result.summary["epochs_completed"]),
+    }
 
 
 def compute_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> dict[str, float | int]:
@@ -1119,7 +1185,7 @@ def _initial_manifest(
             "window": WINDOW,
             "horizon": HORIZON,
             "features": list(FEATURE_COLUMNS),
-            "target": TARGET_COLUMN,
+            "target_column": TARGET_COLUMN,
             "integrity_hash_access_may_read_test_bytes": True,
             "test_values_loaded_during_training": False,
             "source": {
@@ -1234,7 +1300,7 @@ def run_formal(
         write_manifest_atomic(manifest_path, manifest)
 
         stage = "tl_freeze"
-        source_best = reload_best_checkpoint(paths.source_pretrain)
+        source_best = reload_lifecycle_checkpoint(lifecycle, "source_pretrain")
         configure_reproducibility(seed)
         freeze_initial = build_r2_model(output_dir=run_root)
         configure_reproducibility(seed)
@@ -1269,7 +1335,7 @@ def run_formal(
         write_manifest_atomic(manifest_path, manifest)
 
         stage = "tl_full_finetune"
-        source_best = reload_best_checkpoint(paths.source_pretrain)
+        source_best = reload_lifecycle_checkpoint(lifecycle, "source_pretrain")
         configure_reproducibility(seed)
         full_initial = build_r2_model(output_dir=run_root)
         configure_reproducibility(seed)
@@ -1292,10 +1358,8 @@ def run_formal(
 
         stage = "reload_all_checkpoints"
         reloaded = {
-            "source_pretrain": reload_best_checkpoint(paths.source_pretrain),
-            "without_tl": reload_best_checkpoint(paths.without_tl),
-            "tl_freeze": reload_best_checkpoint(paths.tl_freeze),
-            "tl_full_finetune": reload_best_checkpoint(paths.tl_full_finetune),
+            method: reload_lifecycle_checkpoint(lifecycle, method)
+            for method in FORMAL_METHODS
         }
         for method in FORMAL_METHODS:
             _record_event(manifest, f"reload:{method}")
@@ -1360,11 +1424,7 @@ def run_formal(
                 }
             )
         manifest["checkpoints"] = {
-            method: {
-                "path": result.checkpoint_path.relative_to(run_root).as_posix(),
-                "size_bytes": result.checkpoint_path.stat().st_size,
-                "sha256": sha256_file(result.checkpoint_path),
-            }
+            method: checkpoint_manifest_record(result, run_root)
             for method, result in lifecycle.items()
         }
 
