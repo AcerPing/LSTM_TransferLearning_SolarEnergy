@@ -265,17 +265,27 @@ def _git(repo: Path, *args: str) -> str:
         "-c",
         f"safe.directory={repo.as_posix()}",
         "-c",
-        "core.quotePath=false",
+        "core.quotePath=true",
         *args,
     ]
-    result = subprocess.run(
-        command,
-        cwd=repo,
-        capture_output=True,
-        text=True,
-        check=False,
+    try:
+        result = subprocess.run(
+            command,
+            cwd=repo,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except UnicodeDecodeError as exc:
+        raise FormalContractError(
+            "Git output decoding failed; pathname output must remain safely quoted"
+        ) from exc
+    _require(result.stdout is not None, "Git subprocess returned no captured stdout")
+    _require(result.stderr is not None, "Git subprocess returned no captured stderr")
+    _require(
+        result.returncode == 0,
+        f"Git command failed: {' '.join(args)}: {result.stderr.rstrip()}",
     )
-    _require(result.returncode == 0, f"Git command failed: {' '.join(args)}: {result.stderr.strip()}")
     # Porcelain status uses a leading space as the working-tree status column.
     # Remove line terminators only so that semantic status bytes stay intact.
     return result.stdout.rstrip("\r\n")

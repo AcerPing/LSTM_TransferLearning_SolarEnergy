@@ -268,8 +268,80 @@ class SolarR2FormalContractTests(unittest.TestCase):
             stdout=" M r2_solar.py\n",
             stderr="",
         )
-        with patch.object(formal.subprocess, "run", return_value=completed):
+        with patch.object(formal.subprocess, "run", return_value=completed) as run:
             self.assertEqual(formal._git(Path.cwd(), "status"), " M r2_solar.py")
+        command = run.call_args.args[0]
+        self.assertNotIn("core.quotePath=false", command)
+        self.assertIn("core.quotePath=true", command)
+
+    def test_05k_git_octal_utf8_path_round_trip(self):
+        expected = "notebook/20260814執行資料紀錄/紀錄.txt"
+        quoted = '"' + "".join(
+            chr(byte)
+            if 32 <= byte < 127 and chr(byte) not in ('"', "\\")
+            else f"\\{byte:03o}"
+            for byte in expected.encode("utf-8")
+        ) + '"'
+        self.assertEqual(
+            formal.parse_git_status_paths(f"?? {quoted}"),
+            (expected,),
+        )
+
+    def test_05l_chinese_untracked_path_is_unrelated_dirty(self):
+        expected = "notebook/20260814執行資料紀錄/紀錄.txt"
+        quoted = '"' + "".join(
+            chr(byte)
+            if 32 <= byte < 127 and chr(byte) not in ('"', "\\")
+            else f"\\{byte:03o}"
+            for byte in expected.encode("utf-8")
+        ) + '"'
+        lines = [f"?? {quoted}", " M r2_solar.py"]
+        result = formal.classify_git_status(lines)
+        self.assertTrue(result["unrelated_dirty"])
+        self.assertIn(expected, result["unrelated_dirty_paths"])
+        self.assertTrue(result["critical_dirty"])
+        self.assertEqual(result["critical_dirty_paths"], ["r2_solar.py"])
+        self.assertEqual(result["status_porcelain"], lines)
+
+    def test_05m_quoted_unicode_rename_and_copy_parsing(self):
+        old_path = "notebook/舊紀錄.txt"
+        new_path = "notebook/新紀錄.txt"
+
+        def quote(path):
+            return '"' + "".join(
+                chr(byte)
+                if 32 <= byte < 127 and chr(byte) not in ('"', "\\")
+                else f"\\{byte:03o}"
+                for byte in path.encode("utf-8")
+            ) + '"'
+
+        for status in ("R ", "C "):
+            with self.subTest(status=status):
+                self.assertEqual(
+                    formal.parse_git_status_paths(
+                        f"{status} {quote(old_path)} -> {quote(new_path)}"
+                    ),
+                    (old_path, new_path),
+                )
+
+    def test_05n_git_missing_capture_has_clear_diagnostic(self):
+        completed = SimpleNamespace(returncode=0, stdout=None, stderr=None)
+        with patch.object(formal.subprocess, "run", return_value=completed):
+            with self.assertRaisesRegex(
+                formal.FormalContractError,
+                "no captured stdout",
+            ):
+                formal._git(Path.cwd(), "status")
+
+    def test_05o_git_decode_failure_preserves_original_cause(self):
+        decode_error = UnicodeDecodeError("cp950", b"\xe5", 0, 1, "illegal byte")
+        with patch.object(formal.subprocess, "run", side_effect=decode_error):
+            with self.assertRaisesRegex(
+                formal.FormalContractError,
+                "Git output decoding failed",
+            ) as caught:
+                formal._git(Path.cwd(), "status")
+        self.assertIs(caught.exception.__cause__, decode_error)
 
     def test_06_run_id_format(self):
         run_id = formal.generate_run_id(
