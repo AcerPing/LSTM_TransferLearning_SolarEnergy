@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import inspect
+import io
 import json
 import os
 import sys
 import tempfile
 import unittest
+from contextlib import redirect_stderr, redirect_stdout
 from datetime import datetime, timezone
 from pathlib import Path
 from types import SimpleNamespace
@@ -91,6 +93,52 @@ class SolarR2FormalContractTests(unittest.TestCase):
             sequences=sequences,
         )
         return test, scaler
+
+    @classmethod
+    def _pass_result(cls, root):
+        run_root = Path(root)
+        run_root.mkdir(parents=True, exist_ok=True)
+        manifest = cls._minimal_manifest(status="PASS")
+        manifest["identity"] = {
+            "run_id": "20260814T010203Z_seed1234",
+            "source": "Plant1/source_profile",
+            "target": "Plant2/target_profile",
+        }
+        manifest["metrics"] = {
+            method: {
+                "original": {
+                    "MAE": 1.0 + index,
+                    "MSE": 4.0 + index,
+                    "RMSE": 2.0 + index,
+                    "R2": 0.9 - index * 0.1,
+                    "n_samples": 2607,
+                }
+            }
+            for index, method in enumerate(formal.R2_METHOD_NAMES)
+        }
+        manifest["transfer_comparison"] = {
+            "tl_freeze": {
+                "delta_rmse": -0.5,
+                "improvement_percent": 25.0,
+                "label": "observed_positive",
+            },
+            "tl_full_finetune": {
+                "delta_rmse": 0.25,
+                "improvement_percent": -12.5,
+                "label": "observed_negative",
+            },
+        }
+        manifest["lifecycle"] = {
+            method: {"best_epoch": index + 1, "epochs_completed": index + 2}
+            for index, method in enumerate(formal.FORMAL_METHODS)
+        }
+        manifest_path = run_root / "run_manifest.json"
+        formal.write_manifest_atomic(manifest_path, manifest)
+        (run_root / "target_comparison.csv").write_text(
+            "Method,MAE,MSE,RMSE,R2,Best_Epoch,Epochs_Completed\n",
+            encoding="utf-8",
+        )
+        return formal.FormalRunResult(run_root=run_root, manifest_path=manifest_path)
 
     def test_01_experiment_a_mapping(self):
         self.assertEqual(EXPERIMENTS["A"]["source"]["manifest_plant"], "Plant1")
@@ -447,6 +495,7 @@ class SolarR2FormalContractTests(unittest.TestCase):
             stored = json.loads(path.read_text(encoding="utf-8"))
             self.assertEqual(stored["status"], "FAIL")
             self.assertEqual(stored["failure"]["failed_stage"], "unit_test")
+            self.assertEqual(stored["failure"]["type"], "ValueError")
             self.assertTrue(path.exists())
 
     def test_31_no_overwrite_contract(self):
@@ -472,6 +521,187 @@ class SolarR2FormalContractTests(unittest.TestCase):
             )
             with self.assertRaises(formal.FormalContractError):
                 formal.audit_git_writes(["?? outside.txt"], run_root, repo)
+
+    def test_34_keyboard_interrupt_lifecycle_preserves_failure(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            output_base = Path(temporary) / "R2" / "Experiment_A"
+            run_id = "20260814T010203Z_seed1234"
+
+            def initial_manifest(*args, **kwargs):
+                manifest = self._minimal_manifest()
+                manifest["identity"] = {
+                    "run_id": run_id,
+                    "source": "Plant1/source_profile",
+                    "target": "Plant2/target_profile",
+                }
+                return manifest
+
+            def interrupting_build(*args, **kwargs):
+                run_root = Path(kwargs["output_dir"])
+                checkpoint = run_root / "source" / "pretrain" / "best_model.hdf5"
+                checkpoint.parent.mkdir(parents=True, exist_ok=True)
+                checkpoint.write_bytes(b"partial-checkpoint")
+                raise KeyboardInterrupt()
+
+            provenance = {
+                "dirty": False,
+                "critical_dirty": False,
+                "status_porcelain": [],
+            }
+            create_formal_run_root = formal.create_formal_run_root
+            with (
+                patch.object(formal, "FORMAL_OUTPUT_BASE", output_base),
+                patch.object(
+                    formal,
+                    "create_formal_run_root",
+                    side_effect=lambda value: create_formal_run_root(
+                        value,
+                        output_base=output_base,
+                    ),
+                ),
+                patch.object(formal, "validate_formal_request"),
+                patch.object(formal.tf.config, "list_physical_devices", return_value=[]),
+                patch.object(formal, "collect_git_provenance", return_value=provenance),
+                patch.object(formal, "require_clean_git"),
+                patch.object(formal, "configure_reproducibility"),
+                patch.object(
+                    formal,
+                    "prepare_role_training_validation",
+                    return_value=SimpleNamespace(),
+                ),
+                patch.object(formal, "_initial_manifest", side_effect=initial_manifest),
+                patch.object(formal, "build_r2_model", side_effect=interrupting_build),
+            ):
+                with self.assertRaises(KeyboardInterrupt) as caught:
+                    formal.run_formal(
+                        experiment="A",
+                        device="cpu",
+                        seed=1234,
+                        run_id=run_id,
+                    )
+
+            run_root = output_base / run_id
+            manifest_path = run_root / "run_manifest.json"
+            stored = json.loads(manifest_path.read_text(encoding="utf-8"))
+            self.assertEqual(stored["status"], "FAIL")
+            self.assertEqual(stored["failure"]["type"], "KeyboardInterrupt")
+            self.assertEqual(
+                stored["failure"]["message"],
+                "Formal run interrupted by user",
+            )
+            self.assertEqual(stored["failure"]["failed_stage"], "source_pretrain")
+            self.assertIsNotNone(stored["timestamps"]["end"])
+            self.assertIsNotNone(stored["timestamps"]["elapsed_seconds"])
+            self.assertTrue((run_root / "source/pretrain/best_model.hdf5").is_file())
+            self.assertTrue((run_root / "failure_traceback.txt").is_file())
+            self.assertFalse((run_root / "target_comparison.csv").exists())
+            self.assertEqual(caught.exception.run_root.resolve(), run_root.resolve())
+            self.assertEqual(
+                caught.exception.manifest_path.resolve(),
+                manifest_path.resolve(),
+            )
+
+    def test_35_interrupted_console_summary_contains_no_metrics(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            run_root = Path(temporary) / "20260814T010203Z_seed1234"
+            run_root.mkdir()
+            manifest = self._minimal_manifest(status="FAIL")
+            manifest["identity"] = {"run_id": run_root.name}
+            manifest["failure"] = {
+                "type": "KeyboardInterrupt",
+                "message": "Formal run interrupted by user",
+                "failed_stage": "source_pretrain",
+            }
+            manifest_path = run_root / "run_manifest.json"
+            formal.write_manifest_atomic(manifest_path, manifest)
+            summary = formal.format_formal_interrupted_summary(run_root)
+            self.assertIn("R2 Formal Experiment A INTERRUPTED", summary)
+            self.assertIn("source_pretrain", summary)
+            self.assertIn(str(manifest_path), summary)
+            self.assertNotIn("MAE", summary)
+            self.assertNotIn("RMSE", summary)
+            self.assertNotIn("MAPE", summary)
+
+    def test_36_pass_console_summary_uses_final_artifacts_only(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            result = self._pass_result(Path(temporary) / "formal")
+            with (
+                patch.object(formal, "evaluate_lifecycle", side_effect=AssertionError),
+                patch.object(formal, "load_formal_test", side_effect=AssertionError),
+                patch.object(formal, "compute_metrics", side_effect=AssertionError),
+            ):
+                summary = formal.format_formal_success_summary(result)
+            self.assertIn("R2 Formal Experiment A Completed", summary)
+            self.assertIn("Target Test Metrics - Original Scale", summary)
+            for metric in ("MAE", "MSE", "RMSE", "R²"):
+                self.assertIn(metric, summary)
+            self.assertNotIn("MAPE", summary)
+            self.assertIn("Primary criterion: Original-scale RMSE", summary)
+            self.assertIn("Training Summary", summary)
+            self.assertIn(str(result.manifest_path), summary)
+            self.assertIn(str(result.run_root / "target_comparison.csv"), summary)
+
+    def test_37_cli_propagates_keyboard_interrupt_after_summary(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            run_root = Path(temporary) / "20260814T010203Z_seed1234"
+            run_root.mkdir()
+            manifest = self._minimal_manifest(status="FAIL")
+            manifest["identity"] = {"run_id": run_root.name}
+            manifest["failure"] = {
+                "type": "KeyboardInterrupt",
+                "message": "Formal run interrupted by user",
+                "failed_stage": "without_tl",
+            }
+            manifest_path = run_root / "run_manifest.json"
+            formal.write_manifest_atomic(manifest_path, manifest)
+            interruption = KeyboardInterrupt()
+            interruption.run_root = run_root
+            interruption.manifest_path = manifest_path
+            interruption.failed_stage = "without_tl"
+            args = SimpleNamespace(
+                command="formal",
+                experiment="A",
+                device="cpu",
+                seed=1234,
+                run_id=run_root.name,
+            )
+            stderr = io.StringIO()
+            with (
+                patch.object(r2_solar, "_parse_args", return_value=args),
+                patch.object(r2_solar, "_apply_device_policy"),
+                patch.object(r2_solar, "_validate_hash_seed"),
+                patch.object(formal, "run_formal", side_effect=interruption),
+                redirect_stderr(stderr),
+            ):
+                with self.assertRaises(KeyboardInterrupt):
+                    r2_solar.main()
+            self.assertIn("R2 Formal Experiment A INTERRUPTED", stderr.getvalue())
+            self.assertIn("without_tl", stderr.getvalue())
+            self.assertNotIn("RMSE", stderr.getvalue())
+
+    def test_38_cli_prints_pass_summary_from_result(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            result = self._pass_result(Path(temporary) / "formal")
+            args = SimpleNamespace(
+                command="formal",
+                experiment="A",
+                device="cpu",
+                seed=1234,
+                run_id=None,
+            )
+            stdout = io.StringIO()
+            with (
+                patch.object(r2_solar, "_parse_args", return_value=args),
+                patch.object(r2_solar, "_apply_device_policy"),
+                patch.object(r2_solar, "_validate_hash_seed"),
+                patch.object(formal, "run_formal", return_value=result),
+                redirect_stdout(stdout),
+            ):
+                self.assertEqual(r2_solar.main(), 0)
+            output = stdout.getvalue()
+            self.assertIn("R2 Formal Experiment A Completed", output)
+            self.assertIn("R2.4_FORMAL_RUN=PASS", output)
+            self.assertNotIn("MAPE", output)
 
 
 if __name__ == "__main__":

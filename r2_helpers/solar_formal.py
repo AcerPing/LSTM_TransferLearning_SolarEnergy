@@ -91,6 +91,12 @@ FORMAL_METHODS = (
     "tl_freeze",
     "tl_full_finetune",
 )
+FORMAL_METHOD_LABELS = {
+    "source_pretrain": "Source Pre-training",
+    "without_tl": "Without TL",
+    "tl_freeze": "TL Freeze",
+    "tl_full_finetune": "TL Full Fine-tuning",
+}
 TRAINING_SPLITS = ("training", "validation")
 PREDICTION_COLUMNS = (
     "sample_index",
@@ -833,15 +839,187 @@ def mark_manifest_failed(
     *,
     failed_stage: str,
     exc: BaseException,
+    message: str | None = None,
 ) -> None:
+    failure_type = type(exc).__name__
     manifest["status"] = "FAIL"
     manifest["failure"] = {
         "failed_stage": failed_stage,
-        "exception_type": type(exc).__name__,
-        "message": str(exc),
+        "type": failure_type,
+        "exception_type": failure_type,
+        "message": str(exc) if message is None else message,
         "traceback": traceback.format_exc(),
     }
     manifest["timestamps"]["end"] = _utc_now()
+
+
+def _persist_failed_run(
+    *,
+    run_root: Path,
+    manifest: dict[str, Any],
+    manifest_path: Path,
+    failed_stage: str,
+    exc: BaseException,
+    started: float,
+    message: str | None = None,
+) -> None:
+    """Preserve available run evidence without deleting or synthesizing artifacts."""
+
+    mark_manifest_failed(
+        manifest,
+        failed_stage=failed_stage,
+        exc=exc,
+        message=message,
+    )
+    manifest["timestamps"]["elapsed_seconds"] = round(
+        time.perf_counter() - started,
+        6,
+    )
+    write_manifest_atomic(manifest_path, manifest)
+    (run_root / "failure_traceback.txt").write_text(
+        traceback.format_exc(),
+        encoding="utf-8",
+    )
+
+
+def _read_result_manifest(result: FormalRunResult) -> dict[str, Any]:
+    _require(result.manifest_path.is_file(), f"Formal manifest not found: {result.manifest_path}")
+    return json.loads(result.manifest_path.read_text(encoding="utf-8"))
+
+
+def format_formal_success_summary(result: FormalRunResult) -> str:
+    """Format a PASS summary solely from finalized formal artifacts."""
+
+    manifest = _read_result_manifest(result)
+    _require(manifest.get("status") == "PASS", "Formal PASS summary requires a PASS manifest")
+    comparison_path = result.run_root / "target_comparison.csv"
+    _require(comparison_path.is_file(), f"Target comparison not found: {comparison_path}")
+    identity = manifest["identity"]
+    lines = [
+        "=" * 60,
+        "R2 Formal Experiment A Completed",
+        "=" * 60,
+        "",
+        "Run ID:",
+        str(identity["run_id"]),
+        "",
+        "Source:",
+        str(identity["source"]).split("/", 1)[0],
+        "",
+        "Target:",
+        str(identity["target"]).split("/", 1)[0],
+        "",
+        "Status:",
+        "PASS",
+        "",
+        "Target Test Metrics - Original Scale",
+        "",
+        f"{'Method':<24}{'MAE':>12}{'MSE':>14}{'RMSE':>12}{'R²':>12}",
+        "-" * 74,
+    ]
+    for method in R2_METHOD_NAMES:
+        metrics = manifest["metrics"][method]["original"]
+        lines.append(
+            f"{FORMAL_METHOD_LABELS[method]:<24}"
+            f"{float(metrics['MAE']):>12.6f}"
+            f"{float(metrics['MSE']):>14.6f}"
+            f"{float(metrics['RMSE']):>12.6f}"
+            f"{float(metrics['R2']):>12.6f}"
+        )
+    lines.extend(
+        [
+            "",
+            "Transfer Comparison",
+            "Primary criterion: Original-scale RMSE",
+        ]
+    )
+    for method in ("tl_freeze", "tl_full_finetune"):
+        comparison = manifest["transfer_comparison"][method]
+        lines.extend(
+            [
+                "",
+                f"{FORMAL_METHOD_LABELS[method]}:",
+                f"delta_rmse = {float(comparison['delta_rmse']):.6f}",
+                f"improvement_percent = {float(comparison['improvement_percent']):.6f}",
+                f"label = {comparison['label']}",
+            ]
+        )
+    lines.extend(
+        [
+            "",
+            "Training Summary",
+            "",
+            f"{'Method':<24}{'Best Epoch':>16}{'Epochs Completed':>20}",
+            "-" * 60,
+        ]
+    )
+    for method in FORMAL_METHODS:
+        lifecycle = manifest["lifecycle"][method]
+        lines.append(
+            f"{FORMAL_METHOD_LABELS[method]:<24}"
+            f"{int(lifecycle['best_epoch']):>16d}"
+            f"{int(lifecycle['epochs_completed']):>20d}"
+        )
+    lines.extend(
+        [
+            "",
+            "Artifacts:",
+            "",
+            "Run manifest:",
+            str(result.manifest_path),
+            "",
+            "Target comparison:",
+            str(comparison_path),
+            "",
+            "Formal output:",
+            str(result.run_root),
+            "",
+            "=" * 60,
+            "Formal Experiment A: PASS",
+            "=" * 60,
+        ]
+    )
+    return "\n".join(lines)
+
+
+def format_formal_interrupted_summary(
+    run_root: Path | None,
+    *,
+    manifest_path: Path | None = None,
+    failed_stage: str | None = None,
+) -> str:
+    """Format interruption evidence without invoking data or model operations."""
+
+    manifest: Mapping[str, Any] = {}
+    candidate = manifest_path or (run_root / "run_manifest.json" if run_root else None)
+    if candidate is not None and candidate.is_file():
+        manifest = json.loads(candidate.read_text(encoding="utf-8"))
+    run_id = manifest.get("identity", {}).get(
+        "run_id",
+        run_root.name if run_root is not None else "not-created",
+    )
+    stage = manifest.get("failure", {}).get("failed_stage", failed_stage or "preflight")
+    return "\n".join(
+        [
+            "=" * 60,
+            "R2 Formal Experiment A INTERRUPTED",
+            "=" * 60,
+            "",
+            "Run ID:",
+            str(run_id),
+            "",
+            "Failed Stage:",
+            str(stage),
+            "",
+            "Manifest:",
+            str(candidate) if candidate is not None else "not-created",
+            "",
+            "Preserved Output:",
+            str(run_root) if run_root is not None else "not-created",
+            "",
+            "=" * 60,
+        ]
+    )
 
 
 def validate_test_isolation_events(events: Sequence[str]) -> None:
@@ -1214,14 +1392,34 @@ def run_formal(
         manifest["timestamps"]["elapsed_seconds"] = round(time.perf_counter() - started, 6)
         write_manifest_atomic(manifest_path, manifest)
         return FormalRunResult(run_root=run_root, manifest_path=manifest_path)
+    except KeyboardInterrupt as exc:
+        if run_root is not None and manifest is not None and manifest_path is not None:
+            try:
+                _persist_failed_run(
+                    run_root=run_root,
+                    manifest=manifest,
+                    manifest_path=manifest_path,
+                    failed_stage=stage,
+                    exc=exc,
+                    started=started,
+                    message="Formal run interrupted by user",
+                )
+            except Exception:
+                pass
+        exc.run_root = run_root
+        exc.manifest_path = manifest_path
+        exc.failed_stage = stage
+        raise
     except Exception as exc:
         if run_root is not None and manifest is not None and manifest_path is not None:
-            mark_manifest_failed(manifest, failed_stage=stage, exc=exc)
-            manifest["timestamps"]["elapsed_seconds"] = round(time.perf_counter() - started, 6)
             try:
-                write_manifest_atomic(manifest_path, manifest)
-                (run_root / "failure_traceback.txt").write_text(
-                    traceback.format_exc(), encoding="utf-8"
+                _persist_failed_run(
+                    run_root=run_root,
+                    manifest=manifest,
+                    manifest_path=manifest_path,
+                    failed_stage=stage,
+                    exc=exc,
+                    started=started,
                 )
             except Exception:
                 pass

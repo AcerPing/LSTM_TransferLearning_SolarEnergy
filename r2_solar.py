@@ -76,7 +76,12 @@ def main() -> int:
         if args.experiment != "A":
             print("R2.4 formal runner supports Experiment A only.", file=sys.stderr)
             return 2
-        from r2_helpers.solar_formal import FormalRunError, run_formal
+        from r2_helpers.solar_formal import (
+            FormalRunError,
+            format_formal_interrupted_summary,
+            format_formal_success_summary,
+            run_formal,
+        )
 
         try:
             result = run_formal(
@@ -85,12 +90,23 @@ def main() -> int:
                 seed=args.seed,
                 run_id=args.run_id,
             )
+        except KeyboardInterrupt as exc:
+            print(
+                format_formal_interrupted_summary(
+                    getattr(exc, "run_root", None),
+                    manifest_path=getattr(exc, "manifest_path", None),
+                    failed_stage=getattr(exc, "failed_stage", None),
+                ),
+                file=sys.stderr,
+            )
+            raise
         except FormalRunError as exc:
             print(f"R2.4 formal run failed: {exc}", file=sys.stderr)
             if exc.run_root is not None:
                 print(f"FORMAL_FAILURE_ROOT={exc.run_root}", file=sys.stderr)
             traceback.print_exc()
             return 1
+        print(format_formal_success_summary(result))
         print("R2.4_FORMAL_RUN=PASS")
         print(f"FORMAL_ROOT={result.run_root}")
         return 0
