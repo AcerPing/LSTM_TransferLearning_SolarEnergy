@@ -26,6 +26,13 @@ R25_OUTPUT_BASE = (
     / "Experiment_A"
     / "Partial_FT"
 )
+R25_SMOKE_OUTPUT_BASE = (
+    REPOSITORY_ROOT
+    / "reports"
+    / "Solar Energy Result"
+    / "R2.5"
+    / "_smoke"
+)
 
 BASELINE_RUN_ID = "20260814T150304Z_seed1234"
 BASELINE_RUN_ROOT = (

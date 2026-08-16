@@ -616,7 +616,7 @@ def inverse_transform_original(
 
 
 def zero_epoch_contract_summary(output_dir: Path | str) -> Mapping[str, Any]:
-    """Load the approved Source and build both candidates without fitting."""
+    """Load the approved Source and build the approved candidate without fitting."""
 
     baseline = validate_baseline_source_checkpoint()
     source = reload_best_checkpoint(baseline.checkpoint_path).model
