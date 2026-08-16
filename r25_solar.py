@@ -11,7 +11,7 @@ import sys
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Solar R2.5 Partial FT runtime")
     subparsers = parser.add_subparsers(dest="command", required=True)
-    for command in ("contract", "smoke"):
+    for command in ("contract", "smoke", "formal-validation"):
         child = subparsers.add_parser(command)
         child.add_argument("--device", choices=("cpu",), default="cpu")
         child.add_argument("--seed", type=int, default=1234)
@@ -67,6 +67,25 @@ def main() -> int:
         print("R2.5_PHASE_C_SMOKE=PASS")
         print(f"R2.5_SMOKE_ROOT={result.smoke_root}")
         print(f"R2.5_SMOKE_MANIFEST={result.manifest_path}")
+        return 0
+
+    if args.command == "formal-validation":
+        from r2_helpers.solar_partial_formal import (
+            PartialFormalError,
+            run_partial_formal_validation,
+        )
+
+        try:
+            result = run_partial_formal_validation()
+        except PartialFormalError as exc:
+            print(f"R2.5 Phase D formal validation failed: {exc}", file=sys.stderr)
+            if exc.run_root is not None:
+                print(f"R2.5_PHASE_D_FAILURE_ROOT={exc.run_root}", file=sys.stderr)
+            return 1
+        print("R2.5_PHASE_D_FORMAL_VALIDATION=PASS")
+        print(f"R2.5_PHASE_D_RUN_ROOT={result.run_root}")
+        print(f"R2.5_PHASE_D_MANIFEST={result.manifest_path}")
+        print(f"R2.5_PHASE_D_SELECTION={result.selection_path}")
         return 0
 
     raise AssertionError(f"Unsupported command: {args.command}")
