@@ -1,0 +1,251 @@
+{
+  "artifacts": {
+    "history.csv": {
+      "path": "candidate/partial_target_adapters_last_lstm/history.csv",
+      "sha256": "581d9b867a452cd244eea68f19db350acdb132ce57d09909676e30fb4f61f52a",
+      "size_bytes": 33507
+    },
+    "selection.json": {
+      "path": "selection.json",
+      "sha256": "2741a3ad660ffaea2ce1934fde854651c75e1b26d41dcbbb3c3115a1ad0d4994",
+      "size_bytes": 1632
+    },
+    "training_curve.png": {
+      "path": "candidate/partial_target_adapters_last_lstm/training_curve.png",
+      "sha256": "ca9daeea961338d9cad65efa88f1a8516e73d70b607db5afae912020fa0fc497",
+      "size_bytes": 45944
+    },
+    "validation_metrics_original.csv": {
+      "path": "candidate/partial_target_adapters_last_lstm/validation_metrics_original.csv",
+      "sha256": "521f63dd999f91259700a51148dbad6f204fe37c368dc9ec13b9a286b5e4918e",
+      "size_bytes": 109
+    },
+    "validation_metrics_original.json": {
+      "path": "candidate/partial_target_adapters_last_lstm/validation_metrics_original.json",
+      "sha256": "e6f83ab0f945b5ccea79807c43850905e1bc62f19271936e0624e549f43d9bad",
+      "size_bytes": 147
+    },
+    "validation_predictions.csv": {
+      "path": "candidate/partial_target_adapters_last_lstm/validation_predictions.csv",
+      "sha256": "0ef5fdb6baf320ab1fb117d96208c3ddaa78eaa4512328b7435e4dcd2f998efb",
+      "size_bytes": 14102
+    }
+  },
+  "best_epoch": 500,
+  "best_validation_loss": 0.18196970224380493,
+  "bn_verification": {
+    "3": {
+      "all_states_unchanged": true,
+      "runtime_name": "batch_normalization",
+      "states_unchanged": {
+        "beta": true,
+        "gamma": true,
+        "moving_mean": true,
+        "moving_variance": true
+      },
+      "trainable": false
+    },
+    "5": {
+      "all_states_unchanged": true,
+      "runtime_name": "batch_normalization_1",
+      "states_unchanged": {
+        "beta": true,
+        "gamma": true,
+        "moving_mean": true,
+        "moving_variance": true
+      },
+      "trainable": false
+    }
+  },
+  "epochs_completed": 500,
+  "failure": null,
+  "final_learning_rate": 1.0000000116860974e-07,
+  "layer_manifest_before_fit": [
+    {
+      "class_name": "InputLayer",
+      "index": 0,
+      "runtime_name": "input_1",
+      "total_params": 0,
+      "trainable": false
+    },
+    {
+      "class_name": "TimeDistributed",
+      "index": 1,
+      "runtime_name": "time_distributed",
+      "total_params": 60,
+      "trainable": true
+    },
+    {
+      "class_name": "LSTM",
+      "index": 2,
+      "runtime_name": "lstm",
+      "total_params": 17040,
+      "trainable": false
+    },
+    {
+      "class_name": "BatchNormalization",
+      "index": 3,
+      "runtime_name": "batch_normalization",
+      "total_params": 240,
+      "trainable": false
+    },
+    {
+      "class_name": "LSTM",
+      "index": 4,
+      "runtime_name": "lstm_1",
+      "total_params": 29040,
+      "trainable": true
+    },
+    {
+      "class_name": "BatchNormalization",
+      "index": 5,
+      "runtime_name": "batch_normalization_1",
+      "total_params": 240,
+      "trainable": false
+    },
+    {
+      "class_name": "Dense",
+      "index": 6,
+      "runtime_name": "dense_1",
+      "total_params": 61,
+      "trainable": true
+    }
+  ],
+  "layer_verification": {
+    "1": {
+      "any_tensor_changed": true,
+      "class_name": "TimeDistributed",
+      "expected_trainable": true,
+      "max_abs_delta": 0.005676627159118652,
+      "runtime_name": "time_distributed",
+      "tensor_changed": [
+        true,
+        true
+      ],
+      "verified": true
+    },
+    "2": {
+      "any_tensor_changed": false,
+      "class_name": "LSTM",
+      "expected_trainable": false,
+      "max_abs_delta": 0.0,
+      "runtime_name": "lstm",
+      "tensor_changed": [
+        false,
+        false,
+        false
+      ],
+      "verified": true
+    },
+    "3": {
+      "any_tensor_changed": false,
+      "class_name": "BatchNormalization",
+      "expected_trainable": false,
+      "max_abs_delta": 0.0,
+      "runtime_name": "batch_normalization",
+      "tensor_changed": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "verified": true
+    },
+    "4": {
+      "any_tensor_changed": true,
+      "class_name": "LSTM",
+      "expected_trainable": true,
+      "max_abs_delta": 0.005749695003032684,
+      "runtime_name": "lstm_1",
+      "tensor_changed": [
+        true,
+        true,
+        true
+      ],
+      "verified": true
+    },
+    "5": {
+      "any_tensor_changed": false,
+      "class_name": "BatchNormalization",
+      "expected_trainable": false,
+      "max_abs_delta": 0.0,
+      "runtime_name": "batch_normalization_1",
+      "tensor_changed": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "verified": true
+    },
+    "6": {
+      "any_tensor_changed": true,
+      "class_name": "Dense",
+      "expected_trainable": true,
+      "max_abs_delta": 0.005816146731376648,
+      "runtime_name": "dense_1",
+      "tensor_changed": [
+        true,
+        true
+      ],
+      "verified": true
+    }
+  },
+  "parameter_counts": {
+    "non_trainable_params": 17520,
+    "total_params": 46681,
+    "trainable_params": 29161,
+    "trainable_percentage": 62.46867033696793
+  },
+  "phase": "R2.5 Phase D",
+  "positive_transfer_evaluated": false,
+  "run_id": "20260816T073233Z_seed1234",
+  "seed": 1234,
+  "selected_checkpoint": {
+    "path": "candidate/partial_target_adapters_last_lstm/checkpoint_epoch_0500.hdf5",
+    "sha256": "4dca61375c80d609f73ffc44e4cf829a4d1b20aab7e91e22f38072257e4679a6",
+    "size_bytes": 472008
+  },
+  "selection_locked": true,
+  "source_checkpoint": {
+    "best_epoch": 472,
+    "path": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\LSTM_TransferLearning_SolarEnergy\\reports\\Solar Energy Result\\R2\\Experiment_A\\20260814T150304Z_seed1234\\source\\pretrain\\checkpoint_epoch_0472.hdf5",
+    "sha256": "8aa299e09c58c2ce77473ba317bdaf9fe374310a453b61718b605022356ad6aa"
+  },
+  "splits_loaded": [
+    "training",
+    "validation"
+  ],
+  "status": "PASS",
+  "strategy_id": "partial_target_adapters_last_lstm",
+  "target_checksum_files_read": [
+    "feature_scaler.joblib",
+    "normalized_scale_training.csv",
+    "normalized_scale_validation.csv",
+    "original_scale_training.csv",
+    "original_scale_validation.csv",
+    "scaler_manifest.json",
+    "split_manifest.json",
+    "target_scaler.joblib"
+  ],
+  "target_sequences": {
+    "training": 516,
+    "validation": 126
+  },
+  "target_test_accessed": false,
+  "test_metrics_used_for_selection": false,
+  "validation_metrics_normalized": {
+    "MAE": 0.17467734376635274,
+    "MSE": 0.08749193375782732,
+    "R2": 0.020418227602119643,
+    "RMSE": 0.2957903544029577,
+    "n_samples": 126
+  },
+  "validation_metrics_original": {
+    "MAE": 3702.2560237215926,
+    "MSE": 39303185.752355754,
+    "R2": 0.020418227602119643,
+    "RMSE": 6269.225291242591,
+    "n_samples": 126
+  }
+}

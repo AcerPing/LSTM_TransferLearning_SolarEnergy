@@ -1,0 +1,30 @@
+{
+  "best_epoch": 500,
+  "candidate_strategy_ids": [
+    "partial_target_adapters_last_lstm"
+  ],
+  "candidate_validation": {
+    "partial_target_adapters_last_lstm": {
+      "MAE": 3702.2560237215926,
+      "R2": 0.020418227602119643,
+      "RMSE": 6269.225291242591,
+      "best_epoch": 500,
+      "checkpoint_path": "D:\\HoChePing\\\u5317\u79d1\u5927_\u78a9\u73ed_AI\u5b78\u7a0b\\\u671f\u520a\u7814\u7a76\\\u4f7f\u7528LSTM\u6a21\u578b\u9810\u6e2c\u798f\u58fd\u96de\u96bb\u91cd\u91cf\\Code\u7a0b\u5f0f\u78bc\\LSTM_TransferLearning_SolarEnergy\\reports\\Solar Energy Result\\R2.5\\Experiment_A\\Partial_FT\\20260816T073233Z_seed1234\\candidate\\partial_target_adapters_last_lstm\\checkpoint_epoch_0500.hdf5"
+    }
+  },
+  "locked": true,
+  "selected_checkpoint_path": "D:\\HoChePing\\\u5317\u79d1\u5927_\u78a9\u73ed_AI\u5b78\u7a0b\\\u671f\u520a\u7814\u7a76\\\u4f7f\u7528LSTM\u6a21\u578b\u9810\u6e2c\u798f\u58fd\u96de\u96bb\u91cd\u91cf\\Code\u7a0b\u5f0f\u78bc\\LSTM_TransferLearning_SolarEnergy\\reports\\Solar Energy Result\\R2.5\\Experiment_A\\Partial_FT\\20260816T073233Z_seed1234\\candidate\\partial_target_adapters_last_lstm\\checkpoint_epoch_0500.hdf5",
+  "selected_strategy_id": "partial_target_adapters_last_lstm",
+  "selection_basis": "original_scale_validation",
+  "selection_order": [
+    "single_approved_strategy",
+    "best_validation_checkpoint"
+  ],
+  "source_checkpoint_sha256": "8aa299e09c58c2ce77473ba317bdaf9fe374310a453b61718b605022356ad6aa",
+  "test_metrics_used_for_selection": false,
+  "validation_metrics": {
+    "MAE": 3702.2560237215926,
+    "R2": 0.020418227602119643,
+    "RMSE": 6269.225291242591
+  }
+}

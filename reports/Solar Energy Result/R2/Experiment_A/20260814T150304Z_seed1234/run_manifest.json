@@ -1,0 +1,1246 @@
+{
+  "identity": {
+    "run_id": "20260814T150304Z_seed1234",
+    "run_type": "formal",
+    "formal_result": true,
+    "experiment": "A",
+    "source": "Plant1/source_profile",
+    "target": "Plant2/target_profile"
+  },
+  "environment": {
+    "python": "3.10.11",
+    "tensorflow": "2.10.0",
+    "keras": "2.10.0",
+    "numpy": "1.23.5",
+    "device": "cpu",
+    "visible_gpus": [],
+    "CUDA_VISIBLE_DEVICES": "-1",
+    "seed": 1234,
+    "PYTHONHASHSEED": "1234",
+    "deterministic_ops": true,
+    "training_shuffle": true,
+    "validation_ordered": true,
+    "test_ordered": true
+  },
+  "git_provenance": {
+    "commit": "b5ab201b0c0bf6f60ca5335191799c200e4e4907",
+    "branch": "AcerPing",
+    "dirty": true,
+    "status_porcelain": [
+      "?? \"notebook/20260814\\345\\237\\267\\350\\241\\214\\350\\263\\207\\346\\226\\231\\347\\264\\200\\351\\214\\204/20260814\\345\\237\\267\\350\\241\\214\\350\\263\\207\\346\\226\\231\\347\\264\\200\\351\\214\\204.txt\"",
+      "?? \"notebook/20260814\\345\\237\\267\\350\\241\\214\\350\\263\\207\\346\\226\\231\\347\\264\\200\\351\\214\\204/\\350\\236\\242\\345\\271\\225\\346\\223\\267\\345\\217\\226\\347\\225\\253\\351\\235\\242 2026-08-14 154501.png\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/run_manifest.json\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0001.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0002.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0003.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0004.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0005.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0006.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0007.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0008.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0009.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0010.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0011.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0012.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0013.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0014.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0015.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0016.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0017.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0018.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0019.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0020.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0021.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0022.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0023.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0024.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0025.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0026.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0027.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0028.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0029.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0030.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0031.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0032.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0033.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0034.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0035.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0036.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0037.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0038.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0039.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0040.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0041.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0042.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0043.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0044.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0045.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0046.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0047.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0048.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0049.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0050.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0051.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0052.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0053.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0054.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0055.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0056.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0057.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0058.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0059.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0060.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0061.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0062.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0063.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0064.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0065.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0066.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0067.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0068.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0069.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0070.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0071.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0072.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0073.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0074.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0075.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0076.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0077.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0078.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0079.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0080.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0081.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0082.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0083.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0084.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0085.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0086.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0087.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0088.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0089.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0090.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0091.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0092.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0093.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0094.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0095.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0096.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0097.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0098.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0099.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0100.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0101.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0102.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0103.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0104.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0105.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0106.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0107.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0108.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0109.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0110.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0111.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0112.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0113.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0114.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0115.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0116.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0117.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0118.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0119.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0120.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0121.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0122.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0123.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0124.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0125.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0126.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0127.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0128.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0129.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0130.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0131.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0132.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0133.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0135.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0136.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0137.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0138.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0139.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0140.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0141.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0142.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0143.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0144.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0145.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0146.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0147.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0148.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0149.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0150.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0152.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0153.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0154.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0155.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0157.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0158.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0159.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0161.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0162.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0163.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0164.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0165.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0166.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0167.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0168.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0169.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0170.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0172.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0173.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0174.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0175.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0176.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0177.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0179.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0180.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0181.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0182.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0183.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0185.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0186.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0188.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0189.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0190.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0191.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0192.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0193.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0194.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0195.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0196.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0197.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0198.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0199.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0201.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0202.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0204.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0206.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0207.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0208.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0209.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0210.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0211.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0213.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0214.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0216.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0217.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0218.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0220.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0221.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0223.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0224.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0225.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0226.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0227.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0228.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0229.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0230.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0232.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0233.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0235.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0236.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0237.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0239.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0240.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0242.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0243.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0245.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0247.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0249.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0250.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0251.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0252.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0254.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0255.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0257.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0258.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0259.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0260.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0261.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0262.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0263.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0264.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0265.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0266.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0267.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0268.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0269.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0270.hdf5\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0271.hdf5\""
+    ],
+    "critical_dirty": false,
+    "critical_dirty_paths": [],
+    "unrelated_dirty": true,
+    "unrelated_dirty_paths": [
+      "notebook/20260814執行資料紀錄/20260814執行資料紀錄.txt",
+      "notebook/20260814執行資料紀錄/螢幕擷取畫面 2026-08-14 154501.png",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/run_manifest.json",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0001.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0002.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0003.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0004.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0005.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0006.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0007.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0008.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0009.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0010.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0011.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0012.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0013.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0014.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0015.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0016.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0017.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0018.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0019.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0020.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0021.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0022.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0023.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0024.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0025.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0026.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0027.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0028.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0029.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0030.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0031.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0032.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0033.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0034.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0035.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0036.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0037.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0038.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0039.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0040.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0041.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0042.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0043.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0044.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0045.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0046.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0047.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0048.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0049.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0050.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0051.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0052.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0053.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0054.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0055.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0056.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0057.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0058.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0059.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0060.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0061.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0062.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0063.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0064.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0065.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0066.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0067.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0068.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0069.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0070.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0071.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0072.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0073.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0074.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0075.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0076.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0077.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0078.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0079.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0080.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0081.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0082.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0083.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0084.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0085.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0086.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0087.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0088.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0089.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0090.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0091.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0092.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0093.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0094.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0095.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0096.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0097.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0098.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0099.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0100.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0101.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0102.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0103.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0104.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0105.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0106.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0107.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0108.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0109.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0110.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0111.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0112.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0113.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0114.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0115.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0116.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0117.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0118.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0119.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0120.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0121.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0122.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0123.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0124.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0125.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0126.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0127.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0128.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0129.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0130.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0131.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0132.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0133.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0135.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0136.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0137.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0138.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0139.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0140.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0141.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0142.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0143.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0144.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0145.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0146.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0147.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0148.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0149.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0150.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0152.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0153.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0154.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0155.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0157.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0158.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0159.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0161.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0162.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0163.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0164.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0165.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0166.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0167.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0168.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0169.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0170.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0172.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0173.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0174.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0175.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0176.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0177.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0179.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0180.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0181.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0182.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0183.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0185.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0186.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0188.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0189.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0190.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0191.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0192.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0193.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0194.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0195.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0196.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0197.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0198.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0199.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0201.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0202.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0204.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0206.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0207.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0208.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0209.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0210.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0211.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0213.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0214.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0216.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0217.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0218.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0220.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0221.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0223.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0224.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0225.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0226.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0227.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0228.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0229.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0230.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0232.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0233.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0235.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0236.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0237.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0239.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0240.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0242.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0243.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0245.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0247.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0249.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0250.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0251.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0252.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0254.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0255.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0257.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0258.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0259.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0260.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0261.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0262.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0263.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0264.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0265.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0266.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0267.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0268.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0269.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0270.hdf5",
+      "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/source/pretrain/checkpoint_epoch_0271.hdf5"
+    ]
+  },
+  "source_file_sha256": {
+    "r2_solar.py": "f9bf28c7681d96fff8caa3881beb5b80de262e2bd7673518f5a77ee663afb5af",
+    "r2_config/solar_r2.py": "baef9c9ed7792bda1719fbcf30e5d172c1da5940cf92c52f7540973ee994c9ad",
+    "r2_helpers/solar_data.py": "5743055c327598bd976a2a3e27d9e27155120b0fe3ee06b55e9500f6dee3b3bd",
+    "r2_helpers/solar_runtime.py": "2f1933138b087f7eb60d3bbe8c02309a5775369828139257e4ba828c569e50fa",
+    "r2_helpers/solar_formal.py": "1ca05cb3c9778b7d83abaca5308875dc50c794525eed67d9cab01742b9d2907f",
+    "utils/model.py": "fd8170b04a6a9d9271c48a98c29a1a8dd278b86864a15fb87853d38e966b6007"
+  },
+  "data_contract": {
+    "corrected_r1_root": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\PersonalNote\\DataSet_For_TransferLearning\\★★ Solar Power Generation Data ★★\\preprocessed_profiles_corrected_r1",
+    "window": 5,
+    "horizon": 1,
+    "features": [
+      "TIME_SIN",
+      "TIME_COS",
+      "IRRADIATION",
+      "AMBIENT_TEMPERATURE",
+      "MODULE_TEMPERATURE"
+    ],
+    "target_column": "DC_POWER",
+    "integrity_hash_access_may_read_test_bytes": true,
+    "test_values_loaded_during_training": false,
+    "source": {
+      "training": {
+        "rows": 2088,
+        "sequences": 2083,
+        "X_shape": [
+          2083,
+          5,
+          5
+        ],
+        "y_shape": [
+          2083
+        ],
+        "first_target_row_index": 5,
+        "last_target_row_index": 2087,
+        "first_target_timestamp": "2020-05-15T01:15:00.000000000",
+        "last_target_timestamp": "2020-06-05T17:45:00.000000000"
+      },
+      "validation": {
+        "rows": 523,
+        "sequences": 518,
+        "X_shape": [
+          518,
+          5,
+          5
+        ],
+        "y_shape": [
+          518
+        ],
+        "first_target_row_index": 5,
+        "last_target_row_index": 522,
+        "first_target_timestamp": "2020-06-05T19:15:00.000000000",
+        "last_target_timestamp": "2020-06-11T04:30:00.000000000"
+      },
+      "test": {
+        "rows": 653,
+        "sequences": 648,
+        "X_shape": [
+          648,
+          5,
+          5
+        ],
+        "y_shape": [
+          648
+        ],
+        "first_target_row_index": 5,
+        "last_target_row_index": 652,
+        "first_target_timestamp": "2020-06-11T06:00:00.000000000",
+        "last_target_timestamp": "2020-06-17T23:45:00.000000000"
+      }
+    },
+    "target": {
+      "training": {
+        "rows": 521,
+        "sequences": 516,
+        "X_shape": [
+          516,
+          5,
+          5
+        ],
+        "y_shape": [
+          516
+        ],
+        "first_target_row_index": 5,
+        "last_target_row_index": 520,
+        "first_target_timestamp": "2020-05-15T01:15:00.000000000",
+        "last_target_timestamp": "2020-05-20T10:00:00.000000000"
+      },
+      "validation": {
+        "rows": 131,
+        "sequences": 126,
+        "X_shape": [
+          126,
+          5,
+          5
+        ],
+        "y_shape": [
+          126
+        ],
+        "first_target_row_index": 5,
+        "last_target_row_index": 130,
+        "first_target_timestamp": "2020-05-20T11:30:00.000000000",
+        "last_target_timestamp": "2020-05-21T18:45:00.000000000"
+      },
+      "test": {
+        "rows": 2612,
+        "sequences": 2607,
+        "X_shape": [
+          2607,
+          5,
+          5
+        ],
+        "y_shape": [
+          2607
+        ],
+        "first_target_row_index": 5,
+        "last_target_row_index": 2611,
+        "first_target_timestamp": "2020-05-21T20:15:00.000000000",
+        "last_target_timestamp": "2020-06-17T23:45:00.000000000"
+      }
+    },
+    "file_checksums": {
+      "source": {
+        "original_scale_training.csv": "745200fd478731f64e0f8ba7b6df0322c2e6be500578fa21e324ec8b055e3ea1",
+        "normalized_scale_training.csv": "7e9ffd404d93dfd202300022286f7511e77df74910215e9ea9c1a3b9d790a844",
+        "original_scale_validation.csv": "d6a137636b6295913eda0c7e5e07a5f85bf90cd66614b913e5c7fd3bfa6c728d",
+        "normalized_scale_validation.csv": "ba625dcbaaa2087cb7611d69cd159d74d57deee11ca32a8310d4f10719bfa518",
+        "original_scale_test.csv": "2aa03a7ecf4023a9cc2a39677f976ee419d8f65d4d620a89639accd0b9dc07b9",
+        "normalized_scale_test.csv": "9ec32da8d19e2d63859d269043e7e5ca91c13ffd7b217bfacd9578901b90e0d5",
+        "feature_scaler.joblib": "6a66df27dc1358cd4890e632f09fec848edb3c571cfee36f2e141986d4159912",
+        "target_scaler.joblib": "a9c0539b97e0faff07eb04e032b65f79dd45be5d0a6927c3b48fc67e4819f77e",
+        "out_of_range_by_split.csv": "5d603ad5cb585875232bc84129a78fa05e6071eaedcca605ea316cbd9fd0e75c",
+        "out_of_range_by_column.csv": "47d1d345b581403b0d395c712dcfb0436b7ca9b32907692473e7bcb00a991c60",
+        "out_of_range_details.csv": "a05eda4aaba4eefaa49253a7d4f9d45c26cced8c02a6ff820bbd6e7808a56a56",
+        "split_manifest.json": "f20fe7dbafa16c9e9b4d9f5aa31117688f61317e39878437b3b27ffca7a71151",
+        "scaler_manifest.json": "b30ad0e4d29b1ee654cdaca4fe27b25737c07175b4d4a6e837dc8871309bb93a"
+      },
+      "target": {
+        "original_scale_training.csv": "92dbe751258376d6016ac9484de1b3a6879665e73fdd7fecbb6b2f5bc7421487",
+        "normalized_scale_training.csv": "680a5fde846590684fd3cbd1f6c5dd86a8fee0d9f315caeabf8edf78c1ea1e7c",
+        "original_scale_validation.csv": "c2540e130bfaf9668c78d59864056f74505d2d0e77f2addbab370661a10ae09e",
+        "normalized_scale_validation.csv": "2ccd16dddb241296456a639f0b96831406f6282ff5a48545798034274fabe75c",
+        "original_scale_test.csv": "6058aa7dfb0a89e697c60fe1966e12da27227f5d9b5dc07b860f5a64494eac09",
+        "normalized_scale_test.csv": "e4500b88d089e97fb339f585bb05e821561e18bf61f5b834cf987abb830eea82",
+        "feature_scaler.joblib": "d91ce120e26e45b540017859bf419ec35010927492cb7be2b02f275e87077d4d",
+        "target_scaler.joblib": "6db35ad6a42939b687a7b0593920fb5a539f87c54de590f64daa335533c3680c",
+        "out_of_range_by_split.csv": "092c589f0cfbb4c545fd93fe583114f5f5c0bf207e4b592503e125d3c28e4d49",
+        "out_of_range_by_column.csv": "352971c2405366138a6e5ae4c162998a60da2d0ae96a48b4195269e77f7e09e2",
+        "out_of_range_details.csv": "8c83d62ec4486cbde44be5d0a7e3bdf90c432538c1ab17ef1c4eb6fa0ff333a7",
+        "split_manifest.json": "c557e6b993475a681782d523847f17cbb9978dba5b5f9425133ad86bfcdd6243",
+        "scaler_manifest.json": "d647e0578cbe9ddbf56f0ea6bca1147487d0c0b63e620c36ea74abbc7179595b"
+      }
+    }
+  },
+  "scaler_provenance": {
+    "source": {
+      "plant": "Plant1",
+      "profile": "source",
+      "feature_scaler_file": "feature_scaler.joblib",
+      "target_scaler_file": "target_scaler.joblib",
+      "feature_scaler_columns": [
+        "IRRADIATION",
+        "AMBIENT_TEMPERATURE",
+        "MODULE_TEMPERATURE"
+      ],
+      "target_scaler_column": "DC_POWER",
+      "feature_scaler_fit_split": "training",
+      "target_scaler_fit_split": "training",
+      "feature_scaler_n_samples_seen": 2088,
+      "target_scaler_n_samples_seen": 2088,
+      "feature_data_min": [
+        0.0,
+        20.613987769230768,
+        18.492340066666667
+      ],
+      "feature_data_max": [
+        1.151102274,
+        35.25248613333334,
+        65.54571366666664
+      ],
+      "target_data_min": [
+        0.0
+      ],
+      "target_data_max": [
+        298937.78571
+      ],
+      "time_columns_scaled": false,
+      "clipping_applied": false,
+      "inverse_transform_target_scaler": "target_scaler.joblib",
+      "formal_metrics_scale": "original_scale",
+      "normalized_metrics_usage": "training_diagnostics_only"
+    },
+    "target": {
+      "plant": "Plant2",
+      "profile": "target",
+      "feature_scaler_file": "feature_scaler.joblib",
+      "target_scaler_file": "target_scaler.joblib",
+      "feature_scaler_columns": [
+        "IRRADIATION",
+        "AMBIENT_TEMPERATURE",
+        "MODULE_TEMPERATURE"
+      ],
+      "target_scaler_column": "DC_POWER",
+      "feature_scaler_fit_split": "training",
+      "target_scaler_fit_split": "training",
+      "feature_scaler_n_samples_seen": 521,
+      "target_scaler_n_samples_seen": 521,
+      "feature_data_min": [
+        0.0,
+        20.942384766666667,
+        20.295639066666663
+      ],
+      "feature_data_max": [
+        0.9896192403333331,
+        37.3528292,
+        66.0162788275862
+      ],
+      "target_data_min": [
+        0.0
+      ],
+      "target_data_max": [
+        21194.826666666664
+      ],
+      "time_columns_scaled": false,
+      "clipping_applied": false,
+      "inverse_transform_target_scaler": "target_scaler.joblib",
+      "formal_metrics_scale": "original_scale",
+      "normalized_metrics_usage": "training_diagnostics_only"
+    }
+  },
+  "model_contract": {
+    "input_shape": [
+      5,
+      5
+    ],
+    "topology": [
+      "InputLayer",
+      "TimeDistributed",
+      "LSTM",
+      "BatchNormalization",
+      "LSTM",
+      "BatchNormalization",
+      "Dense"
+    ],
+    "output_activation": "sigmoid",
+    "transferable_layer_indices": [
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  "protocol": {
+    "max_epochs": 500,
+    "batch_size": 128,
+    "optimizer": "Adam",
+    "source_without_tl_learning_rate": 0.0001,
+    "tl_learning_rate": 1e-05,
+    "loss": "mse",
+    "reduce_lr": {
+      "monitor": "val_loss",
+      "factor": 0.5,
+      "patience": 4,
+      "min_lr": 1e-07
+    },
+    "early_stopping": {
+      "monitor": "val_loss",
+      "patience": 10,
+      "restore_best_weights": true
+    },
+    "model_checkpoint": {
+      "monitor": "val_loss",
+      "save_best_only": true,
+      "save_weights_only": false
+    }
+  },
+  "methods": [
+    "source_pretrain",
+    "without_tl",
+    "tl_freeze",
+    "tl_full_finetune"
+  ],
+  "lifecycle": {
+    "source_pretrain": {
+      "best_epoch": 472,
+      "best_val_loss": 0.01521193329244852,
+      "epochs_completed": 482,
+      "stopped_epoch": 482,
+      "stop_reason": "early_stopping",
+      "status": "PASS",
+      "checkpoint_path": "checkpoint_epoch_0472.hdf5",
+      "checkpoint_size": 630096,
+      "checkpoint_sha256": "8aa299e09c58c2ce77473ba317bdaf9fe374310a453b61718b605022356ad6aa",
+      "history_artifacts": {
+        "history.csv": {
+          "path": "history.csv",
+          "size_bytes": 32344,
+          "sha256": "ca0e5e64bddb9e629bef584966bd30206167effc5ab3a9b22f54c18e93606aff"
+        },
+        "learning_curve.png": {
+          "path": "learning_curve.png",
+          "size_bytes": 48860,
+          "sha256": "9207aa04369069434cccda6789e486edc80bb1a85f901ebb14142559589d441c"
+        }
+      },
+      "checkpoint_reloaded": true,
+      "test_evaluated_after_reload": true,
+      "prediction_count": 648,
+      "predictions_finite": true
+    },
+    "without_tl": {
+      "best_epoch": 292,
+      "best_val_loss": 0.33576568961143494,
+      "epochs_completed": 302,
+      "stopped_epoch": 302,
+      "stop_reason": "early_stopping",
+      "status": "PASS",
+      "checkpoint_path": "checkpoint_epoch_0292.hdf5",
+      "checkpoint_size": 630096,
+      "checkpoint_sha256": "11c12eeb195fce3a453e230f7608e723b8f7356199f335070aadd4ba3ff17f00",
+      "history_artifacts": {
+        "history.csv": {
+          "path": "history.csv",
+          "size_bytes": 19623,
+          "sha256": "21200bc34fe95a54405926bb4ee891d9f200e3e9df68e69834b423702cc57f46"
+        },
+        "learning_curve.png": {
+          "path": "learning_curve.png",
+          "size_bytes": 63487,
+          "sha256": "a39a8057c36a3e8121cc920499dd4433e02c660bb45281274f54774936b32ad5"
+        }
+      },
+      "checkpoint_reloaded": true,
+      "test_evaluated_after_reload": true,
+      "prediction_count": 2607,
+      "predictions_finite": true
+    },
+    "tl_freeze": {
+      "best_epoch": 500,
+      "best_val_loss": 0.19754555821418762,
+      "epochs_completed": 500,
+      "stopped_epoch": null,
+      "stop_reason": "max_epochs",
+      "status": "PASS",
+      "checkpoint_path": "checkpoint_epoch_0500.hdf5",
+      "checkpoint_size": 232560,
+      "checkpoint_sha256": "f8197d7943261401f25ee07005b3491e2c98b3883f9d5f03eee84f14073de02e",
+      "history_artifacts": {
+        "history.csv": {
+          "path": "history.csv",
+          "size_bytes": 33131,
+          "sha256": "e76ac03ac46eefb07c0ff6b50095d04fb00a2c1b6f3bbf759ed487a9ced23bcd"
+        },
+        "learning_curve.png": {
+          "path": "learning_curve.png",
+          "size_bytes": 45507,
+          "sha256": "e26160ccf564221ada11f7693d87871b91941703c4d8f2851e42f1ea0f2cd59b"
+        }
+      },
+      "transferable_weights_unchanged": true,
+      "checkpoint_reloaded": true,
+      "test_evaluated_after_reload": true,
+      "prediction_count": 2607,
+      "predictions_finite": true
+    },
+    "tl_full_finetune": {
+      "best_epoch": 83,
+      "best_val_loss": 0.18800269067287445,
+      "epochs_completed": 93,
+      "stopped_epoch": 93,
+      "stop_reason": "early_stopping",
+      "status": "PASS",
+      "checkpoint_path": "checkpoint_epoch_0083.hdf5",
+      "checkpoint_size": 630096,
+      "checkpoint_sha256": "fd715d15205741bcab11d93c3f224a5fa28d5fa36f4ddc34f2640b8f4661318e",
+      "history_artifacts": {
+        "history.csv": {
+          "path": "history.csv",
+          "size_bytes": 6123,
+          "sha256": "cb861006fba32b747fd0bcc00dd45bc60a701b0197f8d88c44e8098b05634fb8"
+        },
+        "learning_curve.png": {
+          "path": "learning_curve.png",
+          "size_bytes": 49891,
+          "sha256": "af000847721a5318ca20aa99c014156d45eed241f82e824790882001a32b340d"
+        }
+      },
+      "checkpoint_reloaded": true,
+      "test_evaluated_after_reload": true,
+      "prediction_count": 2607,
+      "predictions_finite": true
+    }
+  },
+  "checkpoints": {
+    "source_pretrain": {
+      "path": "source/pretrain/checkpoint_epoch_0472.hdf5",
+      "size_bytes": 630096,
+      "sha256": "8aa299e09c58c2ce77473ba317bdaf9fe374310a453b61718b605022356ad6aa",
+      "best_epoch": 472,
+      "epochs_completed": 482
+    },
+    "without_tl": {
+      "path": "target/without_tl/checkpoint_epoch_0292.hdf5",
+      "size_bytes": 630096,
+      "sha256": "11c12eeb195fce3a453e230f7608e723b8f7356199f335070aadd4ba3ff17f00",
+      "best_epoch": 292,
+      "epochs_completed": 302
+    },
+    "tl_freeze": {
+      "path": "target/tl_freeze/checkpoint_epoch_0500.hdf5",
+      "size_bytes": 232560,
+      "sha256": "f8197d7943261401f25ee07005b3491e2c98b3883f9d5f03eee84f14073de02e",
+      "best_epoch": 500,
+      "epochs_completed": 500
+    },
+    "tl_full_finetune": {
+      "path": "target/tl_full_finetune/checkpoint_epoch_0083.hdf5",
+      "size_bytes": 630096,
+      "sha256": "fd715d15205741bcab11d93c3f224a5fa28d5fa36f4ddc34f2640b8f4661318e",
+      "best_epoch": 83,
+      "epochs_completed": 93
+    }
+  },
+  "metrics": {
+    "source_pretrain": {
+      "normalized": {
+        "MAE": 0.06243375587790439,
+        "MSE": 0.0072267544085794595,
+        "RMSE": 0.08501031942405263,
+        "R2": 0.9008850913951325,
+        "n_samples": 648
+      },
+      "original": {
+        "MAE": 18663.80873569943,
+        "MSE": 645810233.6314856,
+        "RMSE": 25412.796651126093,
+        "R2": 0.9008850913951326,
+        "n_samples": 648
+      }
+    },
+    "without_tl": {
+      "normalized": {
+        "MAE": 0.13522659114754115,
+        "MSE": 0.03051041639805404,
+        "RMSE": 0.17467231148082413,
+        "R2": 0.6570718304225046,
+        "n_samples": 2607
+      },
+      "original": {
+        "MAE": 2866.1041600963354,
+        "MSE": 13705909.923006574,
+        "RMSE": 3702.1493653020775,
+        "R2": 0.6570718304225046,
+        "n_samples": 2607
+      }
+    },
+    "tl_freeze": {
+      "normalized": {
+        "MAE": 0.13585989280072816,
+        "MSE": 0.05412213224227732,
+        "RMSE": 0.2326416390981574,
+        "R2": 0.39168304026623935,
+        "n_samples": 2607
+      },
+      "original": {
+        "MAE": 2879.5268788633475,
+        "MSE": 24312780.90983426,
+        "RMSE": 4930.799216134668,
+        "R2": 0.3916830402662397,
+        "n_samples": 2607
+      }
+    },
+    "tl_full_finetune": {
+      "normalized": {
+        "MAE": 0.11348786630691844,
+        "MSE": 0.037593255799320775,
+        "RMSE": 0.1938898032370985,
+        "R2": 0.5774627841348675,
+        "n_samples": 2607
+      },
+      "original": {
+        "MAE": 2405.355655144976,
+        "MSE": 16887667.836971827,
+        "RMSE": 4109.460772044408,
+        "R2": 0.5774627841348676,
+        "n_samples": 2607
+      }
+    }
+  },
+  "artifacts": {
+    "source_pretrain": {
+      "history.csv": {
+        "path": "history.csv",
+        "size_bytes": 32344,
+        "sha256": "ca0e5e64bddb9e629bef584966bd30206167effc5ab3a9b22f54c18e93606aff"
+      },
+      "learning_curve.png": {
+        "path": "learning_curve.png",
+        "size_bytes": 48860,
+        "sha256": "9207aa04369069434cccda6789e486edc80bb1a85f901ebb14142559589d441c"
+      },
+      "predictions_test.csv": {
+        "path": "predictions_test.csv",
+        "size_bytes": 69334,
+        "sha256": "9b3883dacbac229fc690355ac848629f938bfcdc37726a888ac897fb90d55720"
+      },
+      "metrics_normalized.json": {
+        "path": "metrics_normalized.json",
+        "size_bytes": 149,
+        "sha256": "e9a41221633690d78e578d6d4a3b8ce3eb9b3b15a839f8ba0496e5cbb285ee39"
+      },
+      "metrics_normalized.csv": {
+        "path": "metrics_normalized.csv",
+        "size_bytes": 113,
+        "sha256": "c5b76c900f22abe6cc8699c2bf951b469962a5f764be60a243cf4449a1610dce"
+      },
+      "metrics_original.json": {
+        "path": "metrics_original.json",
+        "size_bytes": 142,
+        "sha256": "51057eac7f2c8e0afbf03df2d2e0b752a3d70bc21cb75637bdcfd23065bf68c1"
+      },
+      "metrics_original.csv": {
+        "path": "metrics_original.csv",
+        "size_bytes": 106,
+        "sha256": "884dc12de8900e10417a857750baec1d2ae55ef0f8622e50e7ea10417c4e0a9d"
+      },
+      "prediction_test.png": {
+        "path": "prediction_test.png",
+        "size_bytes": 195849,
+        "sha256": "4974c8a1ac5755432a936c2708e8072ad7e3c4ba0e2d4845ab61b4e5502b34e9"
+      }
+    },
+    "without_tl": {
+      "history.csv": {
+        "path": "history.csv",
+        "size_bytes": 19623,
+        "sha256": "21200bc34fe95a54405926bb4ee891d9f200e3e9df68e69834b423702cc57f46"
+      },
+      "learning_curve.png": {
+        "path": "learning_curve.png",
+        "size_bytes": 63487,
+        "sha256": "a39a8057c36a3e8121cc920499dd4433e02c660bb45281274f54774936b32ad5"
+      },
+      "predictions_test.csv": {
+        "path": "predictions_test.csv",
+        "size_bytes": 284793,
+        "sha256": "5db70668e156d421d63ca53453221a025fd56b3ac917f77675acac0f797423b7"
+      },
+      "metrics_normalized.json": {
+        "path": "metrics_normalized.json",
+        "size_bytes": 148,
+        "sha256": "f05211991cc6a8defccbbb8a50a94d6d42b37be6d51aa8afd17fa8226f1a3528"
+      },
+      "metrics_normalized.csv": {
+        "path": "metrics_normalized.csv",
+        "size_bytes": 112,
+        "sha256": "46c7dacd08e9e49c998900270f5a266e155d3d9d9c390198d9b83ea916d0b9f0"
+      },
+      "metrics_original.json": {
+        "path": "metrics_original.json",
+        "size_bytes": 145,
+        "sha256": "16feb15bc275228735e21218191275092907ce2f61091e2531212e0aae0840de"
+      },
+      "metrics_original.csv": {
+        "path": "metrics_original.csv",
+        "size_bytes": 109,
+        "sha256": "e8beaef988ab37ed9ab8dcfb3700acf49ee43ce1e71df9f642b2030670811d7f"
+      },
+      "prediction_test.png": {
+        "path": "prediction_test.png",
+        "size_bytes": 281536,
+        "sha256": "98aec874a9b1b1be982cc5f1522b82ca3e967fb6eab7e1fdcb452b940355f45c"
+      }
+    },
+    "tl_freeze": {
+      "history.csv": {
+        "path": "history.csv",
+        "size_bytes": 33131,
+        "sha256": "e76ac03ac46eefb07c0ff6b50095d04fb00a2c1b6f3bbf759ed487a9ced23bcd"
+      },
+      "learning_curve.png": {
+        "path": "learning_curve.png",
+        "size_bytes": 45507,
+        "sha256": "e26160ccf564221ada11f7693d87871b91941703c4d8f2851e42f1ea0f2cd59b"
+      },
+      "predictions_test.csv": {
+        "path": "predictions_test.csv",
+        "size_bytes": 286446,
+        "sha256": "883aa9752f7069c2ff739be8da8be57bfb0e6fc28035cb01a91727594a7ad1ec"
+      },
+      "metrics_normalized.json": {
+        "path": "metrics_normalized.json",
+        "size_bytes": 148,
+        "sha256": "8cda203b2f3beea2b1540c45dca636f56ec9300161cb714c168fb8c71447445e"
+      },
+      "metrics_normalized.csv": {
+        "path": "metrics_normalized.csv",
+        "size_bytes": 112,
+        "sha256": "cf44a9ceb0b344985a8dbf518adbeacf6fc5c6cddfcef42640049bba3fc6c5b5"
+      },
+      "metrics_original.json": {
+        "path": "metrics_original.json",
+        "size_bytes": 143,
+        "sha256": "82808cc65f9acb1e91570b48f1234832fd4798713f2b4a16a6a7ca1aa313c509"
+      },
+      "metrics_original.csv": {
+        "path": "metrics_original.csv",
+        "size_bytes": 107,
+        "sha256": "5620f3f6caeef6231cac60e992d88a90ff449438e26b3e273c4cf41539205fd7"
+      },
+      "prediction_test.png": {
+        "path": "prediction_test.png",
+        "size_bytes": 267633,
+        "sha256": "c63c12e8db7e899a2d3554749d7e073536d58c9f95fa283d195a45e41444cd13"
+      }
+    },
+    "tl_full_finetune": {
+      "history.csv": {
+        "path": "history.csv",
+        "size_bytes": 6123,
+        "sha256": "cb861006fba32b747fd0bcc00dd45bc60a701b0197f8d88c44e8098b05634fb8"
+      },
+      "learning_curve.png": {
+        "path": "learning_curve.png",
+        "size_bytes": 49891,
+        "sha256": "af000847721a5318ca20aa99c014156d45eed241f82e824790882001a32b340d"
+      },
+      "predictions_test.csv": {
+        "path": "predictions_test.csv",
+        "size_bytes": 286407,
+        "sha256": "01ec5440c551efb613834f34878e53d6e372946a92b56f5b60f74332846e518d"
+      },
+      "metrics_normalized.json": {
+        "path": "metrics_normalized.json",
+        "size_bytes": 148,
+        "sha256": "7d65f44f336a0dd2b0a85f6539d657a1e04066b9aa99eed469e9de2733e5a56f"
+      },
+      "metrics_normalized.csv": {
+        "path": "metrics_normalized.csv",
+        "size_bytes": 112,
+        "sha256": "2d844b248ed8896d01e6965c98ebefcca74ed87c570cb22246cc923d568e8deb"
+      },
+      "metrics_original.json": {
+        "path": "metrics_original.json",
+        "size_bytes": 143,
+        "sha256": "f789b0809c1b39ef0ac475318326ed14c0b209d77cac9900ee81458085744c3d"
+      },
+      "metrics_original.csv": {
+        "path": "metrics_original.csv",
+        "size_bytes": 107,
+        "sha256": "3096af533477d5e9f8d363cdea0963b10cb249208d4c5247feb0464a2439ded8"
+      },
+      "prediction_test.png": {
+        "path": "prediction_test.png",
+        "size_bytes": 278624,
+        "sha256": "d2606167e2d498bd1a5a066d80b8dc1469b6a9b23ca538231dfe932e56e38d58"
+      }
+    },
+    "target_comparison.csv": {
+      "path": "target_comparison.csv",
+      "size_bytes": 339,
+      "sha256": "d9e5a346fa22b10290db51e8d5cabdba6bc4bb0b01c480ba807f56f0df7d9012"
+    }
+  },
+  "test_isolation_events": [
+    "fit_start:source_pretrain",
+    "fit_end:source_pretrain",
+    "fit_start:without_tl",
+    "fit_end:without_tl",
+    "fit_start:tl_freeze",
+    "fit_end:tl_freeze",
+    "fit_start:tl_full_finetune",
+    "fit_end:tl_full_finetune",
+    "reload:source_pretrain",
+    "reload:without_tl",
+    "reload:tl_freeze",
+    "reload:tl_full_finetune",
+    "load_test:source",
+    "load_test:target",
+    "evaluate_test:source_pretrain",
+    "evaluate_test:without_tl",
+    "evaluate_test:tl_freeze",
+    "evaluate_test:tl_full_finetune"
+  ],
+  "residual_definition": "y_true_original - y_pred_original",
+  "transfer_comparison": {
+    "tl_freeze": {
+      "delta_rmse": 1228.6498508325908,
+      "improvement_percent": -33.18747380502674,
+      "label": "observed_negative",
+      "criterion": "original_scale_RMSE",
+      "statistical_significance_claimed": false
+    },
+    "tl_full_finetune": {
+      "delta_rmse": 407.31140674233075,
+      "improvement_percent": -11.002025217021359,
+      "label": "observed_negative",
+      "criterion": "original_scale_RMSE",
+      "statistical_significance_claimed": false
+    }
+  },
+  "status": "PASS",
+  "timestamps": {
+    "start": "2026-08-14T15:03:04.727894+00:00",
+    "end": "2026-08-14T15:04:45.488173+00:00",
+    "elapsed_seconds": 101.081588
+  },
+  "failure": null
+}

@@ -11,7 +11,7 @@ import sys
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Solar R2.5 Partial FT runtime")
     subparsers = parser.add_subparsers(dest="command", required=True)
-    for command in ("contract", "smoke", "formal-validation"):
+    for command in ("contract", "smoke", "formal-validation", "final-test"):
         child = subparsers.add_parser(command)
         child.add_argument("--device", choices=("cpu",), default="cpu")
         child.add_argument("--seed", type=int, default=1234)
@@ -86,6 +86,22 @@ def main() -> int:
         print(f"R2.5_PHASE_D_RUN_ROOT={result.run_root}")
         print(f"R2.5_PHASE_D_MANIFEST={result.manifest_path}")
         print(f"R2.5_PHASE_D_SELECTION={result.selection_path}")
+        return 0
+
+    if args.command == "final-test":
+        from r2_helpers.solar_partial_final import PhaseEError, run_final_target_test
+
+        try:
+            result = run_final_target_test()
+        except PhaseEError as exc:
+            print(f"R2.5 Phase E final Test failed: {exc}", file=sys.stderr)
+            if exc.output_dir is not None:
+                print(f"R2.5_PHASE_E_FAILURE_ROOT={exc.output_dir}", file=sys.stderr)
+            return 1
+        print("R2.5_PHASE_E_FINAL_TEST=PASS")
+        print(f"R2.5_PHASE_E_OUTPUT={result.output_dir}")
+        print(f"R2.5_PHASE_E_MANIFEST={result.manifest_path}")
+        print(f"R2.5_PHASE_E_CLASSIFICATION={result.classification}")
         return 0
 
     raise AssertionError(f"Unsupported command: {args.command}")

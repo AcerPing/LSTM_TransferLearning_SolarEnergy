@@ -1,0 +1,91 @@
+{
+  "artifacts": {
+    "comparison_to_without_tl.csv": {
+      "path": "comparison_to_without_tl.csv",
+      "sha256": "612b925b943e0662f3b9ec2773d4a376c021e75d6ebd12589319966875d50b3a",
+      "size_bytes": 679
+    },
+    "metrics_normalized.json": {
+      "path": "metrics_normalized.json",
+      "sha256": "3274fb22a3af3c7601a8820222ab5dd338c571152cd6c599eb242636cefbdf03",
+      "size_bytes": 149
+    },
+    "metrics_original.csv": {
+      "path": "metrics_original.csv",
+      "sha256": "81d2eea4b5678cb19334987c05756143d514637949241249a380e5d3c1848f22",
+      "size_bytes": 108
+    },
+    "metrics_original.json": {
+      "path": "metrics_original.json",
+      "sha256": "d225e24f2d70ef432a91d1c38baa6b3e759f70e1c2f49921e4d0525c88d75b0d",
+      "size_bytes": 146
+    },
+    "predictions_test.csv": {
+      "path": "predictions_test.csv",
+      "sha256": "352c59f506a7ce57edf3ef8d28560f470d9e6f4b3c7b2807613b2daf3bb3a96d",
+      "size_bytes": 288678
+    },
+    "transfer_classification.json": {
+      "path": "transfer_classification.json",
+      "sha256": "611586a76ca720f4cb3316911ab56b7c47c6c0958f747a1674514f86339c44c7",
+      "size_bytes": 134
+    }
+  },
+  "baseline_metrics": {
+    "MAE": 2866.1041600963354,
+    "MSE": 13705909.923006574,
+    "R2": 0.6570718304225046,
+    "RMSE": 3702.1493653020775,
+    "n_samples": 2607
+  },
+  "failure": null,
+  "metric_deltas": {
+    "delta_mae": -613.1806647676444,
+    "delta_mse": 510325.18019736744,
+    "delta_r2": -0.012768570705446458,
+    "delta_rmse": 68.29293013276174,
+    "improvement_percent_mae": 21.394221232595896,
+    "improvement_percent_mse": -3.7233951125035616,
+    "improvement_percent_r2": -1.9432534030923412,
+    "improvement_percent_rmse": -1.8446832743386452,
+    "mae_direction": "improved",
+    "mse_direction": "deteriorated_or_equal",
+    "r2_direction": "deteriorated_or_equal",
+    "rmse_direction": "deteriorated_or_equal"
+  },
+  "normalized_metrics": {
+    "MAE": 0.10629591507213829,
+    "MSE": 0.03164643975102367,
+    "R2": 0.6443032597170582,
+    "RMSE": 0.1778944623956116,
+    "n_samples": 2607
+  },
+  "original_scale_metrics": {
+    "MAE": 2252.923495328691,
+    "MSE": 14216235.103203941,
+    "R2": 0.6443032597170582,
+    "RMSE": 3770.4422954348393,
+    "n_samples": 2607
+  },
+  "phase": "R2.5 Phase E",
+  "phase_d_manifest_sha256": "2e71e2ea1eca2ee7ce52d37dce8c5d6095936f0e313c429e440b6ceb3a1d258c",
+  "phase_d_run_id": "20260816T073233Z_seed1234",
+  "phase_d_selection_sha256": "2741a3ad660ffaea2ce1934fde854651c75e1b26d41dcbbb3c3115a1ad0d4994",
+  "positive_transfer_evaluated": true,
+  "post_test_tuning_allowed": false,
+  "selected_checkpoint_path": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\LSTM_TransferLearning_SolarEnergy\\reports\\Solar Energy Result\\R2.5\\Experiment_A\\Partial_FT\\20260816T073233Z_seed1234\\candidate\\partial_target_adapters_last_lstm\\checkpoint_epoch_0500.hdf5",
+  "selected_checkpoint_sha256": "4dca61375c80d609f73ffc44e4cf829a4d1b20aab7e91e22f38072257e4679a6",
+  "source_checkpoint_sha256": "8aa299e09c58c2ce77473ba317bdaf9fe374310a453b61718b605022356ad6aa",
+  "status": "PASS",
+  "strategy_id": "partial_target_adapters_last_lstm",
+  "target_test_accessed": true,
+  "test_access_count": 1,
+  "test_metrics_used_for_selection": false,
+  "test_metrics_used_for_training": false,
+  "test_sequence_count": 2607,
+  "transfer_classification": {
+    "classification": "observed_mixed",
+    "rules_applied_to": "original_scale_test",
+    "thesis_interpretation": "Mixed Result"
+  }
+}
