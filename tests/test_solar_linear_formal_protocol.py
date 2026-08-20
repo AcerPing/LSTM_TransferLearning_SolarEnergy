@@ -12,16 +12,45 @@ from r2_config.solar_linear_formal import FORMAL_LINEAR_LAYER_CLASSES
 from r2_helpers import solar_linear_formal as formal
 
 
+def _filesystem_snapshot(path: Path):
+    root = path.resolve()
+    if not root.exists():
+        return None
+    return tuple(
+        sorted(
+            (
+                item.relative_to(root).as_posix(),
+                item.stat().st_size,
+                item.stat().st_mtime_ns,
+            )
+            for item in root.rglob("*")
+            if item.is_file()
+        )
+    )
+
+
 class SolarLinearFormalProtocolTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.git = formal.GitIdentity(head="1" * 40, branch="unit-test", dirty=False)
+        cls.a2_run_root = (
+            LINEAR_EXPERIMENTS["A2"].output_root / "20991231T235959Z_seed1234"
+        )
+        cls.b_run_root = (
+            LINEAR_EXPERIMENTS["B"].output_root / "20991230T235959Z_seed1234"
+        )
+        cls.formal_snapshot_before = _filesystem_snapshot(LINEAR_FORMAL_BASE)
+        cls.a2_run_snapshot_before = _filesystem_snapshot(cls.a2_run_root)
+        cls.b_run_snapshot_before = _filesystem_snapshot(cls.b_run_root)
         cls.a2 = formal.prepare_formal_dry_run(
             "A2", "20991231T235959Z_seed1234", git_identity=cls.git
         )
         cls.b = formal.prepare_formal_dry_run(
             "B", "20991230T235959Z_seed1234", git_identity=cls.git
         )
+        cls.formal_snapshot_after = _filesystem_snapshot(LINEAR_FORMAL_BASE)
+        cls.a2_run_snapshot_after = _filesystem_snapshot(cls.a2_run_root)
+        cls.b_run_snapshot_after = _filesystem_snapshot(cls.b_run_root)
 
     def _source_provenance(self, experiment_id="A2"):
         spec = LINEAR_EXPERIMENTS[experiment_id]
@@ -56,12 +85,18 @@ class SolarLinearFormalProtocolTests(unittest.TestCase):
             formal_eligible=True,
         )
 
-    def test_01_dry_run_does_not_create_formal_root(self):
+    def test_01_dry_run_does_not_create_or_modify_formal_output(self):
+        self.assertIsNone(self.a2_run_snapshot_before)
+        self.assertIsNone(self.b_run_snapshot_before)
         self.assertFalse(self.a2.paths.run_root.exists())
         self.assertFalse(self.b.paths.run_root.exists())
-        self.assertFalse(LINEAR_FORMAL_BASE.exists())
-        self.assertFalse(self.a2.formal_root_created)
-        self.assertEqual(self.a2.training_epochs_executed, 0)
+        self.assertIsNone(self.a2_run_snapshot_after)
+        self.assertIsNone(self.b_run_snapshot_after)
+        self.assertEqual(self.formal_snapshot_after, self.formal_snapshot_before)
+        self.assertEqual(_filesystem_snapshot(LINEAR_FORMAL_BASE), self.formal_snapshot_before)
+        for dry_run in (self.a2, self.b):
+            self.assertFalse(dry_run.formal_root_created)
+            self.assertEqual(dry_run.training_epochs_executed, 0)
 
     def test_02_dry_run_has_all_six_candidates(self):
         self.assertEqual(len(self.a2.candidate_checkpoint_patterns), 6)

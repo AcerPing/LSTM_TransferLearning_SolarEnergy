@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import unittest
 from dataclasses import FrozenInstanceError
+from pathlib import Path
 
 from r2_config.solar_linear import (
     EXPECTED_NON_TRAINABLE_PARAMS,
@@ -13,6 +14,23 @@ from r2_config.solar_linear import (
     PROTECTED_LEGACY_ROOTS,
     linear_experiment,
 )
+
+
+def _filesystem_snapshot(path: Path):
+    root = path.resolve()
+    if not root.exists():
+        return None
+    return tuple(
+        sorted(
+            (
+                item.relative_to(root).as_posix(),
+                item.stat().st_size,
+                item.stat().st_mtime_ns,
+            )
+            for item in root.rglob("*")
+            if item.is_file()
+        )
+    )
 
 
 class SolarLinearConfigTests(unittest.TestCase):
@@ -46,12 +64,38 @@ class SolarLinearConfigTests(unittest.TestCase):
         with self.assertRaises(FrozenInstanceError):
             linear_experiment("A2").activation = "sigmoid"
 
-    def test_05_output_namespaces_are_new_and_not_created(self):
-        for spec in LINEAR_EXPERIMENTS.values():
+    def test_05_output_namespaces_are_isolated_and_not_modified(self):
+        formal_before = _filesystem_snapshot(LINEAR_FORMAL_BASE)
+        output_before = {
+            experiment_id: _filesystem_snapshot(spec.output_root)
+            for experiment_id, spec in LINEAR_EXPERIMENTS.items()
+        }
+        expected_names = {"A2": "Experiment_A2", "B": "Experiment_B"}
+        resolved_outputs = set()
+
+        for experiment_id in expected_names:
+            spec = linear_experiment(experiment_id)
             resolved = spec.output_root.resolve()
+            resolved_outputs.add(resolved)
+            self.assertEqual(
+                resolved,
+                (LINEAR_FORMAL_BASE / expected_names[experiment_id]).resolve(),
+            )
             self.assertTrue(resolved.is_relative_to(LINEAR_FORMAL_BASE.resolve()))
-            self.assertFalse(any(resolved.is_relative_to(root.resolve()) for root in PROTECTED_LEGACY_ROOTS))
-            self.assertFalse(spec.output_root.exists())
+            for root in PROTECTED_LEGACY_ROOTS:
+                protected = root.resolve()
+                self.assertFalse(resolved.is_relative_to(protected))
+                self.assertFalse(protected.is_relative_to(resolved))
+
+        self.assertEqual(len(resolved_outputs), len(expected_names))
+        self.assertEqual(_filesystem_snapshot(LINEAR_FORMAL_BASE), formal_before)
+        self.assertEqual(
+            {
+                experiment_id: _filesystem_snapshot(spec.output_root)
+                for experiment_id, spec in LINEAR_EXPERIMENTS.items()
+            },
+            output_before,
+        )
 
     def test_06_learning_rate_is_not_selected(self):
         self.assertEqual(LEARNING_RATE_POLICY, "required_explicit_before_training")
