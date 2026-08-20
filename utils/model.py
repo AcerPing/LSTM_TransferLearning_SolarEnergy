@@ -25,7 +25,16 @@ def build_model(input_shape: tuple, # 模型的輸入形狀(timesteps, features)
                 freeze=False, # 若為True，會將部分層設為不可訓練，用於遷移學習。
                 noise=None, # 若設定此參數，會加入一層高斯噪聲層，模擬數據變異。
                 verbose=True,
-                savefig=True):
+                savefig=True,
+                output_activation='sigmoid',
+                learning_rate=None):
+
+    if output_activation not in ('sigmoid', 'linear'):
+        raise ValueError(
+            "output_activation must be either 'sigmoid' or 'linear'"
+        )
+    if learning_rate is not None and learning_rate <= 0:
+        raise ValueError("learning_rate must be positive when explicitly provided")
 
     if gpu:
         from keras.layers import CuDNNLSTM as LSTM
@@ -80,7 +89,7 @@ def build_model(input_shape: tuple, # 模型的輸入形狀(timesteps, features)
 
     output_layer = Dense(
         1,
-        activation='sigmoid', # 激活函數為sigmoid，適合輸出一個範圍在0到1之間的預測結果。
+        activation=output_activation,
         kernel_regularizer=regularizers.l2(0.01), # 正則化，減少模型的過度擬合。
         kernel_initializer=initializers.glorot_uniform(seed=0), # 使用 Glorot 均勻初始化方法對權重進行初始化，有助於提高模型的收斂速度和穩定性。
         bias_initializer=initializers.Zeros() # 將偏置初始化為 0。
@@ -125,7 +134,9 @@ def build_model(input_shape: tuple, # 模型的輸入形狀(timesteps, features)
                 print(f"Layer {i} ({model.layers[i].name}) is trainable and its weights will be updated during training (fine-tuning).")
 
     # 調整優化器&學習率。
-    if pre_model:
+    if learning_rate is not None:
+        init_learning_rate = learning_rate
+    elif pre_model:
         # 通常需要更小的學習率；微調時若學習率太大，會導致破壞原本從預訓練模型學到的通用知識。
         init_learning_rate = 1e-5  # 比原先低一個數量級
     else:

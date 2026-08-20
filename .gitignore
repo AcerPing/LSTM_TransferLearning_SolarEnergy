@@ -36,3 +36,5 @@ reports/Solar Energy Result/R2.5/_smoke/
 __pycache__/
 *.py[cod]
 .ipynb_checkpoints/
+# Solar Linear disposable smoke artifacts
+reports/Solar Energy Result/_smoke_linear/

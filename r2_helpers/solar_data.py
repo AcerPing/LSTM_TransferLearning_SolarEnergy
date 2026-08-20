@@ -15,6 +15,7 @@ import pandas as pd
 
 from r2_config.solar_r2 import (
     EXPECTED_ROW_COUNTS,
+    EXPECTED_SEQUENCE_COUNTS,
     FEATURE_COLUMNS,
     FREQUENCY,
     HORIZON,
@@ -86,6 +87,21 @@ class SequenceData:
     @property
     def count(self) -> int:
         return len(self.sample_index)
+
+
+@dataclass(frozen=True)
+class TrainingValidationSplit:
+    split_data: SplitData
+    sequences: SequenceData
+
+
+@dataclass(frozen=True)
+class TrainingValidationProfile:
+    metadata: ProfileMetadata
+    scalers: ScalerBundle
+    checksums: Mapping[str, str]
+    training: TrainingValidationSplit
+    validation: TrainingValidationSplit
 
 
 def _require(condition: bool, message: str) -> None:
@@ -163,6 +179,80 @@ def validate_checksums(profile_dir: Path | str) -> Mapping[str, str]:
         files_requiring_checksums.issubset(results),
         "Checksum manifest does not cover every required artifact: "
         f"{sorted(files_requiring_checksums - set(results))}",
+    )
+    return results
+
+
+def validate_checksums_for_splits(
+    profile_dir: Path | str,
+    splits: Sequence[str] = ("training", "validation"),
+) -> Mapping[str, str]:
+    """Validate only explicitly requested split artifacts and shared metadata.
+
+    The checksum manifest may describe Test artifacts, but this function never
+    opens an unrequested split file.  The existing full-profile checksum API is
+    intentionally unchanged for R2/R2.5 reproduction.
+    """
+
+    directory = Path(profile_dir)
+    _require(directory.is_dir(), f"Profile directory not found: {directory}")
+    requested = tuple(splits)
+    _require(bool(requested), "At least one checksum split is required")
+    _require(len(set(requested)) == len(requested), "Duplicate checksum split")
+    _require(
+        all(split_name in SPLIT_NAMES for split_name in requested),
+        f"Unknown checksum split in {requested}",
+    )
+
+    checksum_path = directory / "file_checksums.csv"
+    try:
+        with checksum_path.open("r", encoding="utf-8-sig", newline="") as handle:
+            rows = list(csv.DictReader(handle))
+    except OSError as exc:
+        raise DataContractError(f"Cannot read checksum manifest: {checksum_path}") from exc
+
+    _require(rows, f"Checksum manifest is empty: {checksum_path}")
+    _require(
+        set(rows[0]) == {"file_name", "sha256"},
+        f"Unexpected checksum columns in {checksum_path}: {list(rows[0])}",
+    )
+    recorded: dict[str, str] = {}
+    for row in rows:
+        name = row["file_name"]
+        _require(name not in recorded, f"Duplicate checksum entry: {name}")
+        recorded[name] = row["sha256"].lower()
+
+    required_names = [
+        *(name for split_name in requested for name in (
+            f"normalized_scale_{split_name}.csv",
+            f"original_scale_{split_name}.csv",
+        )),
+        "feature_scaler.joblib",
+        "target_scaler.joblib",
+        "split_manifest.json",
+        "scaler_manifest.json",
+    ]
+    results: dict[str, str] = {}
+    for name in required_names:
+        _require(name in recorded, f"Checksum manifest entry not found: {name}")
+        file_path = directory / name
+        _require(file_path.is_file(), f"Checksummed file not found: {file_path}")
+        actual = hashlib.sha256(file_path.read_bytes()).hexdigest()
+        _require(
+            actual == recorded[name],
+            f"SHA-256 mismatch for {file_path}: expected {recorded[name]}, got {actual}",
+        )
+        results[name] = actual
+
+    unrequested_csvs = {
+        f"{scale}_scale_{split_name}.csv"
+        for split_name in SPLIT_NAMES
+        if split_name not in requested
+        for scale in ("normalized", "original")
+    }
+    _require(
+        not unrequested_csvs.intersection(results),
+        "Scoped checksum validation opened an unrequested split artifact",
     )
     return results
 
@@ -452,4 +542,63 @@ def build_sequences(
         sample_index=sample_index,
         target_row_index=target_row_index,
         target_timestamp=target_timestamp,
+    )
+
+
+def load_training_validation_profile(
+    profile_dir: Path | str,
+    *,
+    expected_plant: str,
+    expected_profile: str,
+    expected_profile_dir_name: str,
+) -> TrainingValidationProfile:
+    """Load a corrected-R1 role without opening either Test CSV.
+
+    This Phase-I gate validates only Training/Validation bytes, shared scalers,
+    and manifests.  Test metadata may be present inside ``split_manifest.json``;
+    Test CSV contents are deliberately outside this function's access scope.
+    """
+
+    directory = Path(profile_dir)
+    checksums = validate_checksums_for_splits(
+        directory, splits=("training", "validation")
+    )
+    metadata = load_profile_metadata(directory)
+    validate_manifest(
+        metadata,
+        expected_plant=expected_plant,
+        expected_profile=expected_profile,
+        expected_profile_dir_name=expected_profile_dir_name,
+    )
+    scalers = validate_scalers(metadata)
+    loaded: dict[str, TrainingValidationSplit] = {}
+    expected_rows = EXPECTED_ROW_COUNTS[expected_profile_dir_name]
+    expected_sequences = EXPECTED_SEQUENCE_COUNTS[expected_profile_dir_name]
+    for split_name in ("training", "validation"):
+        split_data = load_split(metadata, split_name)
+        validate_feature_transform_consistency(split_data, scalers.feature_scaler)
+        validate_target_round_trip(split_data, scalers.target_scaler)
+        sequences = build_sequences(
+            split_data.X_normalized,
+            split_data.y_normalized,
+            split_data.timestamps,
+        )
+        _require(
+            split_data.row_count == expected_rows[split_name],
+            f"Unexpected {split_name} row count",
+        )
+        _require(
+            sequences.count == expected_sequences[split_name],
+            f"Unexpected {split_name} sequence count",
+        )
+        loaded[split_name] = TrainingValidationSplit(
+            split_data=split_data,
+            sequences=sequences,
+        )
+    return TrainingValidationProfile(
+        metadata=metadata,
+        scalers=scalers,
+        checksums=checksums,
+        training=loaded["training"],
+        validation=loaded["validation"],
     )
