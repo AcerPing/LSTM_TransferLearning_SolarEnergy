@@ -1,6 +1,6 @@
 import os
 from keras.layers import Input, Dense, BatchNormalization
-from keras.layers.wrappers import TimeDistributed
+from keras.layers import TimeDistributed
 from keras.layers.noise import GaussianNoise
 from keras.models import Model
 from keras.utils import plot_model
