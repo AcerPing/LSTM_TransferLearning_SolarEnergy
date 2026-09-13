@@ -3,33 +3,49 @@ import argparse # 解析命令列參數
 import json
 import shutil
 import os
+import sys
 from os import path, getcwd, makedirs, environ, listdir
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1" # ! 不要初始化GPU裝置，避免 CUDA、cuDNN 相容性問題。
 
-import tensorflow as tf
-import numpy as np
-import keras
-from sklearn.model_selection import train_test_split
-from keras.models import load_model
-from keras.callbacks import CSVLogger, ModelCheckpoint, ReduceLROnPlateau, EarlyStopping 
 
-from utils.model import build_model, rmse
-from utils.data_io import (
-    read_data_from_dataset,
-    ReccurentTrainingGenerator,
-    ReccurentPredictingGenerator,
-    decompose_time_series
+_CORRECTED_R1_CLI = any(
+    argument == "--protocol=corrected-r1"
+    or (
+        argument == "corrected-r1"
+        and index > 0
+        and sys.argv[index - 1] == "--protocol"
+    )
+    for index, argument in enumerate(sys.argv)
 )
-from utils.save import save_lr_curve, save_prediction_plot, save_yy_plot, save_mse, ResidualPlot, ErrorHistogram
-from utils.device import limit_gpu_memory # 限制 TensorFlow 對 GPU 記憶體的預留或使用量。
-from Ensemble import start_ensemble # 整體學習
-from reports.Record_args_while_training import Record_args_while_training # 紀錄訓練時的nb_batch、bsize、period
-from reports.Metrics_Comparison import metrics_comparison # 比較 Transfer-Learning遷移學習 vs. Without-Transfer-Learning不使用遷移學習
-from reports.output import MSE_Improvement, MAE_Improvement # 比較 Transfer-Learning遷移學習 vs. Without-Transfer-Learning不使用遷移學習
-from reports.util import dataset_idx_vs_improvement # 比較特徵非相似程度與MSE、MAE改進程度
+
+# Corrected R1 Phase A is a data-only preflight and must not import model or
+# training modules.  The default Legacy CLI keeps its existing eager imports.
+if not _CORRECTED_R1_CLI:
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    os.environ["CUDA_VISIBLE_DEVICES"] = "-1" # ! 不要初始化GPU裝置，避免 CUDA、cuDNN 相容性問題。
+
+    import tensorflow as tf
+    import numpy as np
+    import keras
+    from sklearn.model_selection import train_test_split
+    from keras.models import load_model
+    from keras.callbacks import CSVLogger, ModelCheckpoint, ReduceLROnPlateau, EarlyStopping
+
+    from utils.model import build_model, rmse
+    from utils.data_io import (
+        read_data_from_dataset,
+        ReccurentTrainingGenerator,
+        ReccurentPredictingGenerator,
+        decompose_time_series
+    )
+    from utils.save import save_lr_curve, save_prediction_plot, save_yy_plot, save_mse, ResidualPlot, ErrorHistogram
+    from utils.device import limit_gpu_memory # 限制 TensorFlow 對 GPU 記憶體的預留或使用量。
+    from Ensemble import start_ensemble # 整體學習
+    from reports.Record_args_while_training import Record_args_while_training # 紀錄訓練時的nb_batch、bsize、period
+    from reports.Metrics_Comparison import metrics_comparison # 比較 Transfer-Learning遷移學習 vs. Without-Transfer-Learning不使用遷移學習
+    from reports.output import MSE_Improvement, MAE_Improvement # 比較 Transfer-Learning遷移學習 vs. Without-Transfer-Learning不使用遷移學習
+    from reports.util import dataset_idx_vs_improvement # 比較特徵非相似程度與MSE、MAE改進程度
 
 
 def parse_arguments():
@@ -38,6 +54,23 @@ def parse_arguments():
     
     # for dataset path
     ap.add_argument('--out-dir', '-o', default='result', type=str, help='path for output directory') # 指定輸出目錄的路徑，預設值為 result。
+    ap.add_argument('--protocol', choices=('legacy', 'corrected-r1'), default='legacy',
+                    help='data protocol dispatch (default: legacy)')
+    ap.add_argument('--corrected-r1-root', default=None, type=str,
+                    help='existing formal Corrected R1 data root (no dataset copy is created)')
+    ap.add_argument('--experiment', choices=('A', 'B'), default='A',
+                    help='Corrected R1 Experiment A or B mapping (default: A)')
+    ap.add_argument('--corrected-r1-action',
+                    choices=('preflight', 'source-smoke', 'formal-dry-run', 'formal-run',
+                             'tl-dry-run', 'tl-freeze-smoke', 'tl-unfreeze-smoke',
+                             'tl-freeze-formal-dry-run', 'tl-freeze-formal-run',
+                             'tl-unfreeze-formal-dry-run',
+                             'tl-unfreeze-formal-run'),
+                    default='preflight', help='Corrected R1 action (default: preflight)')
+    ap.add_argument('--batch-size', default=128, type=int,
+                    help='Corrected R1 smoke batch size (fixed at 128 for Phase B1)')
+    ap.add_argument('--device', choices=('/CPU:0',), default='/CPU:0',
+                    help='Corrected R1 execution device (Phase B1: /CPU:0 only)')
     
     # for model
     ap.add_argument('--seed', type=int, default=1234, help='seed value for random value, (default : 1234)') # 確保隨機操作（如資料分割、模型初始化等）在每次執行中一致，方便實驗重現性。
@@ -88,8 +121,191 @@ def make_callbacks(file_path, save_csv=True):
 def main():
 
     # make analysis environment
-    limit_gpu_memory() # 限制GPU記憶體使用量，避免因為分配過多而造成系統不穩定。然而當使用量超出設定的限制後，仍然可能發生OOM錯誤。
+    if not _CORRECTED_R1_CLI:
+        limit_gpu_memory() # 限制GPU記憶體使用量，避免因為分配過多而造成系統不穩定。然而當使用量超出設定的限制後，仍然可能發生OOM錯誤。
     args = parse_arguments() # 解析參數
+    if args["protocol"] == "corrected-r1":
+        source_actions = {'preflight', 'source-smoke', 'formal-dry-run', 'formal-run'}
+        tl_actions = {
+            'tl-dry-run',
+            'tl-freeze-smoke',
+            'tl-unfreeze-smoke',
+            'tl-freeze-formal-dry-run',
+            'tl-freeze-formal-run',
+            'tl-unfreeze-formal-dry-run',
+            'tl-unfreeze-formal-run',
+        }
+        corrected_action = args["corrected_r1_action"]
+        if corrected_action in source_actions and args["train_mode"] != "pre-train":
+            raise ValueError(
+                "Corrected R1 Source actions require --train-mode pre-train"
+            )
+        if corrected_action in tl_actions and args["train_mode"] != "transfer-learning":
+            raise ValueError(
+                "Corrected R1 TL actions require --train-mode transfer-learning"
+            )
+        os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+        from r2_helpers.r2_source_pretraining import (
+            format_source_pretraining_formal_dry_run,
+            format_source_pretraining_preflight,
+            format_source_pretraining_smoke,
+            run_source_pretraining_formal,
+            run_source_pretraining_formal_dry_run,
+            run_source_pretraining_preflight,
+            run_source_pretraining_smoke,
+        )
+
+        if args["corrected_r1_action"] == "preflight":
+            preflight = run_source_pretraining_preflight(
+                corrected_r1_root=args["corrected_r1_root"],
+                experiment=args["experiment"],
+            )
+            print(format_source_pretraining_preflight(preflight))
+            return
+        if args["corrected_r1_action"] == "source-smoke":
+            smoke = run_source_pretraining_smoke(
+                corrected_r1_root=args["corrected_r1_root"],
+                experiment=args["experiment"],
+                seed=args["seed"],
+                device=args["device"],
+                batch_size=args["batch_size"],
+                epochs=args["nb_epochs"],
+                verbose=args["train_verbose"],
+            )
+            print(format_source_pretraining_smoke(smoke))
+            return
+        if args["corrected_r1_action"] == "tl-dry-run":
+            from r2_helpers.r2_transfer_learning import (
+                format_transfer_learning_dry_run,
+                run_transfer_learning_dry_run,
+            )
+
+            tl_dry_run = run_transfer_learning_dry_run(
+                corrected_r1_root=args["corrected_r1_root"],
+                experiment=args["experiment"],
+            )
+            print(format_transfer_learning_dry_run(tl_dry_run))
+            return
+        if args["corrected_r1_action"] == "tl-freeze-smoke":
+            from r2_helpers.r2_transfer_learning import (
+                format_transfer_learning_freeze_smoke,
+                run_transfer_learning_freeze_smoke,
+            )
+
+            tl_freeze_smoke = run_transfer_learning_freeze_smoke(
+                corrected_r1_root=args["corrected_r1_root"],
+                experiment=args["experiment"],
+                seed=args["seed"],
+                device=args["device"],
+                batch_size=args["batch_size"],
+                epochs=args["nb_epochs"],
+                verbose=args["train_verbose"],
+            )
+            print(format_transfer_learning_freeze_smoke(tl_freeze_smoke))
+            return
+        if args["corrected_r1_action"] == "tl-unfreeze-smoke":
+            from r2_helpers.r2_transfer_learning import (
+                format_transfer_learning_unfreeze_smoke,
+                run_transfer_learning_unfreeze_smoke,
+            )
+
+            tl_unfreeze_smoke = run_transfer_learning_unfreeze_smoke(
+                corrected_r1_root=args["corrected_r1_root"],
+                experiment=args["experiment"],
+                seed=args["seed"],
+                device=args["device"],
+                batch_size=args["batch_size"],
+                epochs=args["nb_epochs"],
+                verbose=args["train_verbose"],
+            )
+            print(format_transfer_learning_unfreeze_smoke(tl_unfreeze_smoke))
+            return
+        if args["corrected_r1_action"] == "tl-freeze-formal-dry-run":
+            from r2_helpers.r2_transfer_learning import (
+                format_transfer_learning_freeze_formal_dry_run,
+                run_transfer_learning_freeze_formal_dry_run,
+            )
+
+            tl_freeze_formal_dry_run = (
+                run_transfer_learning_freeze_formal_dry_run(
+                    corrected_r1_root=args["corrected_r1_root"],
+                    experiment=args["experiment"],
+                )
+            )
+            print(
+                format_transfer_learning_freeze_formal_dry_run(
+                    tl_freeze_formal_dry_run
+                )
+            )
+            return
+        if args["corrected_r1_action"] == "tl-unfreeze-formal-dry-run":
+            from r2_helpers.r2_transfer_learning import (
+                format_transfer_learning_unfreeze_formal_dry_run,
+                run_transfer_learning_unfreeze_formal_dry_run,
+            )
+
+            tl_unfreeze_formal_dry_run = (
+                run_transfer_learning_unfreeze_formal_dry_run(
+                    corrected_r1_root=args["corrected_r1_root"],
+                    experiment=args["experiment"],
+                )
+            )
+            print(
+                format_transfer_learning_unfreeze_formal_dry_run(
+                    tl_unfreeze_formal_dry_run
+                )
+            )
+            return
+        if args["corrected_r1_action"] == "tl-freeze-formal-run":
+            from r2_helpers.r2_transfer_learning import (
+                run_transfer_learning_freeze_formal,
+            )
+
+            tl_freeze_formal = run_transfer_learning_freeze_formal(
+                corrected_r1_root=args["corrected_r1_root"],
+                experiment=args["experiment"],
+                verbose=args["train_verbose"],
+            )
+            print(
+                "Formal TL Freeze run completed = "
+                f"{tl_freeze_formal['run_directory']}"
+            )
+            return
+        if args["corrected_r1_action"] == "tl-unfreeze-formal-run":
+            from r2_helpers.r2_transfer_learning import (
+                run_transfer_learning_unfreeze_formal,
+            )
+
+            tl_unfreeze_formal = run_transfer_learning_unfreeze_formal(
+                corrected_r1_root=args["corrected_r1_root"],
+                experiment=args["experiment"],
+                verbose=args["train_verbose"],
+            )
+            print(
+                "Formal TL Unfreeze run completed = "
+                f"{tl_unfreeze_formal['run_directory']}"
+            )
+            return
+        if args["corrected_r1_action"] == "formal-dry-run":
+            dry_run = run_source_pretraining_formal_dry_run(
+                corrected_r1_root=args["corrected_r1_root"],
+                experiment=args["experiment"],
+            )
+            print(format_source_pretraining_formal_dry_run(dry_run))
+            return
+        if args["corrected_r1_action"] == "formal-run":
+            if args["experiment"] not in ("A", "B"):
+                raise ValueError(
+                    "Formal Source execution requires Experiment A or B"
+                )
+            formal_result = run_source_pretraining_formal(
+                corrected_r1_root=args["corrected_r1_root"],
+                experiment=args["experiment"],
+                verbose=args["train_verbose"],
+            )
+            print(f"Formal Source run completed = {formal_result['run_directory']}")
+            return
+        raise ValueError(f"Unsupported Corrected R1 action: {corrected_action!r}")
     seed_every_thing(args["seed"]) # 設定隨機種子，在每次運行時產生一致的結果。
     write_out_dir = path.normpath(path.join(getcwd(), 'reports', args["out_dir"])) # 輸出文件的存放路徑
     makedirs(write_out_dir, exist_ok=True)

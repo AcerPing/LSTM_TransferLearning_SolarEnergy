@@ -1,8 +1,9 @@
 import pickle
+import json
+from pathlib import Path
 import numpy as np
 from keras.utils import Sequence
 from tqdm import tqdm
-from statsmodels import api as sm
 import pandas as pd
 
 
@@ -21,6 +22,352 @@ def read_data_from_dataset(data_dir_path: str):
             data = pickle.load(f)
             data_list.append(data)
     return tuple(data_list)
+
+
+def read_corrected_r1_profile(
+    profile_dir,
+    *,
+    splits=None,
+    scale="normalized",
+):
+    """Read one existing Corrected R1 profile without changing its contents.
+
+    The return value keeps the manifests and split frames together so the
+    separate validation function can enforce the fixed contract.  This reader
+    never falls back to Legacy pickle files and never creates a dataset copy.
+    """
+
+    from r2_config.corrected_r1 import CORRECTED_R1_SPLITS
+
+    directory = Path(profile_dir)
+    if not directory.is_dir():
+        raise FileNotFoundError(f"Corrected R1 profile not found: {directory}")
+    if scale not in ("normalized", "original"):
+        raise ValueError("scale must be 'normalized' or 'original'")
+
+    requested_splits = tuple(CORRECTED_R1_SPLITS if splits is None else splits)
+    if not requested_splits or len(set(requested_splits)) != len(requested_splits):
+        raise ValueError("Corrected R1 splits must be non-empty and unique")
+    unknown_splits = set(requested_splits) - set(CORRECTED_R1_SPLITS)
+    if unknown_splits:
+        raise ValueError(f"Unknown Corrected R1 splits: {sorted(unknown_splits)}")
+
+    def load_json(file_name):
+        file_path = directory / file_name
+        if not file_path.is_file():
+            raise FileNotFoundError(f"Corrected R1 metadata not found: {file_path}")
+        try:
+            value = json.loads(file_path.read_text(encoding="utf-8-sig"))
+        except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+            raise ValueError(f"Cannot read Corrected R1 metadata {file_path}: {exc}") from exc
+        if not isinstance(value, dict):
+            raise ValueError(f"Corrected R1 metadata root must be an object: {file_path}")
+        return value
+
+    split_manifest = load_json("split_manifest.json")
+    scaler_manifest = load_json("scaler_manifest.json")
+    manifest_splits = split_manifest.get("splits")
+    if not isinstance(manifest_splits, dict):
+        raise ValueError("Corrected R1 split_manifest.json has no splits object")
+
+    frames = {}
+    directory_resolved = directory.resolve()
+    for split_name in requested_splits:
+        entry = manifest_splits.get(split_name)
+        if not isinstance(entry, dict):
+            raise ValueError(f"Corrected R1 manifest split is missing: {split_name}")
+        file_key = f"{scale}_scale_file"
+        expected_file_name = f"{scale}_scale_{split_name}.csv"
+        file_name = entry.get(file_key)
+        if file_name != expected_file_name:
+            raise ValueError(
+                f"Unexpected Corrected R1 {split_name} filename: {file_name!r}"
+            )
+        csv_path = (directory / file_name).resolve()
+        if csv_path.parent != directory_resolved or not csv_path.is_file():
+            raise FileNotFoundError(f"Corrected R1 split file not found: {csv_path}")
+        try:
+            frames[split_name] = pd.read_csv(csv_path)
+        except Exception as exc:
+            raise ValueError(f"Cannot read Corrected R1 split {csv_path}: {exc}") from exc
+
+    return {
+        "profile_dir": directory,
+        "scale": scale,
+        "split_manifest": split_manifest,
+        "scaler_manifest": scaler_manifest,
+        "splits": frames,
+    }
+
+
+def validate_corrected_r1_profile(
+    profile,
+    *,
+    expected_plant=None,
+    expected_profile=None,
+    expected_rows=None,
+    expected_sequences=None,
+    feature_order=None,
+    target_column=None,
+    timestamp_column=None,
+    window=None,
+    horizon=None,
+):
+    """Validate one loaded Corrected R1 profile and return its audit facts.
+
+    ``profile`` may be the mapping returned by
+    :func:`read_corrected_r1_profile` or a profile directory.  Validation is
+    read-only and requires chronological, unpadded, one-step-ahead sequences.
+    """
+
+    from r2_config.corrected_r1 import (
+        CORRECTED_R1_EXPECTED_ROWS,
+        CORRECTED_R1_EXPECTED_SEQUENCES,
+        CORRECTED_R1_FEATURE_ORDER,
+        CORRECTED_R1_FREQUENCY,
+        CORRECTED_R1_HORIZON,
+        CORRECTED_R1_SCALED_FEATURES,
+        CORRECTED_R1_SPLITS,
+        CORRECTED_R1_TARGET,
+        CORRECTED_R1_TIMESTAMP,
+        CORRECTED_R1_WINDOW,
+    )
+
+    if isinstance(profile, (str, Path)):
+        profile = read_corrected_r1_profile(profile)
+    if not isinstance(profile, dict):
+        raise TypeError("profile must be a Corrected R1 profile mapping or path")
+
+    split_manifest = profile.get("split_manifest")
+    scaler_manifest = profile.get("scaler_manifest")
+    frames = profile.get("splits")
+    if not isinstance(split_manifest, dict) or not isinstance(scaler_manifest, dict):
+        raise ValueError("Corrected R1 profile manifests are missing")
+    if not isinstance(frames, dict):
+        raise ValueError("Corrected R1 profile split frames are missing")
+    if profile.get("scale") != "normalized":
+        raise ValueError("Aligned Corrected R1 sequences require normalized-scale data")
+
+    manifest_profile = split_manifest.get("profile")
+    manifest_plant = split_manifest.get("plant")
+    role = expected_profile or manifest_profile
+    if role not in CORRECTED_R1_EXPECTED_ROWS:
+        raise ValueError(f"Unknown Corrected R1 profile role: {role!r}")
+    expected_plant = manifest_plant if expected_plant is None else expected_plant
+    expected_rows = (
+        CORRECTED_R1_EXPECTED_ROWS[role] if expected_rows is None else expected_rows
+    )
+    expected_sequences = (
+        CORRECTED_R1_EXPECTED_SEQUENCES[role]
+        if expected_sequences is None
+        else expected_sequences
+    )
+    feature_order = tuple(
+        CORRECTED_R1_FEATURE_ORDER if feature_order is None else feature_order
+    )
+    target_column = CORRECTED_R1_TARGET if target_column is None else target_column
+    timestamp_column = (
+        CORRECTED_R1_TIMESTAMP if timestamp_column is None else timestamp_column
+    )
+    window = CORRECTED_R1_WINDOW if window is None else window
+    horizon = CORRECTED_R1_HORIZON if horizon is None else horizon
+
+    if tuple(frames) != tuple(CORRECTED_R1_SPLITS):
+        raise ValueError(
+            "Corrected R1 preflight requires training, validation, and test in fixed order"
+        )
+    if manifest_plant != expected_plant:
+        raise ValueError(
+            f"Corrected R1 plant mismatch: expected {expected_plant}, got {manifest_plant}"
+        )
+    if manifest_profile != role:
+        raise ValueError(
+            f"Corrected R1 profile mismatch: expected {role}, got {manifest_profile}"
+        )
+    if split_manifest.get("frequency") != CORRECTED_R1_FREQUENCY:
+        raise ValueError("Corrected R1 frequency must be 15min")
+    if tuple(split_manifest.get("feature_columns", ())) != feature_order:
+        raise ValueError("Corrected R1 feature order mismatch")
+    if split_manifest.get("target_column") != target_column:
+        raise ValueError("Corrected R1 target column mismatch")
+    if split_manifest.get("date_time_index_saved") is not True:
+        raise ValueError("Corrected R1 DATE_TIME index is not saved")
+    if split_manifest.get("date_time_index_label") != timestamp_column:
+        raise ValueError("Corrected R1 timestamp column mismatch")
+
+    expected_training_rows = expected_rows["training"]
+    scaler_requirements = {
+        "feature_scaler_fit_split": "training",
+        "target_scaler_fit_split": "training",
+        "target_scaler_column": target_column,
+        "time_columns_scaled": False,
+        "clipping_applied": False,
+        "feature_scaler_n_samples_seen": expected_training_rows,
+        "target_scaler_n_samples_seen": expected_training_rows,
+    }
+    for key, expected_value in scaler_requirements.items():
+        if scaler_manifest.get(key) != expected_value:
+            raise ValueError(
+                f"Corrected R1 scaler contract mismatch for {key}: "
+                f"expected {expected_value!r}, got {scaler_manifest.get(key)!r}"
+            )
+    if tuple(scaler_manifest.get("feature_scaler_columns", ())) != tuple(
+        CORRECTED_R1_SCALED_FEATURES
+    ):
+        raise ValueError("Corrected R1 scaled feature order mismatch")
+
+    manifest_splits = split_manifest.get("splits", {})
+    expected_columns = (timestamp_column,) + feature_order + (target_column,)
+    row_counts = {}
+    sequence_counts = {}
+    sequence_data = {}
+    previous_end = None
+
+    for split_name in CORRECTED_R1_SPLITS:
+        frame = frames[split_name]
+        if not isinstance(frame, pd.DataFrame):
+            raise TypeError(f"Corrected R1 {split_name} split is not a DataFrame")
+        if tuple(frame.columns) != expected_columns:
+            raise ValueError(f"Corrected R1 {split_name} column/order mismatch")
+        if len(frame) != expected_rows[split_name]:
+            raise ValueError(
+                f"Corrected R1 {split_name} rows: expected "
+                f"{expected_rows[split_name]}, got {len(frame)}"
+            )
+        if frame.isna().any().any():
+            raise ValueError(f"Corrected R1 {split_name} contains NaN")
+
+        entry = manifest_splits.get(split_name)
+        if not isinstance(entry, dict) or entry.get("rows") != len(frame):
+            raise ValueError(f"Corrected R1 {split_name} manifest row mismatch")
+        if entry.get("nan_total_original") != 0 or entry.get("nan_total_normalized") != 0:
+            raise ValueError(f"Corrected R1 {split_name} manifest reports NaN")
+
+        try:
+            timestamps = pd.DatetimeIndex(
+                pd.to_datetime(frame[timestamp_column], errors="raise")
+            )
+            X = frame.loc[:, feature_order].to_numpy(dtype=np.float64, copy=True)
+            y = frame.loc[:, target_column].to_numpy(dtype=np.float64, copy=True)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"Invalid Corrected R1 {split_name} values: {exc}") from exc
+        if not np.isfinite(X).all() or not np.isfinite(y).all():
+            raise ValueError(f"Corrected R1 {split_name} contains non-finite values")
+        if timestamps.has_duplicates or not timestamps.is_monotonic_increasing:
+            raise ValueError(f"Corrected R1 {split_name} timestamps are not unique/ordered")
+        if len(timestamps) > 1:
+            expected_delta = pd.Timedelta(CORRECTED_R1_FREQUENCY)
+            if not bool(((timestamps[1:] - timestamps[:-1]) == expected_delta).all()):
+                raise ValueError(f"Corrected R1 {split_name} frequency mismatch")
+        if previous_end is not None and timestamps[0] - previous_end != pd.Timedelta(
+            CORRECTED_R1_FREQUENCY
+        ):
+            raise ValueError(f"Corrected R1 boundary before {split_name} is not contiguous")
+        previous_end = timestamps[-1]
+        if timestamps[0] != pd.Timestamp(entry.get("start_time")):
+            raise ValueError(f"Corrected R1 {split_name} start timestamp mismatch")
+        if timestamps[-1] != pd.Timestamp(entry.get("end_time")):
+            raise ValueError(f"Corrected R1 {split_name} end timestamp mismatch")
+
+        X_seq, y_seq, target_indices = build_aligned_sequences(
+            X,
+            y,
+            window=window,
+            horizon=horizon,
+            return_target_indices=True,
+        )
+        if len(X_seq) != expected_sequences[split_name]:
+            raise ValueError(
+                f"Corrected R1 {split_name} sequences: expected "
+                f"{expected_sequences[split_name]}, got {len(X_seq)}"
+            )
+        row_counts[split_name] = len(frame)
+        sequence_counts[split_name] = len(X_seq)
+        sequence_data[split_name] = {
+            "X": X_seq,
+            "y": y_seq,
+            "target_indices": target_indices,
+            "target_timestamps": timestamps.to_numpy()[target_indices],
+        }
+
+    first_X = frames["training"].loc[:, feature_order].to_numpy(dtype=np.float64)[:window]
+    first_y = float(frames["training"].loc[:, target_column].iloc[window + horizon - 1])
+    alignment_ok = bool(
+        np.array_equal(sequence_data["training"]["X"][0], first_X)
+        and sequence_data["training"]["y"][0] == first_y
+    )
+    if not alignment_ok:
+        raise ValueError("Corrected R1 first sequence is not X[0:5] -> y[5]")
+
+    validation_indices = sequence_data["validation"]["target_indices"]
+    validation_duplicate_count = int(
+        len(validation_indices) - len(np.unique(validation_indices))
+    )
+    validation_padding_count = int(
+        len(validation_indices) - expected_sequences["validation"]
+    )
+    if validation_duplicate_count != 0 or validation_padding_count != 0:
+        raise ValueError("Corrected R1 validation contains duplicate/padded sequences")
+
+    return {
+        "profile_dir": profile["profile_dir"],
+        "plant": manifest_plant,
+        "profile": role,
+        "rows": row_counts,
+        "sequences": sequence_counts,
+        "feature_order": feature_order,
+        "target": target_column,
+        "alignment": "X[0:5] -> y[5]",
+        "alignment_ok": alignment_ok,
+        "validation_duplicate_count": validation_duplicate_count,
+        "validation_padding_count": validation_padding_count,
+        "sequence_data": sequence_data,
+    }
+
+
+def build_aligned_sequences(
+    X,
+    y,
+    *,
+    window=5,
+    horizon=1,
+    return_target_indices=False,
+):
+    """Build exact windows using ``X[i:i+window] -> y[i+window]`` at horizon 1.
+
+    Unlike the Legacy training generator, this function performs no shuffling,
+    batching, duplication, or padding.  It returns ``(X_seq, y_seq)`` by
+    default; preflight callers may request the aligned target row indices.
+    """
+
+    X_array = np.asarray(X)
+    y_array = np.asarray(y)
+    if X_array.ndim != 2:
+        raise ValueError(f"X must be 2-D, got {X_array.shape}")
+    if y_array.ndim == 2 and y_array.shape[1] == 1:
+        y_array = y_array.reshape(-1)
+    if y_array.ndim != 1:
+        raise ValueError(f"y must be 1-D or (rows, 1), got {y_array.shape}")
+    if not isinstance(window, int) or window <= 0:
+        raise ValueError("window must be a positive integer")
+    if not isinstance(horizon, int) or horizon <= 0:
+        raise ValueError("horizon must be a positive integer")
+    if len(X_array) != len(y_array):
+        raise ValueError("X and y row counts differ")
+
+    sequence_count = len(X_array) - window - horizon + 1
+    if sequence_count <= 0:
+        raise ValueError("Not enough rows to build one aligned sequence")
+    sample_indices = np.arange(sequence_count, dtype=np.int64)
+    target_indices = sample_indices + window + horizon - 1
+    X_seq = np.stack(
+        [X_array[index : index + window] for index in sample_indices],
+        axis=0,
+    )
+    y_seq = y_array[target_indices].copy()
+    if return_target_indices:
+        return X_seq, y_seq, target_indices
+    return X_seq, y_seq
 
 
 def generator(X: np.array, y: np.array, time_steps: int):
@@ -154,6 +501,8 @@ def decompose_time_series(x):
     時間序列分解 (Time Series Decomposition), 把原始序列 x 拆解成 趨勢 (Trend)、季節性 (Seasonal / Period)、殘差 (Residual)。
     並且自動找到最適合的週期(period)
     '''
+    from statsmodels import api as sm
+
     step = len(x) // 10 # 設定最大週期範圍，最多要測試的 period 是總長度的十分之一，避免 period 設太大 → 不穩定。
     best_score = np.inf # 用正無限大初始化，用來存放目前找到的最佳 score (愈小愈好)
     print('decomposing time series data ・・・・・')
