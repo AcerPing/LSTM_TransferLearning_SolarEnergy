@@ -1,0 +1,46 @@
+{
+  "experiment": "A",
+  "source": "Plant1/source_profile",
+  "seed": 1234,
+  "device": "/CPU:0",
+  "window": 5,
+  "horizon": 1,
+  "input_shape": [
+    5,
+    5
+  ],
+  "total_params": 46681,
+  "output_activation": "sigmoid",
+  "optimizer": "Adam",
+  "learning_rate": 0.0001,
+  "loss": "mse",
+  "batch_size": 128,
+  "training_shuffle": true,
+  "validation_shuffle": false,
+  "maximum_epochs": 500,
+  "allow_overwrite": false,
+  "run_id": "R2_A_Plant1_SourcePretrain_Sigmoid_seed1234_run01",
+  "callbacks": {
+    "ReduceLROnPlateau": {
+      "monitor": "val_loss",
+      "factor": 0.5,
+      "patience": 4,
+      "min_lr": 1e-07
+    },
+    "ModelCheckpoint": {
+      "monitor": "val_loss",
+      "save_best_only": true
+    },
+    "EarlyStopping": {
+      "monitor": "val_loss",
+      "patience": 10,
+      "restore_best_weights": true
+    },
+    "CSVLogger": {
+      "filename": "epoch_log.csv"
+    }
+  },
+  "training_sequences": 2083,
+  "validation_sequences": 518,
+  "test_sequences": 648
+}

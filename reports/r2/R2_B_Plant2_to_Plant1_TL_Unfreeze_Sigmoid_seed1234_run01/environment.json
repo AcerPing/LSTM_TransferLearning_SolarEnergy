@@ -1,0 +1,11 @@
+{
+  "python": "3.10.11 (tags/v3.10.11:7d4cc5a, Apr  5 2023, 00:38:17) [MSC v.1929 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.19044-SP0",
+  "tensorflow": "2.10.0",
+  "keras": "2.10.0",
+  "numpy": "1.23.5",
+  "scikit-learn": "1.6.1",
+  "joblib": "1.4.2",
+  "device": "/CPU:0",
+  "CUDA_VISIBLE_DEVICES": "-1"
+}

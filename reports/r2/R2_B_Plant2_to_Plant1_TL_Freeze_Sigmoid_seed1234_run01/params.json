@@ -1,0 +1,78 @@
+{
+  "experiment": "B",
+  "source": "Plant2/source_profile",
+  "target": "Plant1/target_profile",
+  "source_run_id": "R2_B_Plant2_SourcePretrain_Sigmoid_seed1234_run01",
+  "source_checkpoint": "checkpoints/best_model.hdf5",
+  "source_checkpoint_sha256": "02b512327becfe28d685f97b1b855d450ce65877e34218256c78f7bceeea241d",
+  "input_shape": [
+    5,
+    5
+  ],
+  "total_params": 46681,
+  "output_activation": "sigmoid",
+  "optimizer": "Adam",
+  "learning_rate": 1e-05,
+  "loss": "mse",
+  "maximum_epochs": 500,
+  "seed": 1234,
+  "device": "/CPU:0",
+  "training_shuffle": true,
+  "validation_shuffle": false,
+  "transfer_layer_indices": [
+    2,
+    3,
+    4,
+    5
+  ],
+  "freeze": {
+    "batch_size": 128,
+    "trainable_params": 121,
+    "non_trainable_params": 46560
+  },
+  "unfreeze": {
+    "batch_size": 128,
+    "trainable_params": 46441,
+    "non_trainable_params": 240
+  },
+  "planned_run_ids": {
+    "freeze": "R2_B_Plant2_to_Plant1_TL_Freeze_Sigmoid_seed1234_run01",
+    "unfreeze": "R2_B_Plant2_to_Plant1_TL_Unfreeze_Sigmoid_seed1234_run01"
+  },
+  "allow_overwrite": false,
+  "run_id": "R2_B_Plant2_to_Plant1_TL_Freeze_Sigmoid_seed1234_run01",
+  "mode": "TL Freeze",
+  "batch_size": 128,
+  "trainable_params": 121,
+  "non_trainable_params": 46560,
+  "callbacks": {
+    "ReduceLROnPlateau": {
+      "monitor": "val_loss",
+      "factor": 0.5,
+      "patience": 4,
+      "min_lr": 1e-07
+    },
+    "ModelCheckpoint": {
+      "monitor": "val_loss",
+      "save_best_only": true
+    },
+    "EarlyStopping": {
+      "monitor": "val_loss",
+      "patience": 10,
+      "restore_best_weights": true
+    },
+    "CSVLogger": {
+      "filename": "epoch_log.csv"
+    }
+  },
+  "training_sequences": 516,
+  "validation_sequences": 126,
+  "test_sequences": 2607,
+  "metric_units": {
+    "target": "kW",
+    "MAE": "kW",
+    "MSE": "kW^2",
+    "RMSE": "kW",
+    "R2": "unitless"
+  }
+}

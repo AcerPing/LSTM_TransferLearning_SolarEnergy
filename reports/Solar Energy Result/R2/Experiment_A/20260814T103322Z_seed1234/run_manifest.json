@@ -1,0 +1,319 @@
+{
+  "identity": {
+    "run_id": "20260814T103322Z_seed1234",
+    "run_type": "formal",
+    "formal_result": true,
+    "experiment": "A",
+    "source": "Plant1/source_profile",
+    "target": "Plant2/target_profile"
+  },
+  "environment": {
+    "python": "3.10.11",
+    "tensorflow": "2.10.0",
+    "keras": "2.10.0",
+    "numpy": "1.23.5",
+    "device": "cpu",
+    "visible_gpus": [],
+    "CUDA_VISIBLE_DEVICES": "-1",
+    "seed": 1234,
+    "PYTHONHASHSEED": "1234",
+    "deterministic_ops": true,
+    "training_shuffle": true,
+    "validation_ordered": true,
+    "test_ordered": true
+  },
+  "git_provenance": {
+    "commit": "b5ab201b0c0bf6f60ca5335191799c200e4e4907",
+    "branch": "AcerPing",
+    "dirty": true,
+    "status_porcelain": [
+      "?? \"notebook/20260814\\345\\237\\267\\350\\241\\214\\350\\263\\207\\346\\226\\231\\347\\264\\200\\351\\214\\204/20260814\\345\\237\\267\\350\\241\\214\\350\\263\\207\\346\\226\\231\\347\\264\\200\\351\\214\\204.txt\"",
+      "?? \"notebook/20260814\\345\\237\\267\\350\\241\\214\\350\\263\\207\\346\\226\\231\\347\\264\\200\\351\\214\\204/\\350\\236\\242\\345\\271\\225\\346\\223\\267\\345\\217\\226\\347\\225\\253\\351\\235\\242 2026-08-14 154501.png\""
+    ],
+    "critical_dirty": false,
+    "critical_dirty_paths": [],
+    "unrelated_dirty": true,
+    "unrelated_dirty_paths": [
+      "notebook/20260814執行資料紀錄/20260814執行資料紀錄.txt",
+      "notebook/20260814執行資料紀錄/螢幕擷取畫面 2026-08-14 154501.png"
+    ]
+  },
+  "source_file_sha256": {
+    "r2_solar.py": "f9bf28c7681d96fff8caa3881beb5b80de262e2bd7673518f5a77ee663afb5af",
+    "r2_config/solar_r2.py": "baef9c9ed7792bda1719fbcf30e5d172c1da5940cf92c52f7540973ee994c9ad",
+    "r2_helpers/solar_data.py": "5743055c327598bd976a2a3e27d9e27155120b0fe3ee06b55e9500f6dee3b3bd",
+    "r2_helpers/solar_runtime.py": "2f1933138b087f7eb60d3bbe8c02309a5775369828139257e4ba828c569e50fa",
+    "r2_helpers/solar_formal.py": "1ca05cb3c9778b7d83abaca5308875dc50c794525eed67d9cab01742b9d2907f",
+    "utils/model.py": "fd8170b04a6a9d9271c48a98c29a1a8dd278b86864a15fb87853d38e966b6007"
+  },
+  "data_contract": {
+    "corrected_r1_root": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\PersonalNote\\DataSet_For_TransferLearning\\★★ Solar Power Generation Data ★★\\preprocessed_profiles_corrected_r1",
+    "window": 5,
+    "horizon": 1,
+    "features": [
+      "TIME_SIN",
+      "TIME_COS",
+      "IRRADIATION",
+      "AMBIENT_TEMPERATURE",
+      "MODULE_TEMPERATURE"
+    ],
+    "target_column": "DC_POWER",
+    "integrity_hash_access_may_read_test_bytes": true,
+    "test_values_loaded_during_training": false,
+    "source": {
+      "training": {
+        "rows": 2088,
+        "sequences": 2083,
+        "X_shape": [
+          2083,
+          5,
+          5
+        ],
+        "y_shape": [
+          2083
+        ],
+        "first_target_row_index": 5,
+        "last_target_row_index": 2087,
+        "first_target_timestamp": "2020-05-15T01:15:00.000000000",
+        "last_target_timestamp": "2020-06-05T17:45:00.000000000"
+      },
+      "validation": {
+        "rows": 523,
+        "sequences": 518,
+        "X_shape": [
+          518,
+          5,
+          5
+        ],
+        "y_shape": [
+          518
+        ],
+        "first_target_row_index": 5,
+        "last_target_row_index": 522,
+        "first_target_timestamp": "2020-06-05T19:15:00.000000000",
+        "last_target_timestamp": "2020-06-11T04:30:00.000000000"
+      }
+    },
+    "target": {
+      "training": {
+        "rows": 521,
+        "sequences": 516,
+        "X_shape": [
+          516,
+          5,
+          5
+        ],
+        "y_shape": [
+          516
+        ],
+        "first_target_row_index": 5,
+        "last_target_row_index": 520,
+        "first_target_timestamp": "2020-05-15T01:15:00.000000000",
+        "last_target_timestamp": "2020-05-20T10:00:00.000000000"
+      },
+      "validation": {
+        "rows": 131,
+        "sequences": 126,
+        "X_shape": [
+          126,
+          5,
+          5
+        ],
+        "y_shape": [
+          126
+        ],
+        "first_target_row_index": 5,
+        "last_target_row_index": 130,
+        "first_target_timestamp": "2020-05-20T11:30:00.000000000",
+        "last_target_timestamp": "2020-05-21T18:45:00.000000000"
+      }
+    },
+    "file_checksums": {
+      "source": {
+        "original_scale_training.csv": "745200fd478731f64e0f8ba7b6df0322c2e6be500578fa21e324ec8b055e3ea1",
+        "normalized_scale_training.csv": "7e9ffd404d93dfd202300022286f7511e77df74910215e9ea9c1a3b9d790a844",
+        "original_scale_validation.csv": "d6a137636b6295913eda0c7e5e07a5f85bf90cd66614b913e5c7fd3bfa6c728d",
+        "normalized_scale_validation.csv": "ba625dcbaaa2087cb7611d69cd159d74d57deee11ca32a8310d4f10719bfa518",
+        "original_scale_test.csv": "2aa03a7ecf4023a9cc2a39677f976ee419d8f65d4d620a89639accd0b9dc07b9",
+        "normalized_scale_test.csv": "9ec32da8d19e2d63859d269043e7e5ca91c13ffd7b217bfacd9578901b90e0d5",
+        "feature_scaler.joblib": "6a66df27dc1358cd4890e632f09fec848edb3c571cfee36f2e141986d4159912",
+        "target_scaler.joblib": "a9c0539b97e0faff07eb04e032b65f79dd45be5d0a6927c3b48fc67e4819f77e",
+        "out_of_range_by_split.csv": "5d603ad5cb585875232bc84129a78fa05e6071eaedcca605ea316cbd9fd0e75c",
+        "out_of_range_by_column.csv": "47d1d345b581403b0d395c712dcfb0436b7ca9b32907692473e7bcb00a991c60",
+        "out_of_range_details.csv": "a05eda4aaba4eefaa49253a7d4f9d45c26cced8c02a6ff820bbd6e7808a56a56",
+        "split_manifest.json": "f20fe7dbafa16c9e9b4d9f5aa31117688f61317e39878437b3b27ffca7a71151",
+        "scaler_manifest.json": "b30ad0e4d29b1ee654cdaca4fe27b25737c07175b4d4a6e837dc8871309bb93a"
+      },
+      "target": {
+        "original_scale_training.csv": "92dbe751258376d6016ac9484de1b3a6879665e73fdd7fecbb6b2f5bc7421487",
+        "normalized_scale_training.csv": "680a5fde846590684fd3cbd1f6c5dd86a8fee0d9f315caeabf8edf78c1ea1e7c",
+        "original_scale_validation.csv": "c2540e130bfaf9668c78d59864056f74505d2d0e77f2addbab370661a10ae09e",
+        "normalized_scale_validation.csv": "2ccd16dddb241296456a639f0b96831406f6282ff5a48545798034274fabe75c",
+        "original_scale_test.csv": "6058aa7dfb0a89e697c60fe1966e12da27227f5d9b5dc07b860f5a64494eac09",
+        "normalized_scale_test.csv": "e4500b88d089e97fb339f585bb05e821561e18bf61f5b834cf987abb830eea82",
+        "feature_scaler.joblib": "d91ce120e26e45b540017859bf419ec35010927492cb7be2b02f275e87077d4d",
+        "target_scaler.joblib": "6db35ad6a42939b687a7b0593920fb5a539f87c54de590f64daa335533c3680c",
+        "out_of_range_by_split.csv": "092c589f0cfbb4c545fd93fe583114f5f5c0bf207e4b592503e125d3c28e4d49",
+        "out_of_range_by_column.csv": "352971c2405366138a6e5ae4c162998a60da2d0ae96a48b4195269e77f7e09e2",
+        "out_of_range_details.csv": "8c83d62ec4486cbde44be5d0a7e3bdf90c432538c1ab17ef1c4eb6fa0ff333a7",
+        "split_manifest.json": "c557e6b993475a681782d523847f17cbb9978dba5b5f9425133ad86bfcdd6243",
+        "scaler_manifest.json": "d647e0578cbe9ddbf56f0ea6bca1147487d0c0b63e620c36ea74abbc7179595b"
+      }
+    }
+  },
+  "scaler_provenance": {
+    "source": {
+      "plant": "Plant1",
+      "profile": "source",
+      "feature_scaler_file": "feature_scaler.joblib",
+      "target_scaler_file": "target_scaler.joblib",
+      "feature_scaler_columns": [
+        "IRRADIATION",
+        "AMBIENT_TEMPERATURE",
+        "MODULE_TEMPERATURE"
+      ],
+      "target_scaler_column": "DC_POWER",
+      "feature_scaler_fit_split": "training",
+      "target_scaler_fit_split": "training",
+      "feature_scaler_n_samples_seen": 2088,
+      "target_scaler_n_samples_seen": 2088,
+      "feature_data_min": [
+        0.0,
+        20.613987769230768,
+        18.492340066666667
+      ],
+      "feature_data_max": [
+        1.151102274,
+        35.25248613333334,
+        65.54571366666664
+      ],
+      "target_data_min": [
+        0.0
+      ],
+      "target_data_max": [
+        298937.78571
+      ],
+      "time_columns_scaled": false,
+      "clipping_applied": false,
+      "inverse_transform_target_scaler": "target_scaler.joblib",
+      "formal_metrics_scale": "original_scale",
+      "normalized_metrics_usage": "training_diagnostics_only"
+    },
+    "target": {
+      "plant": "Plant2",
+      "profile": "target",
+      "feature_scaler_file": "feature_scaler.joblib",
+      "target_scaler_file": "target_scaler.joblib",
+      "feature_scaler_columns": [
+        "IRRADIATION",
+        "AMBIENT_TEMPERATURE",
+        "MODULE_TEMPERATURE"
+      ],
+      "target_scaler_column": "DC_POWER",
+      "feature_scaler_fit_split": "training",
+      "target_scaler_fit_split": "training",
+      "feature_scaler_n_samples_seen": 521,
+      "target_scaler_n_samples_seen": 521,
+      "feature_data_min": [
+        0.0,
+        20.942384766666667,
+        20.295639066666663
+      ],
+      "feature_data_max": [
+        0.9896192403333331,
+        37.3528292,
+        66.0162788275862
+      ],
+      "target_data_min": [
+        0.0
+      ],
+      "target_data_max": [
+        21194.826666666664
+      ],
+      "time_columns_scaled": false,
+      "clipping_applied": false,
+      "inverse_transform_target_scaler": "target_scaler.joblib",
+      "formal_metrics_scale": "original_scale",
+      "normalized_metrics_usage": "training_diagnostics_only"
+    }
+  },
+  "model_contract": {
+    "input_shape": [
+      5,
+      5
+    ],
+    "topology": [
+      "InputLayer",
+      "TimeDistributed",
+      "LSTM",
+      "BatchNormalization",
+      "LSTM",
+      "BatchNormalization",
+      "Dense"
+    ],
+    "output_activation": "sigmoid",
+    "transferable_layer_indices": [
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  "protocol": {
+    "max_epochs": 500,
+    "batch_size": 128,
+    "optimizer": "Adam",
+    "source_without_tl_learning_rate": 0.0001,
+    "tl_learning_rate": 1e-05,
+    "loss": "mse",
+    "reduce_lr": {
+      "monitor": "val_loss",
+      "factor": 0.5,
+      "patience": 4,
+      "min_lr": 1e-07
+    },
+    "early_stopping": {
+      "monitor": "val_loss",
+      "patience": 10,
+      "restore_best_weights": true
+    },
+    "model_checkpoint": {
+      "monitor": "val_loss",
+      "save_best_only": true,
+      "save_weights_only": false
+    }
+  },
+  "methods": [
+    "source_pretrain",
+    "without_tl",
+    "tl_freeze",
+    "tl_full_finetune"
+  ],
+  "lifecycle": {
+    "source_pretrain": {
+      "status": "PENDING"
+    },
+    "without_tl": {
+      "status": "PENDING"
+    },
+    "tl_freeze": {
+      "status": "PENDING"
+    },
+    "tl_full_finetune": {
+      "status": "PENDING"
+    }
+  },
+  "checkpoints": {},
+  "metrics": {},
+  "artifacts": {},
+  "test_isolation_events": [],
+  "residual_definition": "y_true_original - y_pred_original",
+  "transfer_comparison": {},
+  "status": "RUNNING",
+  "timestamps": {
+    "start": "2026-08-14T10:33:22.723237+00:00",
+    "end": null,
+    "elapsed_seconds": null
+  },
+  "failure": null
+}

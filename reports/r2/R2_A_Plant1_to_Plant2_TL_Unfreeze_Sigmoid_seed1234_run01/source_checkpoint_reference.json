@@ -1,0 +1,8 @@
+{
+  "source_run_id": "R2_A_Plant1_SourcePretrain_Sigmoid_seed1234_run01",
+  "source_checkpoint_path": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\LSTM_TransferLearning_SolarEnergy\\reports\\r2\\R2_A_Plant1_SourcePretrain_Sigmoid_seed1234_run01\\checkpoints\\best_model.hdf5",
+  "source_checkpoint_sha256": "8aa299e09c58c2ce77473ba317bdaf9fe374310a453b61718b605022356ad6aa",
+  "source_final_learning_rate": 1e-07,
+  "source_optimizer_transferred": false,
+  "used_for_initialization": true
+}

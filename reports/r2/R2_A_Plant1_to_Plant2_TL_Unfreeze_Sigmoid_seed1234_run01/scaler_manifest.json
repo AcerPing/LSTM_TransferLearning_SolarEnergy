@@ -1,0 +1,37 @@
+{
+  "plant": "Plant2",
+  "profile": "target",
+  "feature_scaler_file": "feature_scaler.joblib",
+  "target_scaler_file": "target_scaler.joblib",
+  "feature_scaler_columns": [
+    "IRRADIATION",
+    "AMBIENT_TEMPERATURE",
+    "MODULE_TEMPERATURE"
+  ],
+  "target_scaler_column": "DC_POWER",
+  "feature_scaler_fit_split": "training",
+  "target_scaler_fit_split": "training",
+  "feature_scaler_n_samples_seen": 521,
+  "target_scaler_n_samples_seen": 521,
+  "feature_data_min": [
+    0.0,
+    20.942384766666667,
+    20.295639066666663
+  ],
+  "feature_data_max": [
+    0.9896192403333331,
+    37.3528292,
+    66.0162788275862
+  ],
+  "target_data_min": [
+    0.0
+  ],
+  "target_data_max": [
+    21194.826666666664
+  ],
+  "time_columns_scaled": false,
+  "clipping_applied": false,
+  "inverse_transform_target_scaler": "target_scaler.joblib",
+  "formal_metrics_scale": "original_scale",
+  "normalized_metrics_usage": "training_diagnostics_only"
+}

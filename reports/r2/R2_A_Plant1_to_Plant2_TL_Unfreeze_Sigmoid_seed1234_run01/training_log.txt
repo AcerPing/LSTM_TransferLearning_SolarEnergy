@@ -1,0 +1,306 @@
+是否加入噪聲: None
+初始學習率: 3e-05
+優化器參數: {'name': 'Adam', 'learning_rate': 3e-05, 'decay': 0.0, 'beta_1': 0.9, 'beta_2': 0.999, 'epsilon': 1e-07, 'amsgrad': False}
+是否加入噪聲: None
+
+--- Layer 2: lstm_2 ---
+Weights successfully updated to pre-trained weights!
+Layer 2 (lstm_2) is trainable and its weights will be updated during training (fine-tuning).
+
+--- Layer 3: batch_normalization_2 ---
+Weights successfully updated to pre-trained weights!
+Layer 3 (batch_normalization_2) is trainable and its weights will be updated during training (fine-tuning).
+
+--- Layer 4: lstm_3 ---
+Weights successfully updated to pre-trained weights!
+Layer 4 (lstm_3) is trainable and its weights will be updated during training (fine-tuning).
+
+--- Layer 5: batch_normalization_3 ---
+Weights successfully updated to pre-trained weights!
+Layer 5 (batch_normalization_3) is trainable and its weights will be updated during training (fine-tuning).
+初始學習率: 3e-05
+優化器參數: {'name': 'Adam', 'learning_rate': 3e-05, 'decay': 0.0, 'beta_1': 0.9, 'beta_2': 0.999, 'epsilon': 1e-07, 'amsgrad': False}
+Epoch 1/500
+
+Epoch 1: val_loss improved from inf to 0.21621, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 2s - loss: 0.1264 - mse: 0.0301 - rmse: 0.1583 - mae: 0.0991 - mape: 280360.5625 - msle: 0.0127 - val_loss: 0.2162 - val_mse: 0.1199 - val_rmse: 0.3463 - val_mae: 0.2236 - val_mape: 706264.6250 - val_msle: 0.0448 - lr: 3.0000e-05 - 2s/epoch - 421ms/step
+Epoch 2/500
+
+Epoch 2: val_loss improved from 0.21621 to 0.21196, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1263 - mse: 0.0300 - rmse: 0.1559 - mae: 0.0997 - mape: 327543.0000 - msle: 0.0127 - val_loss: 0.2120 - val_mse: 0.1158 - val_rmse: 0.3403 - val_mae: 0.2186 - val_mape: 764133.3750 - val_msle: 0.0433 - lr: 3.0000e-05 - 54ms/epoch - 11ms/step
+Epoch 3/500
+
+Epoch 3: val_loss improved from 0.21196 to 0.20867, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1250 - mse: 0.0289 - rmse: 0.1793 - mae: 0.0978 - mape: 358332.2500 - msle: 0.0122 - val_loss: 0.2087 - val_mse: 0.1126 - val_rmse: 0.3355 - val_mae: 0.2144 - val_mape: 782437.9375 - val_msle: 0.0422 - lr: 3.0000e-05 - 49ms/epoch - 10ms/step
+Epoch 4/500
+
+Epoch 4: val_loss improved from 0.20867 to 0.20736, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1244 - mse: 0.0283 - rmse: 0.1631 - mae: 0.0967 - mape: 399979.1875 - msle: 0.0120 - val_loss: 0.2074 - val_mse: 0.1113 - val_rmse: 0.3337 - val_mae: 0.2124 - val_mape: 787653.1875 - val_msle: 0.0418 - lr: 3.0000e-05 - 50ms/epoch - 10ms/step
+Epoch 5/500
+
+Epoch 5: val_loss improved from 0.20736 to 0.20600, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1238 - mse: 0.0277 - rmse: 0.1661 - mae: 0.0958 - mape: 442050.2500 - msle: 0.0118 - val_loss: 0.2060 - val_mse: 0.1100 - val_rmse: 0.3317 - val_mae: 0.2109 - val_mape: 835399.8750 - val_msle: 0.0413 - lr: 3.0000e-05 - 47ms/epoch - 9ms/step
+Epoch 6/500
+
+Epoch 6: val_loss improved from 0.20600 to 0.20406, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1235 - mse: 0.0275 - rmse: 0.1569 - mae: 0.0952 - mape: 439947.3750 - msle: 0.0116 - val_loss: 0.2041 - val_mse: 0.1082 - val_rmse: 0.3289 - val_mae: 0.2085 - val_mape: 858978.5625 - val_msle: 0.0407 - lr: 3.0000e-05 - 51ms/epoch - 10ms/step
+Epoch 7/500
+
+Epoch 7: val_loss improved from 0.20406 to 0.20248, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1241 - mse: 0.0282 - rmse: 0.1557 - mae: 0.0980 - mape: 728735.7500 - msle: 0.0121 - val_loss: 0.2025 - val_mse: 0.1067 - val_rmse: 0.3266 - val_mae: 0.2060 - val_mape: 945070.8125 - val_msle: 0.0403 - lr: 3.0000e-05 - 39ms/epoch - 8ms/step
+Epoch 8/500
+
+Epoch 8: val_loss improved from 0.20248 to 0.20017, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1234 - mse: 0.0276 - rmse: 0.1706 - mae: 0.0960 - mape: 591357.1250 - msle: 0.0117 - val_loss: 0.2002 - val_mse: 0.1044 - val_rmse: 0.3231 - val_mae: 0.2029 - val_mape: 1044336.3750 - val_msle: 0.0396 - lr: 3.0000e-05 - 40ms/epoch - 8ms/step
+Epoch 9/500
+
+Epoch 9: val_loss improved from 0.20017 to 0.19821, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1220 - mse: 0.0262 - rmse: 0.1643 - mae: 0.0930 - mape: 699825.6875 - msle: 0.0112 - val_loss: 0.1982 - val_mse: 0.1025 - val_rmse: 0.3202 - val_mae: 0.2004 - val_mape: 1140412.2500 - val_msle: 0.0392 - lr: 3.0000e-05 - 50ms/epoch - 10ms/step
+Epoch 10/500
+
+Epoch 10: val_loss improved from 0.19821 to 0.19684, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1214 - mse: 0.0257 - rmse: 0.1389 - mae: 0.0923 - mape: 766547.0625 - msle: 0.0111 - val_loss: 0.1968 - val_mse: 0.1012 - val_rmse: 0.3182 - val_mae: 0.1985 - val_mape: 1245593.1250 - val_msle: 0.0388 - lr: 3.0000e-05 - 50ms/epoch - 10ms/step
+Epoch 11/500
+
+Epoch 11: val_loss improved from 0.19684 to 0.19587, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1195 - mse: 0.0239 - rmse: 0.1337 - mae: 0.0896 - mape: 964604.8750 - msle: 0.0103 - val_loss: 0.1959 - val_mse: 0.1003 - val_rmse: 0.3167 - val_mae: 0.1973 - val_mape: 1267893.6250 - val_msle: 0.0386 - lr: 3.0000e-05 - 50ms/epoch - 10ms/step
+Epoch 12/500
+
+Epoch 12: val_loss improved from 0.19587 to 0.19452, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1207 - mse: 0.0252 - rmse: 0.1542 - mae: 0.0911 - mape: 893148.0000 - msle: 0.0111 - val_loss: 0.1945 - val_mse: 0.0991 - val_rmse: 0.3147 - val_mae: 0.1953 - val_mape: 1280939.1250 - val_msle: 0.0382 - lr: 3.0000e-05 - 50ms/epoch - 10ms/step
+Epoch 13/500
+
+Epoch 13: val_loss improved from 0.19452 to 0.19325, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1208 - mse: 0.0253 - rmse: 0.1510 - mae: 0.0916 - mape: 979358.1875 - msle: 0.0114 - val_loss: 0.1933 - val_mse: 0.0979 - val_rmse: 0.3128 - val_mae: 0.1929 - val_mape: 1324466.1250 - val_msle: 0.0379 - lr: 3.0000e-05 - 50ms/epoch - 10ms/step
+Epoch 14/500
+
+Epoch 14: val_loss improved from 0.19325 to 0.19202, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1196 - mse: 0.0242 - rmse: 0.1637 - mae: 0.0893 - mape: 1101321.7500 - msle: 0.0109 - val_loss: 0.1920 - val_mse: 0.0967 - val_rmse: 0.3110 - val_mae: 0.1901 - val_mape: 1388600.8750 - val_msle: 0.0377 - lr: 3.0000e-05 - 50ms/epoch - 10ms/step
+Epoch 15/500
+
+Epoch 15: val_loss improved from 0.19202 to 0.19095, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1191 - mse: 0.0238 - rmse: 0.1275 - mae: 0.0889 - mape: 1302908.0000 - msle: 0.0109 - val_loss: 0.1910 - val_mse: 0.0957 - val_rmse: 0.3093 - val_mae: 0.1880 - val_mape: 1517673.5000 - val_msle: 0.0376 - lr: 3.0000e-05 - 50ms/epoch - 10ms/step
+Epoch 16/500
+
+Epoch 16: val_loss improved from 0.19095 to 0.19013, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1188 - mse: 0.0236 - rmse: 0.1312 - mae: 0.0882 - mape: 1428787.3750 - msle: 0.0109 - val_loss: 0.1901 - val_mse: 0.0949 - val_rmse: 0.3081 - val_mae: 0.1860 - val_mape: 1650144.3750 - val_msle: 0.0375 - lr: 3.0000e-05 - 50ms/epoch - 10ms/step
+Epoch 17/500
+
+Epoch 17: val_loss improved from 0.19013 to 0.18950, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1180 - mse: 0.0228 - rmse: 0.1421 - mae: 0.0856 - mape: 1541846.7500 - msle: 0.0106 - val_loss: 0.1895 - val_mse: 0.0944 - val_rmse: 0.3072 - val_mae: 0.1846 - val_mape: 1721494.7500 - val_msle: 0.0375 - lr: 3.0000e-05 - 50ms/epoch - 10ms/step
+Epoch 18/500
+
+Epoch 18: val_loss improved from 0.18950 to 0.18873, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1182 - mse: 0.0231 - rmse: 0.1365 - mae: 0.0862 - mape: 1784071.7500 - msle: 0.0108 - val_loss: 0.1887 - val_mse: 0.0937 - val_rmse: 0.3060 - val_mae: 0.1844 - val_mape: 1949142.7500 - val_msle: 0.0376 - lr: 3.0000e-05 - 50ms/epoch - 10ms/step
+Epoch 19/500
+
+Epoch 19: val_loss improved from 0.18873 to 0.18832, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1175 - mse: 0.0224 - rmse: 0.1269 - mae: 0.0854 - mape: 2039458.3750 - msle: 0.0106 - val_loss: 0.1883 - val_mse: 0.0933 - val_rmse: 0.3055 - val_mae: 0.1844 - val_mape: 2059165.6250 - val_msle: 0.0376 - lr: 3.0000e-05 - 50ms/epoch - 10ms/step
+Epoch 20/500
+
+Epoch 20: val_loss improved from 0.18832 to 0.18783, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1167 - mse: 0.0217 - rmse: 0.1491 - mae: 0.0828 - mape: 2502503.7500 - msle: 0.0105 - val_loss: 0.1878 - val_mse: 0.0929 - val_rmse: 0.3048 - val_mae: 0.1843 - val_mape: 2216750.0000 - val_msle: 0.0376 - lr: 3.0000e-05 - 50ms/epoch - 10ms/step
+Epoch 21/500
+
+Epoch 21: val_loss improved from 0.18783 to 0.18651, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1167 - mse: 0.0218 - rmse: 0.1798 - mae: 0.0834 - mape: 2377455.7500 - msle: 0.0105 - val_loss: 0.1865 - val_mse: 0.0916 - val_rmse: 0.3027 - val_mae: 0.1831 - val_mape: 2243472.0000 - val_msle: 0.0372 - lr: 3.0000e-05 - 50ms/epoch - 10ms/step
+Epoch 22/500
+
+Epoch 22: val_loss improved from 0.18651 to 0.18549, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1171 - mse: 0.0223 - rmse: 0.1357 - mae: 0.0856 - mape: 2505521.5000 - msle: 0.0109 - val_loss: 0.1855 - val_mse: 0.0907 - val_rmse: 0.3011 - val_mae: 0.1813 - val_mape: 2230167.0000 - val_msle: 0.0368 - lr: 3.0000e-05 - 44ms/epoch - 9ms/step
+Epoch 23/500
+
+Epoch 23: val_loss improved from 0.18549 to 0.18510, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1173 - mse: 0.0225 - rmse: 0.1316 - mae: 0.0854 - mape: 2725456.5000 - msle: 0.0110 - val_loss: 0.1851 - val_mse: 0.0904 - val_rmse: 0.3006 - val_mae: 0.1799 - val_mape: 2206098.5000 - val_msle: 0.0365 - lr: 3.0000e-05 - 49ms/epoch - 10ms/step
+Epoch 24/500
+
+Epoch 24: val_loss did not improve from 0.18510
+5/5 - 0s - loss: 0.1169 - mse: 0.0222 - rmse: 0.1773 - mae: 0.0846 - mape: 2334314.2500 - msle: 0.0106 - val_loss: 0.1852 - val_mse: 0.0905 - val_rmse: 0.3008 - val_mae: 0.1791 - val_mape: 2028978.3750 - val_msle: 0.0363 - lr: 3.0000e-05 - 27ms/epoch - 5ms/step
+Epoch 25/500
+
+Epoch 25: val_loss did not improve from 0.18510
+5/5 - 0s - loss: 0.1156 - mse: 0.0210 - rmse: 0.1516 - mae: 0.0839 - mape: 2020557.5000 - msle: 0.0099 - val_loss: 0.1864 - val_mse: 0.0918 - val_rmse: 0.3030 - val_mae: 0.1792 - val_mape: 1805695.6250 - val_msle: 0.0363 - lr: 3.0000e-05 - 20ms/epoch - 4ms/step
+Epoch 26/500
+
+Epoch 26: val_loss did not improve from 0.18510
+5/5 - 0s - loss: 0.1154 - mse: 0.0208 - rmse: 0.1296 - mae: 0.0828 - mape: 1763809.2500 - msle: 0.0095 - val_loss: 0.1874 - val_mse: 0.0929 - val_rmse: 0.3047 - val_mae: 0.1807 - val_mape: 1674243.1250 - val_msle: 0.0364 - lr: 3.0000e-05 - 20ms/epoch - 4ms/step
+Epoch 27/500
+
+Epoch 27: ReduceLROnPlateau reducing learning rate to 1.4999999621068127e-05.
+
+Epoch 27: val_loss did not improve from 0.18510
+5/5 - 0s - loss: 0.1172 - mse: 0.0226 - rmse: 0.1472 - mae: 0.0857 - mape: 1732567.2500 - msle: 0.0102 - val_loss: 0.1876 - val_mse: 0.0931 - val_rmse: 0.3051 - val_mae: 0.1813 - val_mape: 1646749.1250 - val_msle: 0.0365 - lr: 3.0000e-05 - 30ms/epoch - 6ms/step
+Epoch 28/500
+
+Epoch 28: val_loss did not improve from 0.18510
+5/5 - 0s - loss: 0.1158 - mse: 0.0213 - rmse: 0.1455 - mae: 0.0841 - mape: 2293526.0000 - msle: 0.0096 - val_loss: 0.1875 - val_mse: 0.0930 - val_rmse: 0.3049 - val_mae: 0.1810 - val_mape: 1672060.8750 - val_msle: 0.0364 - lr: 1.5000e-05 - 40ms/epoch - 8ms/step
+Epoch 29/500
+
+Epoch 29: val_loss did not improve from 0.18510
+5/5 - 0s - loss: 0.1152 - mse: 0.0208 - rmse: 0.1504 - mae: 0.0829 - mape: 1654898.8750 - msle: 0.0093 - val_loss: 0.1869 - val_mse: 0.0925 - val_rmse: 0.3041 - val_mae: 0.1798 - val_mape: 1683863.7500 - val_msle: 0.0363 - lr: 1.5000e-05 - 30ms/epoch - 6ms/step
+Epoch 30/500
+
+Epoch 30: val_loss did not improve from 0.18510
+5/5 - 0s - loss: 0.1151 - mse: 0.0207 - rmse: 0.1451 - mae: 0.0825 - mape: 1707972.5000 - msle: 0.0093 - val_loss: 0.1860 - val_mse: 0.0916 - val_rmse: 0.3026 - val_mae: 0.1784 - val_mape: 1782860.6250 - val_msle: 0.0361 - lr: 1.5000e-05 - 30ms/epoch - 6ms/step
+Epoch 31/500
+
+Epoch 31: ReduceLROnPlateau reducing learning rate to 7.499999810534064e-06.
+
+Epoch 31: val_loss did not improve from 0.18510
+5/5 - 0s - loss: 0.1142 - mse: 0.0198 - rmse: 0.1296 - mae: 0.0805 - mape: 1840025.0000 - msle: 0.0090 - val_loss: 0.1852 - val_mse: 0.0909 - val_rmse: 0.3014 - val_mae: 0.1775 - val_mape: 1861605.2500 - val_msle: 0.0360 - lr: 1.5000e-05 - 40ms/epoch - 8ms/step
+Epoch 32/500
+
+Epoch 32: val_loss improved from 0.18510 to 0.18485, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1143 - mse: 0.0199 - rmse: 0.1215 - mae: 0.0801 - mape: 1912374.7500 - msle: 0.0092 - val_loss: 0.1848 - val_mse: 0.0905 - val_rmse: 0.3008 - val_mae: 0.1774 - val_mape: 1846175.3750 - val_msle: 0.0360 - lr: 7.5000e-06 - 50ms/epoch - 10ms/step
+Epoch 33/500
+
+Epoch 33: val_loss improved from 0.18485 to 0.18464, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1145 - mse: 0.0202 - rmse: 0.1389 - mae: 0.0812 - mape: 2417798.0000 - msle: 0.0094 - val_loss: 0.1846 - val_mse: 0.0903 - val_rmse: 0.3005 - val_mae: 0.1772 - val_mape: 1880386.0000 - val_msle: 0.0359 - lr: 7.5000e-06 - 50ms/epoch - 10ms/step
+Epoch 34/500
+
+Epoch 34: val_loss improved from 0.18464 to 0.18429, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1151 - mse: 0.0208 - rmse: 0.1372 - mae: 0.0815 - mape: 2133745.7500 - msle: 0.0097 - val_loss: 0.1843 - val_mse: 0.0900 - val_rmse: 0.2999 - val_mae: 0.1770 - val_mape: 1876077.5000 - val_msle: 0.0359 - lr: 7.5000e-06 - 52ms/epoch - 10ms/step
+Epoch 35/500
+
+Epoch 35: val_loss improved from 0.18429 to 0.18408, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1143 - mse: 0.0200 - rmse: 0.1297 - mae: 0.0813 - mape: 2227964.0000 - msle: 0.0093 - val_loss: 0.1841 - val_mse: 0.0898 - val_rmse: 0.2996 - val_mae: 0.1769 - val_mape: 1902944.5000 - val_msle: 0.0358 - lr: 7.5000e-06 - 50ms/epoch - 10ms/step
+Epoch 36/500
+
+Epoch 36: val_loss improved from 0.18408 to 0.18388, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1144 - mse: 0.0201 - rmse: 0.1299 - mae: 0.0809 - mape: 2316933.5000 - msle: 0.0092 - val_loss: 0.1839 - val_mse: 0.0896 - val_rmse: 0.2993 - val_mae: 0.1769 - val_mape: 1886298.0000 - val_msle: 0.0358 - lr: 7.5000e-06 - 50ms/epoch - 10ms/step
+Epoch 37/500
+
+Epoch 37: val_loss improved from 0.18388 to 0.18375, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1144 - mse: 0.0201 - rmse: 0.1556 - mae: 0.0810 - mape: 2354658.7500 - msle: 0.0093 - val_loss: 0.1838 - val_mse: 0.0895 - val_rmse: 0.2991 - val_mae: 0.1766 - val_mape: 1862530.0000 - val_msle: 0.0357 - lr: 7.5000e-06 - 50ms/epoch - 10ms/step
+Epoch 38/500
+
+Epoch 38: val_loss improved from 0.18375 to 0.18361, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1141 - mse: 0.0198 - rmse: 0.1392 - mae: 0.0809 - mape: 2052537.6250 - msle: 0.0092 - val_loss: 0.1836 - val_mse: 0.0893 - val_rmse: 0.2989 - val_mae: 0.1763 - val_mape: 1769685.8750 - val_msle: 0.0357 - lr: 7.5000e-06 - 50ms/epoch - 10ms/step
+Epoch 39/500
+
+Epoch 39: val_loss did not improve from 0.18361
+5/5 - 0s - loss: 0.1141 - mse: 0.0198 - rmse: 0.1264 - mae: 0.0801 - mape: 2101371.5000 - msle: 0.0092 - val_loss: 0.1837 - val_mse: 0.0894 - val_rmse: 0.2990 - val_mae: 0.1759 - val_mape: 1746528.2500 - val_msle: 0.0356 - lr: 7.5000e-06 - 30ms/epoch - 6ms/step
+Epoch 40/500
+
+Epoch 40: val_loss improved from 0.18361 to 0.18350, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1136 - mse: 0.0194 - rmse: 0.1268 - mae: 0.0798 - mape: 1951328.8750 - msle: 0.0089 - val_loss: 0.1835 - val_mse: 0.0893 - val_rmse: 0.2988 - val_mae: 0.1758 - val_mape: 1753290.1250 - val_msle: 0.0356 - lr: 7.5000e-06 - 52ms/epoch - 10ms/step
+Epoch 41/500
+
+Epoch 41: val_loss improved from 0.18350 to 0.18333, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1153 - mse: 0.0210 - rmse: 0.1890 - mae: 0.0826 - mape: 2272433.0000 - msle: 0.0097 - val_loss: 0.1833 - val_mse: 0.0891 - val_rmse: 0.2985 - val_mae: 0.1762 - val_mape: 1673771.7500 - val_msle: 0.0356 - lr: 7.5000e-06 - 47ms/epoch - 9ms/step
+Epoch 42/500
+
+Epoch 42: val_loss did not improve from 0.18333
+5/5 - 0s - loss: 0.1132 - mse: 0.0190 - rmse: 0.1377 - mae: 0.0787 - mape: 1947223.1250 - msle: 0.0088 - val_loss: 0.1834 - val_mse: 0.0892 - val_rmse: 0.2986 - val_mae: 0.1763 - val_mape: 1600603.7500 - val_msle: 0.0357 - lr: 7.5000e-06 - 30ms/epoch - 6ms/step
+Epoch 43/500
+
+Epoch 43: val_loss did not improve from 0.18333
+5/5 - 0s - loss: 0.1142 - mse: 0.0200 - rmse: 0.1359 - mae: 0.0811 - mape: 1920768.1250 - msle: 0.0092 - val_loss: 0.1835 - val_mse: 0.0893 - val_rmse: 0.2988 - val_mae: 0.1762 - val_mape: 1549427.3750 - val_msle: 0.0357 - lr: 7.5000e-06 - 30ms/epoch - 6ms/step
+Epoch 44/500
+
+Epoch 44: val_loss did not improve from 0.18333
+5/5 - 0s - loss: 0.1141 - mse: 0.0199 - rmse: 0.1269 - mae: 0.0805 - mape: 2109613.7500 - msle: 0.0092 - val_loss: 0.1835 - val_mse: 0.0893 - val_rmse: 0.2988 - val_mae: 0.1760 - val_mape: 1530224.2500 - val_msle: 0.0357 - lr: 7.5000e-06 - 33ms/epoch - 7ms/step
+Epoch 45/500
+
+Epoch 45: ReduceLROnPlateau reducing learning rate to 3.749999905267032e-06.
+
+Epoch 45: val_loss did not improve from 0.18333
+5/5 - 0s - loss: 0.1135 - mse: 0.0193 - rmse: 0.1171 - mae: 0.0798 - mape: 2057986.7500 - msle: 0.0088 - val_loss: 0.1834 - val_mse: 0.0892 - val_rmse: 0.2987 - val_mae: 0.1759 - val_mape: 1527566.0000 - val_msle: 0.0356 - lr: 7.5000e-06 - 38ms/epoch - 8ms/step
+Epoch 46/500
+
+Epoch 46: val_loss did not improve from 0.18333
+5/5 - 0s - loss: 0.1145 - mse: 0.0203 - rmse: 0.1402 - mae: 0.0803 - mape: 2071277.8750 - msle: 0.0094 - val_loss: 0.1834 - val_mse: 0.0892 - val_rmse: 0.2987 - val_mae: 0.1758 - val_mape: 1541546.0000 - val_msle: 0.0356 - lr: 3.7500e-06 - 30ms/epoch - 6ms/step
+Epoch 47/500
+
+Epoch 47: val_loss improved from 0.18333 to 0.18325, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1136 - mse: 0.0194 - rmse: 0.1307 - mae: 0.0797 - mape: 2088158.0000 - msle: 0.0090 - val_loss: 0.1832 - val_mse: 0.0891 - val_rmse: 0.2985 - val_mae: 0.1757 - val_mape: 1578329.0000 - val_msle: 0.0356 - lr: 3.7500e-06 - 44ms/epoch - 9ms/step
+Epoch 48/500
+
+Epoch 48: val_loss improved from 0.18325 to 0.18306, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1135 - mse: 0.0193 - rmse: 0.1147 - mae: 0.0795 - mape: 1911310.5000 - msle: 0.0089 - val_loss: 0.1831 - val_mse: 0.0889 - val_rmse: 0.2982 - val_mae: 0.1758 - val_mape: 1566518.2500 - val_msle: 0.0356 - lr: 3.7500e-06 - 49ms/epoch - 10ms/step
+Epoch 49/500
+
+Epoch 49: val_loss improved from 0.18306 to 0.18292, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1131 - mse: 0.0189 - rmse: 0.1219 - mae: 0.0784 - mape: 2011930.1250 - msle: 0.0087 - val_loss: 0.1829 - val_mse: 0.0888 - val_rmse: 0.2979 - val_mae: 0.1757 - val_mape: 1581309.1250 - val_msle: 0.0355 - lr: 3.7500e-06 - 40ms/epoch - 8ms/step
+Epoch 50/500
+
+Epoch 50: val_loss improved from 0.18292 to 0.18280, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1136 - mse: 0.0194 - rmse: 0.1525 - mae: 0.0797 - mape: 2062066.6250 - msle: 0.0090 - val_loss: 0.1828 - val_mse: 0.0887 - val_rmse: 0.2977 - val_mae: 0.1758 - val_mape: 1582339.1250 - val_msle: 0.0355 - lr: 3.7500e-06 - 41ms/epoch - 8ms/step
+Epoch 51/500
+
+Epoch 51: val_loss improved from 0.18280 to 0.18273, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1136 - mse: 0.0195 - rmse: 0.1560 - mae: 0.0797 - mape: 2120702.2500 - msle: 0.0090 - val_loss: 0.1827 - val_mse: 0.0886 - val_rmse: 0.2976 - val_mae: 0.1760 - val_mape: 1582409.8750 - val_msle: 0.0356 - lr: 3.7500e-06 - 50ms/epoch - 10ms/step
+Epoch 52/500
+
+Epoch 52: val_loss improved from 0.18273 to 0.18261, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1125 - mse: 0.0184 - rmse: 0.1193 - mae: 0.0766 - mape: 2098085.5000 - msle: 0.0085 - val_loss: 0.1826 - val_mse: 0.0885 - val_rmse: 0.2975 - val_mae: 0.1760 - val_mape: 1599787.6250 - val_msle: 0.0356 - lr: 3.7500e-06 - 50ms/epoch - 10ms/step
+Epoch 53/500
+
+Epoch 53: val_loss improved from 0.18261 to 0.18248, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1128 - mse: 0.0186 - rmse: 0.1337 - mae: 0.0791 - mape: 2088638.2500 - msle: 0.0086 - val_loss: 0.1825 - val_mse: 0.0884 - val_rmse: 0.2973 - val_mae: 0.1762 - val_mape: 1571145.2500 - val_msle: 0.0356 - lr: 3.7500e-06 - 50ms/epoch - 10ms/step
+Epoch 54/500
+
+Epoch 54: val_loss improved from 0.18248 to 0.18235, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1135 - mse: 0.0194 - rmse: 0.1601 - mae: 0.0800 - mape: 2162967.0000 - msle: 0.0089 - val_loss: 0.1824 - val_mse: 0.0882 - val_rmse: 0.2970 - val_mae: 0.1762 - val_mape: 1562833.6250 - val_msle: 0.0356 - lr: 3.7500e-06 - 50ms/epoch - 10ms/step
+Epoch 55/500
+
+Epoch 55: val_loss did not improve from 0.18235
+5/5 - 0s - loss: 0.1142 - mse: 0.0201 - rmse: 0.1254 - mae: 0.0807 - mape: 2586446.0000 - msle: 0.0092 - val_loss: 0.1824 - val_mse: 0.0883 - val_rmse: 0.2971 - val_mae: 0.1759 - val_mape: 1589197.1250 - val_msle: 0.0355 - lr: 3.7500e-06 - 30ms/epoch - 6ms/step
+Epoch 56/500
+
+Epoch 56: val_loss improved from 0.18235 to 0.18231, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1131 - mse: 0.0190 - rmse: 0.1300 - mae: 0.0789 - mape: 2076951.7500 - msle: 0.0088 - val_loss: 0.1823 - val_mse: 0.0882 - val_rmse: 0.2970 - val_mae: 0.1759 - val_mape: 1562142.5000 - val_msle: 0.0355 - lr: 3.7500e-06 - 60ms/epoch - 12ms/step
+Epoch 57/500
+
+Epoch 57: val_loss improved from 0.18231 to 0.18219, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1136 - mse: 0.0195 - rmse: 0.1394 - mae: 0.0798 - mape: 2281762.5000 - msle: 0.0090 - val_loss: 0.1822 - val_mse: 0.0881 - val_rmse: 0.2968 - val_mae: 0.1759 - val_mape: 1507875.7500 - val_msle: 0.0356 - lr: 3.7500e-06 - 55ms/epoch - 11ms/step
+Epoch 58/500
+
+Epoch 58: val_loss improved from 0.18219 to 0.18214, saving model to D:\HoChePing\北科大_碩班_AI學程\期刊研究\使用LSTM模型預測福壽雞隻重量\Code程式碼\LSTM_TransferLearning_SolarEnergy\reports\r2\R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01\checkpoints\best_model.hdf5
+5/5 - 0s - loss: 0.1128 - mse: 0.0187 - rmse: 0.1226 - mae: 0.0783 - mape: 2050751.5000 - msle: 0.0086 - val_loss: 0.1821 - val_mse: 0.0880 - val_rmse: 0.2967 - val_mae: 0.1759 - val_mape: 1508347.5000 - val_msle: 0.0355 - lr: 3.7500e-06 - 50ms/epoch - 10ms/step
+Epoch 59/500
+
+Epoch 59: val_loss did not improve from 0.18214
+5/5 - 0s - loss: 0.1148 - mse: 0.0207 - rmse: 0.1949 - mae: 0.0817 - mape: 2115215.0000 - msle: 0.0095 - val_loss: 0.1821 - val_mse: 0.0881 - val_rmse: 0.2967 - val_mae: 0.1763 - val_mape: 1437056.7500 - val_msle: 0.0356 - lr: 3.7500e-06 - 28ms/epoch - 6ms/step
+Epoch 60/500
+
+Epoch 60: val_loss did not improve from 0.18214
+5/5 - 0s - loss: 0.1133 - mse: 0.0192 - rmse: 0.1317 - mae: 0.0802 - mape: 2111087.7500 - msle: 0.0089 - val_loss: 0.1823 - val_mse: 0.0882 - val_rmse: 0.2970 - val_mae: 0.1762 - val_mape: 1427533.6250 - val_msle: 0.0356 - lr: 3.7500e-06 - 40ms/epoch - 8ms/step
+Epoch 61/500
+
+Epoch 61: ReduceLROnPlateau reducing learning rate to 1.874999952633516e-06.
+
+Epoch 61: val_loss did not improve from 0.18214
+5/5 - 0s - loss: 0.1134 - mse: 0.0193 - rmse: 0.1740 - mae: 0.0787 - mape: 2127336.2500 - msle: 0.0090 - val_loss: 0.1823 - val_mse: 0.0882 - val_rmse: 0.2971 - val_mae: 0.1766 - val_mape: 1367669.2500 - val_msle: 0.0357 - lr: 3.7500e-06 - 30ms/epoch - 6ms/step
+Epoch 62/500
+
+Epoch 62: val_loss did not improve from 0.18214
+5/5 - 0s - loss: 0.1133 - mse: 0.0193 - rmse: 0.1331 - mae: 0.0796 - mape: 2111898.0000 - msle: 0.0089 - val_loss: 0.1824 - val_mse: 0.0883 - val_rmse: 0.2971 - val_mae: 0.1763 - val_mape: 1383851.0000 - val_msle: 0.0357 - lr: 1.8750e-06 - 32ms/epoch - 6ms/step
+Epoch 63/500
+
+Epoch 63: val_loss did not improve from 0.18214
+5/5 - 0s - loss: 0.1129 - mse: 0.0189 - rmse: 0.1166 - mae: 0.0785 - mape: 2087341.3750 - msle: 0.0087 - val_loss: 0.1823 - val_mse: 0.0882 - val_rmse: 0.2970 - val_mae: 0.1764 - val_mape: 1365124.8750 - val_msle: 0.0357 - lr: 1.8750e-06 - 30ms/epoch - 6ms/step
+Epoch 64/500
+
+Epoch 64: val_loss did not improve from 0.18214
+5/5 - 0s - loss: 0.1140 - mse: 0.0199 - rmse: 0.1299 - mae: 0.0811 - mape: 2200938.0000 - msle: 0.0093 - val_loss: 0.1823 - val_mse: 0.0882 - val_rmse: 0.2971 - val_mae: 0.1761 - val_mape: 1393967.7500 - val_msle: 0.0356 - lr: 1.8750e-06 - 30ms/epoch - 6ms/step
+Epoch 65/500
+
+Epoch 65: ReduceLROnPlateau reducing learning rate to 9.37499976316758e-07.
+
+Epoch 65: val_loss did not improve from 0.18214
+5/5 - 0s - loss: 0.1135 - mse: 0.0194 - rmse: 0.1658 - mae: 0.0790 - mape: 2169130.2500 - msle: 0.0089 - val_loss: 0.1823 - val_mse: 0.0882 - val_rmse: 0.2970 - val_mae: 0.1761 - val_mape: 1395628.5000 - val_msle: 0.0356 - lr: 1.8750e-06 - 30ms/epoch - 6ms/step
+Epoch 66/500
+
+Epoch 66: val_loss did not improve from 0.18214
+5/5 - 0s - loss: 0.1133 - mse: 0.0192 - rmse: 0.1354 - mae: 0.0794 - mape: 2158565.2500 - msle: 0.0088 - val_loss: 0.1822 - val_mse: 0.0882 - val_rmse: 0.2970 - val_mae: 0.1761 - val_mape: 1386171.6250 - val_msle: 0.0356 - lr: 9.3750e-07 - 30ms/epoch - 6ms/step
+Epoch 67/500
+
+Epoch 67: val_loss did not improve from 0.18214
+5/5 - 0s - loss: 0.1135 - mse: 0.0194 - rmse: 0.1241 - mae: 0.0792 - mape: 2086427.5000 - msle: 0.0089 - val_loss: 0.1822 - val_mse: 0.0882 - val_rmse: 0.2970 - val_mae: 0.1761 - val_mape: 1391356.7500 - val_msle: 0.0356 - lr: 9.3750e-07 - 30ms/epoch - 6ms/step
+Epoch 68/500
+
+Epoch 68: val_loss did not improve from 0.18214
+Restoring model weights from the end of the best epoch: 58.
+5/5 - 0s - loss: 0.1130 - mse: 0.0190 - rmse: 0.1364 - mae: 0.0790 - mape: 2068950.0000 - msle: 0.0088 - val_loss: 0.1822 - val_mse: 0.0881 - val_rmse: 0.2969 - val_mae: 0.1761 - val_mape: 1396506.7500 - val_msle: 0.0356 - lr: 9.3750e-07 - 38ms/epoch - 8ms/step
+Epoch 68: early stopping

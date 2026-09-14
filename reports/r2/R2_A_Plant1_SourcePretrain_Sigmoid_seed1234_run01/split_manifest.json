@@ -1,0 +1,46 @@
+{
+  "plant": "Plant1",
+  "profile": "source",
+  "frequency": "15min",
+  "feature_columns": [
+    "TIME_SIN",
+    "TIME_COS",
+    "IRRADIATION",
+    "AMBIENT_TEMPERATURE",
+    "MODULE_TEMPERATURE"
+  ],
+  "target_column": "DC_POWER",
+  "splits": {
+    "training": {
+      "rows": 2088,
+      "start_time": "2020-05-15T00:00:00",
+      "end_time": "2020-06-05T17:45:00",
+      "nan_total_original": 0,
+      "nan_total_normalized": 0,
+      "original_scale_file": "original_scale_training.csv",
+      "normalized_scale_file": "normalized_scale_training.csv"
+    },
+    "validation": {
+      "rows": 523,
+      "start_time": "2020-06-05T18:00:00",
+      "end_time": "2020-06-11T04:30:00",
+      "nan_total_original": 0,
+      "nan_total_normalized": 0,
+      "original_scale_file": "original_scale_validation.csv",
+      "normalized_scale_file": "normalized_scale_validation.csv"
+    },
+    "test": {
+      "rows": 653,
+      "start_time": "2020-06-11T04:45:00",
+      "end_time": "2020-06-17T23:45:00",
+      "nan_total_original": 0,
+      "nan_total_normalized": 0,
+      "original_scale_file": "original_scale_test.csv",
+      "normalized_scale_file": "normalized_scale_test.csv"
+    }
+  },
+  "export_root": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\PersonalNote\\DataSet_For_TransferLearning\\★★ Solar Power Generation Data ★★\\preprocessed_profiles_corrected_r1",
+  "profile_directory": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\PersonalNote\\DataSet_For_TransferLearning\\★★ Solar Power Generation Data ★★\\preprocessed_profiles_corrected_r1\\plant1\\source_profile",
+  "date_time_index_saved": true,
+  "date_time_index_label": "DATE_TIME"
+}

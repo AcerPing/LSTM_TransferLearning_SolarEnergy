@@ -1,0 +1,123 @@
+{
+  "run_id": "R2_B_Plant2_SourcePretrain_Sigmoid_seed1234_run01",
+  "experiment": "B",
+  "source": "Plant2/source_profile",
+  "source_plant": "Plant2",
+  "source_profile": "source_profile",
+  "status": "complete",
+  "started_at_utc": "2026-09-01T07:32:28.418159+00:00",
+  "run_directory": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\LSTM_TransferLearning_SolarEnergy\\reports\\r2\\R2_B_Plant2_SourcePretrain_Sigmoid_seed1234_run01",
+  "allow_overwrite": false,
+  "git": {
+    "commit": "84300460725ea682d9243a9a945bb0817a47c100",
+    "dirty": true,
+    "dirty_status": "dirty",
+    "status_porcelain": [
+      "M main.py",
+      " M utils/data_io.py",
+      " M utils/model.py",
+      "?? notebook/修改紀錄/",
+      "?? notebook/執行紀錄/",
+      "?? r2_config/corrected_r1.py",
+      "?? r2_helpers/r2_source_pretraining.py",
+      "?? r2_helpers/r2_transfer_learning.py",
+      "?? \"reports/Solar Energy Result/Linear_Formal/\"",
+      "?? \"reports/Solar Energy Result/Linear_Supplementary/Experiment_B2/20260822T120239Z_seed1234/baseline/\"",
+      "?? \"reports/Solar Energy Result/Linear_Supplementary/Experiment_B2/20260822T120239Z_seed1234/candidates/\"",
+      "?? \"reports/Solar Energy Result/Linear_Supplementary/Experiment_B2/20260822T120239Z_seed1234/run_manifest.json\"",
+      "?? \"reports/Solar Energy Result/Linear_Supplementary/Experiment_B2/20260822T120239Z_seed1234/summary/comparison.json\"",
+      "?? \"reports/Solar Energy Result/Linear_Supplementary/Experiment_B2/20260822T120239Z_seed1234/summary/results_summary.json\"",
+      "?? \"reports/Solar Energy Result/Linear_Supplementary/Experiment_B2/20260822T120239Z_seed1234/summary/validation_registry.json\"",
+      "?? \"reports/Solar Energy Result/Linear_Supplementary/Experiment_B2/20260822T120239Z_seed1234/test_reuse_disclosure.json\"",
+      "?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/\"",
+      "?? reports/r2/"
+    ]
+  },
+  "core_code_sha256": {
+    "main.py": {
+      "source_path": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\LSTM_TransferLearning_SolarEnergy\\main.py",
+      "sha256": "b3d895dc32526055e1bd69cfa068e03173cf4f47a762232a77431880623c9194"
+    },
+    "utils/data_io.py": {
+      "source_path": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\LSTM_TransferLearning_SolarEnergy\\utils\\data_io.py",
+      "sha256": "bcef7f0aa729b3f95e25eb6806c0a30a690610b4cb6c4c4834b2f20f69bc2126"
+    },
+    "utils/model.py": {
+      "source_path": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\LSTM_TransferLearning_SolarEnergy\\utils\\model.py",
+      "sha256": "01b2de66cdcb9a8e98a037dbc21f12614ea0c01b722dad1a44575cfd1b09e339"
+    },
+    "r2_config/corrected_r1.py": {
+      "source_path": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\LSTM_TransferLearning_SolarEnergy\\r2_config\\corrected_r1.py",
+      "sha256": "d5ac5f83202482b5624cb02fdbd495b0a22f7928c4f5b9a94e9efbedddc2da24"
+    },
+    "r2_helpers/r2_source_pretraining.py": {
+      "source_path": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\LSTM_TransferLearning_SolarEnergy\\r2_helpers\\r2_source_pretraining.py",
+      "sha256": "48c32f313c38262c756a8c1beda1cc7e1deba2b46b3c30b46a78cad41e4cc8c6"
+    }
+  },
+  "source_data_evidence": {
+    "experiment": "B",
+    "source_plant": "Plant2",
+    "source_profile": "source_profile",
+    "source_profile_directory": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\PersonalNote\\DataSet_For_TransferLearning\\★★ Solar Power Generation Data ★★\\preprocessed_profiles_corrected_r1\\plant2\\source_profile",
+    "artifacts": {
+      "split_manifest.json": {
+        "source_path": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\PersonalNote\\DataSet_For_TransferLearning\\★★ Solar Power Generation Data ★★\\preprocessed_profiles_corrected_r1\\plant2\\source_profile\\split_manifest.json",
+        "run_artifact": "split_manifest.json",
+        "sha256": "e88dc6398803ef9c2846ee1a2fd7249cdcebf11476fa46671aaf2045bdea098f",
+        "snapshot_path": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\LSTM_TransferLearning_SolarEnergy\\reports\\r2\\R2_B_Plant2_SourcePretrain_Sigmoid_seed1234_run01\\split_manifest.json",
+        "snapshot_sha256": "e88dc6398803ef9c2846ee1a2fd7249cdcebf11476fa46671aaf2045bdea098f"
+      },
+      "scaler_manifest.json": {
+        "source_path": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\PersonalNote\\DataSet_For_TransferLearning\\★★ Solar Power Generation Data ★★\\preprocessed_profiles_corrected_r1\\plant2\\source_profile\\scaler_manifest.json",
+        "run_artifact": "scaler_manifest.json",
+        "sha256": "35f13bb3d0eeaab60a667d21805a39baf0ed7df39e047e7ac0b4d4dc1acb6f17",
+        "snapshot_path": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\LSTM_TransferLearning_SolarEnergy\\reports\\r2\\R2_B_Plant2_SourcePretrain_Sigmoid_seed1234_run01\\scaler_manifest.json",
+        "snapshot_sha256": "35f13bb3d0eeaab60a667d21805a39baf0ed7df39e047e7ac0b4d4dc1acb6f17"
+      },
+      "feature_scaler.joblib": {
+        "source_path": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\PersonalNote\\DataSet_For_TransferLearning\\★★ Solar Power Generation Data ★★\\preprocessed_profiles_corrected_r1\\plant2\\source_profile\\feature_scaler.joblib",
+        "run_artifact": "feature_scaler.joblib",
+        "sha256": "d77a2b9d0636d97b0a9f192cd6c4fa213cd117982d53c188e24bf03560a31fad",
+        "snapshot_path": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\LSTM_TransferLearning_SolarEnergy\\reports\\r2\\R2_B_Plant2_SourcePretrain_Sigmoid_seed1234_run01\\feature_scaler.joblib",
+        "snapshot_sha256": "d77a2b9d0636d97b0a9f192cd6c4fa213cd117982d53c188e24bf03560a31fad"
+      },
+      "target_scaler.joblib": {
+        "source_path": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\PersonalNote\\DataSet_For_TransferLearning\\★★ Solar Power Generation Data ★★\\preprocessed_profiles_corrected_r1\\plant2\\source_profile\\target_scaler.joblib",
+        "run_artifact": "target_scaler.joblib",
+        "sha256": "253cb4e4523caab428c8c3e81081fabe44ab83d174392bf1d3b66f139eba60f1",
+        "snapshot_path": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\LSTM_TransferLearning_SolarEnergy\\reports\\r2\\R2_B_Plant2_SourcePretrain_Sigmoid_seed1234_run01\\target_scaler.joblib",
+        "snapshot_sha256": "253cb4e4523caab428c8c3e81081fabe44ab83d174392bf1d3b66f139eba60f1"
+      }
+    },
+    "scalers_refit": false,
+    "snapshot_method": "exclusive-byte-copy"
+  },
+  "selection_split": "validation",
+  "source_test_used_for_selection": false,
+  "source_test_evaluation_stage": "after-best-checkpoint-fixed",
+  "planned_outputs": [
+    "run_manifest.json",
+    "params.json",
+    "environment.json",
+    "git_commit.txt",
+    "split_manifest.json",
+    "scaler_manifest.json",
+    "feature_scaler.joblib",
+    "target_scaler.joblib",
+    "epoch_log.csv",
+    "training_log.txt",
+    "checkpoints/best_model.hdf5",
+    "architecture.png",
+    "learning_curve.png",
+    "predictions_normalized.csv",
+    "predictions_original_scale.csv",
+    "metrics_normalized.json",
+    "metrics_original_scale.json"
+  ],
+  "completed_at_utc": "2026-09-01T07:33:24.791240+00:00",
+  "executed_epochs": 438,
+  "best_checkpoint": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\LSTM_TransferLearning_SolarEnergy\\reports\\r2\\R2_B_Plant2_SourcePretrain_Sigmoid_seed1234_run01\\checkpoints\\best_model.hdf5",
+  "source_test_metrics_role": "checkpoint-diagnostic-only",
+  "evidence_package_complete": true
+}

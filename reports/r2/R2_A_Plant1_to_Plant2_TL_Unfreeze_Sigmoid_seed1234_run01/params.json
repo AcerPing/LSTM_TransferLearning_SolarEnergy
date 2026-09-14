@@ -1,0 +1,80 @@
+{
+  "experiment": "A",
+  "source": "Plant1/source_profile",
+  "target": "Plant2/target_profile",
+  "source_run_id": "R2_A_Plant1_SourcePretrain_Sigmoid_seed1234_run01",
+  "source_checkpoint": "checkpoints/best_model.hdf5",
+  "source_checkpoint_sha256": "8aa299e09c58c2ce77473ba317bdaf9fe374310a453b61718b605022356ad6aa",
+  "input_shape": [
+    5,
+    5
+  ],
+  "total_params": 46681,
+  "output_activation": "sigmoid",
+  "optimizer": "Adam",
+  "learning_rate": 3e-05,
+  "loss": "mse",
+  "maximum_epochs": 500,
+  "seed": 1234,
+  "device": "/CPU:0",
+  "training_shuffle": true,
+  "validation_shuffle": false,
+  "transfer_layer_indices": [
+    2,
+    3,
+    4,
+    5
+  ],
+  "freeze": {
+    "batch_size": 64,
+    "trainable_params": 121,
+    "non_trainable_params": 46560
+  },
+  "unfreeze": {
+    "batch_size": 128,
+    "trainable_params": 46441,
+    "non_trainable_params": 240
+  },
+  "planned_run_ids": {
+    "freeze": "R2_A_Plant1_to_Plant2_TL_Freeze_Sigmoid_seed1234_run01",
+    "unfreeze": "R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01"
+  },
+  "allow_overwrite": false,
+  "run_id": "R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01",
+  "mode": "TL Unfreeze",
+  "batch_size": 128,
+  "trainable_params": 46441,
+  "non_trainable_params": 240,
+  "callbacks": {
+    "ReduceLROnPlateau": {
+      "monitor": "val_loss",
+      "factor": 0.5,
+      "patience": 4,
+      "min_lr": 1e-07
+    },
+    "ModelCheckpoint": {
+      "monitor": "val_loss",
+      "save_best_only": true
+    },
+    "EarlyStopping": {
+      "monitor": "val_loss",
+      "patience": 10,
+      "restore_best_weights": true
+    },
+    "CSVLogger": {
+      "filename": "epoch_log.csv"
+    }
+  },
+  "training_sequences": 516,
+  "validation_sequences": 126,
+  "test_sequences": 2607,
+  "metric_units": {
+    "target": "kW",
+    "MAE": "kW",
+    "MSE": "kW^2",
+    "RMSE": "kW",
+    "R2": "unitless"
+  },
+  "unfreeze_initialized_from_source": true,
+  "unfreeze_initialized_from_freeze": false
+}
