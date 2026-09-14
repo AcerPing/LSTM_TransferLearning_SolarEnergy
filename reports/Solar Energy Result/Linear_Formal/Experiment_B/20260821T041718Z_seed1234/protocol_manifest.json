@@ -1,0 +1,197 @@
+{
+  "activation": "linear",
+  "batch_size": 128,
+  "bn_frozen": true,
+  "callback_policy": {
+    "checkpoint": {
+      "monitor": "val_loss",
+      "save_best_only": true,
+      "save_weights_only": false
+    },
+    "early_stopping": {
+      "min_delta": 0.0,
+      "monitor": "val_loss",
+      "patience": 50,
+      "restore_best_weights": false
+    },
+    "maximum_epochs": 500,
+    "reduce_lr": {
+      "cooldown": 0,
+      "factor": 0.1,
+      "min_lr": 1e-07,
+      "monitor": "val_loss",
+      "patience": 20
+    },
+    "terminate_on_nan": true
+  },
+  "candidate_registry": {
+    "partial_ft": [
+      "PFT_lr1e-5",
+      "PFT_lr3e-5"
+    ],
+    "source": [
+      "SRC_lr1e-4",
+      "SRC_lr3e-5"
+    ],
+    "wotl": [
+      "WOTL_lr1e-4",
+      "WOTL_lr3e-5"
+    ]
+  },
+  "checkpoint_locked": true,
+  "config_locked": true,
+  "device_policy": {
+    "cuda_visible_devices": "-1",
+    "deterministic_ops": true,
+    "device": "CPU",
+    "priority": "reproducibility_over_speed",
+    "require_pythonhashseed_before_start": true,
+    "seed": 1234
+  },
+  "direction": "Plant2_to_Plant1",
+  "dry_run": false,
+  "environment": {
+    "keras": "2.10.0",
+    "numpy": "1.23.5",
+    "python": "3.10.11",
+    "tensorflow": "2.10.0"
+  },
+  "experiment_id": "B",
+  "feature_scaler_provenance": {
+    "source": {
+      "fit_row_count": 2088,
+      "fit_split": "training",
+      "path": "D:\\HoChePing\\\u5317\u79d1\u5927_\u78a9\u73ed_AI\u5b78\u7a0b\\\u671f\u520a\u7814\u7a76\\\u4f7f\u7528LSTM\u6a21\u578b\u9810\u6e2c\u798f\u58fd\u96de\u96bb\u91cd\u91cf\\Code\u7a0b\u5f0f\u78bc\\PersonalNote\\DataSet_For_TransferLearning\\\u2605\u2605 Solar Power Generation Data \u2605\u2605\\preprocessed_profiles_corrected_r1\\plant2\\source_profile\\feature_scaler.joblib"
+    },
+    "target": {
+      "fit_row_count": 521,
+      "fit_split": "training",
+      "path": "D:\\HoChePing\\\u5317\u79d1\u5927_\u78a9\u73ed_AI\u5b78\u7a0b\\\u671f\u520a\u7814\u7a76\\\u4f7f\u7528LSTM\u6a21\u578b\u9810\u6e2c\u798f\u58fd\u96de\u96bb\u91cd\u91cf\\Code\u7a0b\u5f0f\u78bc\\PersonalNote\\DataSet_For_TransferLearning\\\u2605\u2605 Solar Power Generation Data \u2605\u2605\\preprocessed_profiles_corrected_r1\\plant1\\target_profile\\feature_scaler.joblib"
+    }
+  },
+  "feature_scaler_sha256": {
+    "source": "d77a2b9d0636d97b0a9f192cd6c4fa213cd117982d53c188e24bf03560a31fad",
+    "target": "af39898772c40a7e44f148ca7f549d646743e9a49f782c4f18a54992aa43cb6b"
+  },
+  "features": [
+    "TIME_SIN",
+    "TIME_COS",
+    "IRRADIATION",
+    "AMBIENT_TEMPERATURE",
+    "MODULE_TEMPERATURE"
+  ],
+  "formal_eligible": true,
+  "formal_paths": {
+    "final": "D:\\HoChePing\\\u5317\u79d1\u5927_\u78a9\u73ed_AI\u5b78\u7a0b\\\u671f\u520a\u7814\u7a76\\\u4f7f\u7528LSTM\u6a21\u578b\u9810\u6e2c\u798f\u58fd\u96de\u96bb\u91cd\u91cf\\Code\u7a0b\u5f0f\u78bc\\LSTM_TransferLearning_SolarEnergy\\reports\\Solar Energy Result\\Linear_Formal\\Experiment_B\\20260821T041718Z_seed1234\\final",
+    "protocol_manifest": "D:\\HoChePing\\\u5317\u79d1\u5927_\u78a9\u73ed_AI\u5b78\u7a0b\\\u671f\u520a\u7814\u7a76\\\u4f7f\u7528LSTM\u6a21\u578b\u9810\u6e2c\u798f\u58fd\u96de\u96bb\u91cd\u91cf\\Code\u7a0b\u5f0f\u78bc\\LSTM_TransferLearning_SolarEnergy\\reports\\Solar Energy Result\\Linear_Formal\\Experiment_B\\20260821T041718Z_seed1234\\protocol_manifest.json",
+    "run_root": "D:\\HoChePing\\\u5317\u79d1\u5927_\u78a9\u73ed_AI\u5b78\u7a0b\\\u671f\u520a\u7814\u7a76\\\u4f7f\u7528LSTM\u6a21\u578b\u9810\u6e2c\u798f\u58fd\u96de\u96bb\u91cd\u91cf\\Code\u7a0b\u5f0f\u78bc\\LSTM_TransferLearning_SolarEnergy\\reports\\Solar Energy Result\\Linear_Formal\\Experiment_B\\20260821T041718Z_seed1234",
+    "selection": "D:\\HoChePing\\\u5317\u79d1\u5927_\u78a9\u73ed_AI\u5b78\u7a0b\\\u671f\u520a\u7814\u7a76\\\u4f7f\u7528LSTM\u6a21\u578b\u9810\u6e2c\u798f\u58fd\u96de\u96bb\u91cd\u91cf\\Code\u7a0b\u5f0f\u78bc\\LSTM_TransferLearning_SolarEnergy\\reports\\Solar Energy Result\\Linear_Formal\\Experiment_B\\20260821T041718Z_seed1234\\selection"
+  },
+  "frequency": "15min",
+  "frozen_layers": [
+    2,
+    3,
+    5
+  ],
+  "git": {
+    "branch": "AcerPing",
+    "dirty": false,
+    "head": "ec6e881cf95f03bedd81adff10e55151a8b26ff5"
+  },
+  "historical_target_test_previously_revealed": false,
+  "horizon": 1,
+  "known_untracked_paths": [
+    "notebook/\u4fee\u6539\u7d00\u9304/README_Solar_v1_20260817.md",
+    "notebook/\u57f7\u884c\u7d00\u9304/20260814\u57f7\u884c\u8cc7\u6599\u7d00\u9304.txt",
+    "notebook/\u57f7\u884c\u7d00\u9304/\u87a2\u5e55\u64f7\u53d6\u756b\u9762 2026-08-14 154501.png",
+    "notebook/\u57f7\u884c\u7d00\u9304/\u87a2\u5e55\u64f7\u53d6\u756b\u9762 2026-08-15 153459.png",
+    "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/run_manifest.json"
+  ],
+  "known_untracked_present": true,
+  "learning_rate_candidates": {
+    "partial_ft": [
+      1e-05,
+      3e-05
+    ],
+    "source": [
+      0.0001,
+      3e-05
+    ],
+    "wotl": [
+      0.0001,
+      3e-05
+    ]
+  },
+  "loss": "mse",
+  "optimizer": "Adam",
+  "partial_ft_strategy_id": "partial_target_adapters_last_lstm",
+  "post_test_tuning_allowed": false,
+  "protocol_stage": "selection_locked_awaiting_test_authorization",
+  "protocol_version": "solar-linear-v1.0",
+  "run_id": "20260821T041718Z_seed1234",
+  "seed": 1234,
+  "selection_locked": true,
+  "source_plant": "Plant2",
+  "source_profile_path": "D:\\HoChePing\\\u5317\u79d1\u5927_\u78a9\u73ed_AI\u5b78\u7a0b\\\u671f\u520a\u7814\u7a76\\\u4f7f\u7528LSTM\u6a21\u578b\u9810\u6e2c\u798f\u58fd\u96de\u96bb\u91cd\u91cf\\Code\u7a0b\u5f0f\u78bc\\PersonalNote\\DataSet_For_TransferLearning\\\u2605\u2605 Solar Power Generation Data \u2605\u2605\\preprocessed_profiles_corrected_r1\\plant2\\source_profile",
+  "target": "DC_POWER",
+  "target_plant": "Plant1",
+  "target_profile_path": "D:\\HoChePing\\\u5317\u79d1\u5927_\u78a9\u73ed_AI\u5b78\u7a0b\\\u671f\u520a\u7814\u7a76\\\u4f7f\u7528LSTM\u6a21\u578b\u9810\u6e2c\u798f\u58fd\u96de\u96bb\u91cd\u91cf\\Code\u7a0b\u5f0f\u78bc\\PersonalNote\\DataSet_For_TransferLearning\\\u2605\u2605 Solar Power Generation Data \u2605\u2605\\preprocessed_profiles_corrected_r1\\plant1\\target_profile",
+  "target_protocol_fingerprint": "25a94026a2518dd6b016f02afb36f405d2dc8e2ee92c5c2a260b2582791c5a61",
+  "target_scaler_provenance": {
+    "source": {
+      "fit_row_count": 2088,
+      "fit_split": "training",
+      "path": "D:\\HoChePing\\\u5317\u79d1\u5927_\u78a9\u73ed_AI\u5b78\u7a0b\\\u671f\u520a\u7814\u7a76\\\u4f7f\u7528LSTM\u6a21\u578b\u9810\u6e2c\u798f\u58fd\u96de\u96bb\u91cd\u91cf\\Code\u7a0b\u5f0f\u78bc\\PersonalNote\\DataSet_For_TransferLearning\\\u2605\u2605 Solar Power Generation Data \u2605\u2605\\preprocessed_profiles_corrected_r1\\plant2\\source_profile\\target_scaler.joblib"
+    },
+    "target": {
+      "fit_row_count": 521,
+      "fit_split": "training",
+      "path": "D:\\HoChePing\\\u5317\u79d1\u5927_\u78a9\u73ed_AI\u5b78\u7a0b\\\u671f\u520a\u7814\u7a76\\\u4f7f\u7528LSTM\u6a21\u578b\u9810\u6e2c\u798f\u58fd\u96de\u96bb\u91cd\u91cf\\Code\u7a0b\u5f0f\u78bc\\PersonalNote\\DataSet_For_TransferLearning\\\u2605\u2605 Solar Power Generation Data \u2605\u2605\\preprocessed_profiles_corrected_r1\\plant1\\target_profile\\target_scaler.joblib"
+    }
+  },
+  "target_scaler_sha256": {
+    "source": "253cb4e4523caab428c8c3e81081fabe44ab83d174392bf1d3b66f139eba60f1",
+    "target": "8db443f4308504fac107eb2835f048ddd6c7c2b6851838391aebc8ac01bccc6b"
+  },
+  "test_accessed": false,
+  "test_authorized": false,
+  "test_metrics_used_for_selection": false,
+  "test_rows": {
+    "source": 653,
+    "target": 2612
+  },
+  "test_sequences": {
+    "source": 648,
+    "target": 2607
+  },
+  "tracked_dirty": false,
+  "trainable_layers": [
+    1,
+    4,
+    6
+  ],
+  "training_rows": {
+    "source": 2088,
+    "target": 521
+  },
+  "training_sequences": {
+    "source": 2083,
+    "target": 516
+  },
+  "transferred_layers": [
+    2,
+    3,
+    4,
+    5
+  ],
+  "unknown_untracked_paths": [],
+  "validation_rows": {
+    "source": 523,
+    "target": 131
+  },
+  "validation_sequences": {
+    "source": 518,
+    "target": 126
+  },
+  "window": 5
+}

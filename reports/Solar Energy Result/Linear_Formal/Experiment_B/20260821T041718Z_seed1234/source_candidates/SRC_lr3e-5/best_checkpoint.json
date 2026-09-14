@@ -1,0 +1,7 @@
+{
+  "best_epoch": 500,
+  "best_val_loss": 0.23417861759662628,
+  "path": "D:\\HoChePing\\\u5317\u79d1\u5927_\u78a9\u73ed_AI\u5b78\u7a0b\\\u671f\u520a\u7814\u7a76\\\u4f7f\u7528LSTM\u6a21\u578b\u9810\u6e2c\u798f\u58fd\u96de\u96bb\u91cd\u91cf\\Code\u7a0b\u5f0f\u78bc\\LSTM_TransferLearning_SolarEnergy\\reports\\Solar Energy Result\\Linear_Formal\\Experiment_B\\20260821T041718Z_seed1234\\source_candidates\\SRC_lr3e-5\\checkpoint_epoch_0500.hdf5",
+  "sha256": "cffe160492b581a8f3bf7cb87db1f06e83f6cc35609dc00099ff12103fa26e91",
+  "sha256_verified": true
+}

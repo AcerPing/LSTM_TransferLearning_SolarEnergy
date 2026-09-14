@@ -1,0 +1,24 @@
+{
+  "best_epoch": 16,
+  "candidate_id": "PFT_lr1e-5",
+  "checkpoint_sha256": "8aa1462cfb4addddb330b6d895d86b2a57114055d02b6e75b49dfeb94a0fb443",
+  "completed_epochs": 66,
+  "experiment_id": "B",
+  "git_head": "ec6e881cf95f03bedd81adff10e55151a8b26ff5",
+  "initial_learning_rate": 1e-05,
+  "lifecycle": "partial_ft",
+  "locked_source_checkpoint_sha256": "5cd3db4501d6c6720fbdd8ee3cce692b01cecb82619574f8c6944a8795182d91",
+  "partial_ft_state_audit": {
+    "bn3_unchanged": true,
+    "bn5_unchanged": true,
+    "layer1_changed": true,
+    "layer2_unchanged": true,
+    "layer4_changed": true,
+    "layer6_changed": true
+  },
+  "protocol_version": "solar-linear-v1.0",
+  "run_id": "20260821T041718Z_seed1234",
+  "test_accessed": false,
+  "test_metrics_used": false,
+  "validation_only": true
+}

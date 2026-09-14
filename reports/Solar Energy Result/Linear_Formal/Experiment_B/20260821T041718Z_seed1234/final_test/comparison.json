@@ -1,0 +1,36 @@
+{
+  "classification": "Negative Transfer",
+  "execution_git_head": "0e31520644836368f460ce1c740de4ed14318068",
+  "experiment_id": "B",
+  "metrics_scale": "original",
+  "partial_ft_candidate_id": "PFT_lr3e-5",
+  "partial_ft_metrics_original_scale": {
+    "mae": 36009.4171478381,
+    "mse": 2149426000.90803,
+    "negative_prediction_count": 782,
+    "prediction_count": 2607,
+    "r2": 0.7234060385816001,
+    "rmse": 46361.90247291444,
+    "scale": "original",
+    "target_name": "DC_POWER",
+    "unit": "DC_POWER (raw dataset scale; documented unit: kW)"
+  },
+  "post_test_tuning_allowed": false,
+  "run_id": "20260821T041718Z_seed1234",
+  "selection_git_head": "ec6e881cf95f03bedd81adff10e55151a8b26ff5",
+  "state": "TEST_COMPLETED",
+  "target_name": "DC_POWER",
+  "unit": "DC_POWER (raw dataset scale; documented unit: kW)",
+  "wotl_candidate_id": "WOTL_lr1e-4",
+  "wotl_metrics_original_scale": {
+    "mae": 28769.9078045441,
+    "mse": 1392464754.3387341,
+    "negative_prediction_count": 21,
+    "prediction_count": 2607,
+    "r2": 0.8208138626892281,
+    "rmse": 37315.744054470284,
+    "scale": "original",
+    "target_name": "DC_POWER",
+    "unit": "DC_POWER (raw dataset scale; documented unit: kW)"
+  }
+}

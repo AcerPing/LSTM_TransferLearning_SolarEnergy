@@ -1,0 +1,12 @@
+{
+  "normalized_loss": 0.04145192626207611,
+  "normalized_mae": 0.1540726375445285,
+  "normalized_r2": 0.6752385810436796,
+  "normalized_rmse": 0.20359746133504739,
+  "original_mae": 43611.569674397906,
+  "original_mse": 3321215978.992731,
+  "original_r2": 0.6752385810436796,
+  "original_rmse": 57629.9920093065,
+  "prediction_count": 126,
+  "unit": "DC_POWER (raw dataset scale; documented unit: kW)"
+}
