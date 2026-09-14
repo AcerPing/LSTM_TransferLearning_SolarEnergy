@@ -1,0 +1,11 @@
+{
+  "mae": 0.07876571324384506,
+  "mse": 0.012506662496720722,
+  "negative_prediction_count": 26,
+  "prediction_count": 126,
+  "r2": 0.9020146510643873,
+  "rmse": 0.11183319049692145,
+  "scale": "normalized",
+  "target_name": "DC_POWER",
+  "unit": "MinMaxScaler normalized scale"
+}

@@ -1,0 +1,73 @@
+{
+  "best_epoch": 500,
+  "best_val_loss": 0.11070908606052399,
+  "candidate_id": "B2-P3",
+  "checkpoint_path": "D:\\HoChePing\\\u5317\u79d1\u5927_\u78a9\u73ed_AI\u5b78\u7a0b\\\u671f\u520a\u7814\u7a76\\\u4f7f\u7528LSTM\u6a21\u578b\u9810\u6e2c\u798f\u58fd\u96de\u96bb\u91cd\u91cf\\Code\u7a0b\u5f0f\u78bc\\LSTM_TransferLearning_SolarEnergy\\reports\\Solar Energy Result\\Linear_Supplementary\\Experiment_B2\\20260822T120239Z_seed1234\\candidates\\B2-P3\\checkpoints\\checkpoint_epoch_0500.hdf5",
+  "checkpoint_sha256": "8dcb0cd2e8245062843ddf76ddc071921075855bf3dbaa8599590ec09ba6c513",
+  "checkpoint_sha256_verified": true,
+  "execution_git_head": "2148396d00a904f457ec5a64d6b80369303970ca",
+  "frozen_layer_indices": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "frozen_layer_names": [
+    "time_distributed_2",
+    "lstm_4",
+    "batch_normalization_4",
+    "lstm_5",
+    "batch_normalization_5"
+  ],
+  "learning_rate": 1e-05,
+  "run_root": "D:\\HoChePing\\\u5317\u79d1\u5927_\u78a9\u73ed_AI\u5b78\u7a0b\\\u671f\u520a\u7814\u7a76\\\u4f7f\u7528LSTM\u6a21\u578b\u9810\u6e2c\u798f\u58fd\u96de\u96bb\u91cd\u91cf\\Code\u7a0b\u5f0f\u78bc\\LSTM_TransferLearning_SolarEnergy\\reports\\Solar Energy Result\\Linear_Supplementary\\Experiment_B2\\20260822T120239Z_seed1234",
+  "selection_split": "validation",
+  "strategy": "Output Head Only",
+  "test_used_for_epoch_selection": false,
+  "total_params": 46681,
+  "trainable_layer_indices": [
+    6
+  ],
+  "trainable_layer_names": [
+    "dense_5"
+  ],
+  "trainable_params": 61,
+  "trainable_ratio": 0.0013067415008247466,
+  "transferred_layer_indices": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "transferred_layer_names": [
+    "time_distributed_2",
+    "lstm_4",
+    "batch_normalization_4",
+    "lstm_5",
+    "batch_normalization_5"
+  ],
+  "validation_metrics_normalized": {
+    "mae": 0.09969249119242425,
+    "mse": 0.020183353404387736,
+    "negative_prediction_count": 33,
+    "prediction_count": 126,
+    "r2": 0.8418704489276599,
+    "rmse": 0.14206812944636013,
+    "scale": "normalized",
+    "target_name": "DC_POWER",
+    "unit": "MinMaxScaler normalized scale"
+  },
+  "validation_metrics_original_scale": {
+    "mae": 28218.807018190826,
+    "mse": 1617132950.8910627,
+    "negative_prediction_count": 33,
+    "prediction_count": 126,
+    "r2": 0.8418704489276599,
+    "rmse": 40213.59161889252,
+    "scale": "original",
+    "target_name": "DC_POWER",
+    "unit": "DC_POWER (raw dataset scale; documented unit: kW)"
+  }
+}

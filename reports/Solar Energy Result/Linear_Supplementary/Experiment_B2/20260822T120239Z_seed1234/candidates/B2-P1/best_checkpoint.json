@@ -1,0 +1,10 @@
+{
+  "best_epoch": 500,
+  "best_val_loss": 0.096119724214077,
+  "checkpoint_path": "D:\\HoChePing\\\u5317\u79d1\u5927_\u78a9\u73ed_AI\u5b78\u7a0b\\\u671f\u520a\u7814\u7a76\\\u4f7f\u7528LSTM\u6a21\u578b\u9810\u6e2c\u798f\u58fd\u96de\u96bb\u91cd\u91cf\\Code\u7a0b\u5f0f\u78bc\\LSTM_TransferLearning_SolarEnergy\\reports\\Solar Energy Result\\Linear_Supplementary\\Experiment_B2\\20260822T120239Z_seed1234\\candidates\\B2-P1\\checkpoints\\checkpoint_epoch_0500.hdf5",
+  "checkpoint_sha256": "a666b15cdbc3af8cf25d79f3af2080f4869ac5658a2d15d0370033da20fbabf1",
+  "checkpoint_sha256_verified": true,
+  "execution_git_head": "2148396d00a904f457ec5a64d6b80369303970ca",
+  "selection_split": "validation",
+  "test_used_for_epoch_selection": false
+}

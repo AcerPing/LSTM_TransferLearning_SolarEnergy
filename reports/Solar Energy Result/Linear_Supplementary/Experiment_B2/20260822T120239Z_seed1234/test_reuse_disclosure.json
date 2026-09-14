@@ -1,0 +1,10 @@
+{
+  "experiment": "B2",
+  "formal_experiment_b_preserved": true,
+  "formal_final_test_replacement": false,
+  "original_plant1_test_previously_revealed": true,
+  "plant1_test_reused": true,
+  "post_test_supplementary_tuning": true,
+  "test_disk_load_count": 1,
+  "test_used_for_supplementary_comparison": true
+}

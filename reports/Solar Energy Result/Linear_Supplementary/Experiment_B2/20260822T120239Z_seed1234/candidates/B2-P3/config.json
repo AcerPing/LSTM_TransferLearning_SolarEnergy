@@ -1,0 +1,24 @@
+{
+  "batch_normalization_frozen": true,
+  "candidate_id": "B2-P3",
+  "expected_trainable_params": 61,
+  "frozen_indices": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "learning_rate": 1e-05,
+  "strategy": "Output Head Only",
+  "trainable_indices": [
+    6
+  ],
+  "transferred_indices": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ]
+}

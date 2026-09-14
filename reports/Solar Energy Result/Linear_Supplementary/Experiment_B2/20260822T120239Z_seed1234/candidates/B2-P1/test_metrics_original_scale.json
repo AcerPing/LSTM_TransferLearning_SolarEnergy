@@ -1,0 +1,11 @@
+{
+  "mae": 12964.014197236855,
+  "mse": 550250743.1285998,
+  "negative_prediction_count": 610,
+  "prediction_count": 2607,
+  "r2": 0.9291922435333609,
+  "rmse": 23457.424051429854,
+  "scale": "original",
+  "target_name": "DC_POWER",
+  "unit": "DC_POWER (raw dataset scale; documented unit: kW)"
+}
