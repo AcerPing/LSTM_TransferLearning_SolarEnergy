@@ -1,0 +1,14 @@
+reports/r2/R2_A_Plant1_SourcePretrain_Sigmoid_seed1234_run01/checkpoints/best_model.hdf5 filter=lfs diff=lfs merge=lfs -text
+reports/r2/R2_A_Plant1_to_Plant2_TL_Freeze_Sigmoid_seed1234_run01/checkpoints/best_model.hdf5 filter=lfs diff=lfs merge=lfs -text
+reports/r2/R2_A_Plant1_to_Plant2_TL_Unfreeze_Sigmoid_seed1234_run01/checkpoints/best_model.hdf5 filter=lfs diff=lfs merge=lfs -text
+reports/r2/R2_B_Plant2_SourcePretrain_Sigmoid_seed1234_run01/checkpoints/best_model.hdf5 filter=lfs diff=lfs merge=lfs -text
+reports/r2/R2_B_Plant2_to_Plant1_TL_Freeze_Sigmoid_seed1234_run01/checkpoints/best_model.hdf5 filter=lfs diff=lfs merge=lfs -text
+reports/r2/R2_B_Plant2_to_Plant1_TL_Unfreeze_Sigmoid_seed1234_run01/checkpoints/best_model.hdf5 filter=lfs diff=lfs merge=lfs -text
+"reports/Solar Energy Result/R2/Experiment_A/20260814T150304Z_seed1234/source/pretrain/checkpoint_epoch_0472.hdf5" filter=lfs diff=lfs merge=lfs -text
+"reports/Solar Energy Result/R2/Experiment_A/20260814T150304Z_seed1234/target/without_tl/checkpoint_epoch_0292.hdf5" filter=lfs diff=lfs merge=lfs -text
+"reports/Solar Energy Result/R2/Experiment_A/20260814T150304Z_seed1234/target/tl_freeze/checkpoint_epoch_0500.hdf5" filter=lfs diff=lfs merge=lfs -text
+"reports/Solar Energy Result/R2/Experiment_A/20260814T150304Z_seed1234/target/tl_full_finetune/checkpoint_epoch_0083.hdf5" filter=lfs diff=lfs merge=lfs -text
+"reports/Solar Energy Result/Linear_Formal/Experiment_B/20260821T041718Z_seed1234/source_candidates/SRC_lr1e-4/checkpoint_epoch_0500.hdf5" filter=lfs diff=lfs merge=lfs -text
+"reports/Solar Energy Result/Linear_Formal/Experiment_B/20260821T041718Z_seed1234/target_wotl_candidates/WOTL_lr1e-4/checkpoint_epoch_0499.hdf5" filter=lfs diff=lfs merge=lfs -text
+"reports/Solar Energy Result/Linear_Formal/Experiment_B/20260821T041718Z_seed1234/target_partial_ft_candidates/PFT_lr3e-5/checkpoint_epoch_0004.hdf5" filter=lfs diff=lfs merge=lfs -text
+"reports/Solar Energy Result/Linear_Supplementary/Experiment_B2/20260822T120239Z_seed1234/candidates/B2-P1/checkpoints/checkpoint_epoch_0500.hdf5" filter=lfs diff=lfs merge=lfs -text
