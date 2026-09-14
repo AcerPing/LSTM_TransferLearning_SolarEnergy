@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "title": "Solar Experiment B/B2 — Thesis Figure Generation v1",
+  "generated_at_utc": "2026-09-01T09:44:02.401355+00:00",
+  "mode": "read-only post-processing",
+  "experiment_direction": "Plant2 -> Plant1",
+  "baseline": "WOTL_lr1e-4",
+  "optimized_tl": "B2-P1",
+  "target": "DC_POWER",
+  "documented_unit": "kW",
+  "test_rows": 2607,
+  "raw_unclipped_predictions": true,
+  "training_performed": false,
+  "model_loaded": false,
+  "model_predict_called": false,
+  "checkpoint_reselected": false,
+  "prediction_clipping_applied": false,
+  "formal_experiment_artifacts_modified": false,
+  "git": {
+    "head": "84300460725ea682d9243a9a945bb0817a47c100",
+    "branch": "AcerPing",
+    "tracked_or_untracked_status": "M main.py\n M utils/data_io.py\n M utils/model.py\n?? notebook/SolarEnergy_directory_structure.txt\n?? notebook/修改紀錄/\n?? notebook/執行紀錄/\n?? r2_config/corrected_r1.py\n?? r2_helpers/r2_source_pretraining.py\n?? r2_helpers/r2_transfer_learning.py\n?? \"reports/Solar Energy Result/Linear_Formal/\"\n?? \"reports/Solar Energy Result/Linear_Supplementary/Experiment_B2/20260822T120239Z_seed1234/baseline/\"\n?? \"reports/Solar Energy Result/Linear_Supplementary/Experiment_B2/20260822T120239Z_seed1234/candidates/\"\n?? \"reports/Solar Energy Result/Linear_Supplementary/Experiment_B2/20260822T120239Z_seed1234/run_manifest.json\"\n?? \"reports/Solar Energy Result/Linear_Supplementary/Experiment_B2/20260822T120239Z_seed1234/summary/comparison.json\"\n?? \"reports/Solar Energy Result/Linear_Supplementary/Experiment_B2/20260822T120239Z_seed1234/summary/results_summary.json\"\n?? \"reports/Solar Energy Result/Linear_Supplementary/Experiment_B2/20260822T120239Z_seed1234/summary/validation_registry.json\"\n?? \"reports/Solar Energy Result/Linear_Supplementary/Experiment_B2/20260822T120239Z_seed1234/test_reuse_disclosure.json\"\n?? \"reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/\"\n?? \"reports/Solar Energy Result/Thesis_Figures/\"\n?? reports/r2/\n?? tools/generate_solar_b2_thesis_figures.py",
+    "git_status_available": true,
+    "dirty_or_untracked_present": true
+  },
+  "input_files": {
+    "wotl_history": {
+      "path": "reports\\Solar Energy Result\\Linear_Formal\\Experiment_B\\20260821T041718Z_seed1234\\target_wotl_candidates\\WOTL_lr1e-4\\history.csv",
+      "sha256": "8ab58ae3cf0950948c0e3f3afa72e3c0848a026ec538cb0c0ef0e26a374917df"
+    },
+    "wotl_predictions": {
+      "path": "reports\\Solar Energy Result\\Linear_Formal\\Experiment_B\\20260821T041718Z_seed1234\\final_test\\predictions.csv",
+      "sha256": "dba9ee9b5a7a97cacd25fa658a3594ee68260549d1a8a14cdb45b52317bd4773"
+    },
+    "wotl_official_metrics": {
+      "path": "reports\\Solar Energy Result\\Linear_Formal\\Experiment_B\\20260821T041718Z_seed1234\\final_test\\wotl_metrics_original_scale.json",
+      "sha256": "b32e42b9ece2e56f268b6c78ea014c4504a6c144eb0ad88758546ff1350b3c1e"
+    },
+    "b2_p1_history": {
+      "path": "reports\\Solar Energy Result\\Linear_Supplementary\\Experiment_B2\\20260822T120239Z_seed1234\\candidates\\B2-P1\\training_history.csv",
+      "sha256": "d152850e6624ea9410cc443f4f52eff06c881a9b88092f49a0a60772d6226549"
+    },
+    "b2_p1_predictions": {
+      "path": "reports\\Solar Energy Result\\Linear_Supplementary\\Experiment_B2\\20260822T120239Z_seed1234\\candidates\\B2-P1\\predictions.csv",
+      "sha256": "dc7a5b8ae81e91cefc3def38fcb167c9e4eeca732da5c68c0abcee78b3b49b79"
+    },
+    "b2_p1_official_metrics": {
+      "path": "reports\\Solar Energy Result\\Linear_Supplementary\\Experiment_B2\\20260822T120239Z_seed1234\\candidates\\B2-P1\\test_metrics_original_scale.json",
+      "sha256": "9153ca8ec4e94ca212bd002638b886cabf980a87682f3186c8f49bc63d53e11a"
+    }
+  },
+  "learning_curve_summary": {
+    "wotl": {
+      "rows": 500,
+      "best_epoch_from_history": 499,
+      "best_val_loss_from_history": 0.2614199817180633,
+      "final_epoch": 500,
+      "final_loss": 0.2467817664146423,
+      "final_val_loss": 0.2621538043022156
+    },
+    "b2_p1": {
+      "rows": 500,
+      "best_epoch_from_history": 500,
+      "best_val_loss_from_history": 0.096119724214077,
+      "final_epoch": 500,
+      "final_loss": 0.0912467166781425,
+      "final_val_loss": 0.096119724214077
+    }
+  },
+  "figure_files": [
+    "01_WOTL_learning_curve.png",
+    "02_B2_P1_learning_curve.png",
+    "03_WOTL_prediction_plot.png",
+    "04_B2_P1_prediction_plot.png",
+    "05_WOTL_yy_plot.png",
+    "06_B2_P1_yy_plot.png",
+    "07_WOTL_residual_plot.png",
+    "08_B2_P1_residual_plot.png",
+    "09_WOTL_error_histogram.png",
+    "10_B2_P1_error_histogram.png"
+  ],
+  "verification_files": [
+    "metrics_recheck.json",
+    "figure_manifest.json"
+  ]
+}
