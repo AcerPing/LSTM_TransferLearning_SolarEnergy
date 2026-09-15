@@ -741,6 +741,30 @@ Plant2 Test 已被揭露，因此不得再依 Phase E Test 結果修改：
 
 ---
 
+# Experiment A2 — Status
+
+Direction：
+
+```text
+Plant1 → Plant2
+```
+
+Protocol：
+
+```text
+Linear Formal / solar-linear-v1.0
+```
+
+Status：
+
+```text
+NOT STARTED / PENDING
+```
+
+目前沒有 A2 formal training result、validation-selected result 或 Final Test result；Historical Experiment A / R2 / R2.5 不得改寫為 A2 Formal Linear 結果。
+
+---
+
 # Experiment B — Status
 
 Direction：
@@ -749,13 +773,41 @@ Direction：
 Plant2 → Plant1
 ```
 
-目前 Corrected reciprocal formal experiment：
+Formal protocol：
 
 ```text
-Pending
+solar-linear-v1.0
 ```
 
-Repository 中即使存在 Legacy Experiment B 結果，也不得因此宣稱目前 Corrected reciprocal Experiment B 已完成。
+Formal Experiment B 已完成並封存：
+
+```text
+Formal classification = Negative Transfer
+Status = SEALED / CLOSED
+```
+
+後續 Experiment B2 為：
+
+```text
+Post-Test Supplementary / Exploratory Tuning
+Selected candidate = B2-P1
+B2-P1 classification = Supplementary Positive Transfer
+```
+
+B2 使用已於 Formal B 揭露之 Plant1 Test，因此不得視為新的 untouched confirmatory Final Test，也不得覆寫 Formal B 的 Negative Transfer 結論。
+
+Repository governance 狀態：
+
+```text
+Step 1  = COMPLETE
+Step 2  = COMPLETE
+Step 3  = COMPLETE
+Step 4  = COMPLETE
+Step 5A = COMPLETE
+Step 5B = NOT COMPLETE
+```
+
+Step 5B 尚未完成，external archive transfer / verification 尚待完成；此狀態不重新開啟 Experiment B 模型開發。
 
 ---
 
@@ -970,6 +1022,10 @@ Git repository 優先保存 lightweight reproducibility evidence：
 - figures
 - transfer classification
 
+Selected / locked checkpoints that have been explicitly approved by repository governance may be retained through exact-path Git LFS rules.
+
+Per-epoch / non-selected checkpoint collections remain external-archive evidence and must not be broadly added to ordinary Git or Git LFS.
+
 大量 binary checkpoints：
 
 ```text
@@ -1019,8 +1075,8 @@ af03be5
 5. Sigmoid 無法表示 normalized prediction > 1。
 6. Plant1 / Plant2 raw `DC_POWER` 實際物理尺度一致性仍有疑義。
 7. Candidate B 的正式結果為 Mixed Result，而不是全面 Positive Transfer。
-8. Corrected Experiment B 尚未完成。
-9. Legacy 與 Corrected results 同時存在，不得混用。
+8. Linear Formal Experiment B 已完成並判定為 Negative Transfer；B2 為 Post-Test Supplementary / Exploratory Tuning，B2-P1 僅可表述為 Supplementary Positive Transfer，不得視為新的 untouched confirmatory Test。
+9. Legacy、Corrected R2/R2.5、Linear Formal 與 Supplementary results 同時存在，必須明確分離，不得混用。
 10. Normalized-scale metrics 與 original-scale metrics 必須明確區分。
 
 ---
@@ -1047,37 +1103,11 @@ af03be5
 
 ---
 
-# Upstream Project / Acknowledgment
+# Repository Provenance Note
 
-本 repository 最初源自：
+本 repository 保留歷史來源與演進紀錄於 Git history／歷史文件中；本 canonical README 僅描述目前 Solar Power Generation Dataset 專屬研究流程與已核准的實驗治理狀態。
 
-**Transfer Learning LSTM for Time-Series Regression**
-
-Upstream repository：
-
-```text
-dainnovation722/transfer-learning-LSTM
-```
-
-Original author：
-
-```text
-dainnovation722
-```
-
-目前 repository 已針對 Solar Power Generation Dataset 進行大幅調整，包括：
-
-- Corrected preprocessing
-- Training-only scaling
-- feature / target scaler separation
-- inverse-transform evaluation
-- run manifest
-- formal Test gating
-- Partial Fine-tuning
-- experiment provenance
-- original-scale evaluation
-
-原始專案 attribution 保留，以維持 repository provenance 與研究倫理。
+舊通用 upstream-style 安裝／執行指令不得作為目前 Solar formal workflow 的 canonical 操作依據。
 
 ---
 
@@ -1096,18 +1126,17 @@ dainnovation722
 - Phase D formal Train / Validation
 - Phase E one-time Target Test
 - Experiment A transfer classification
-- Git artifact policy
-- Phase E Git provenance
+- Linear Formal Experiment B（Plant2 → Plant1）：Formal classification = Negative Transfer
+- Experiment B2：Post-Test Supplementary / Exploratory Tuning
+- B2-P1：Supplementary Positive Transfer
+- Solar Experiment B thesis figure / evidence consolidation
+- Repository governance Step 1–5A = COMPLETE
 
 ## Next
 
-- Corrected reciprocal Experiment B：Plant2 → Plant1
-- Reciprocal fair-comparison review
-- Solar formal figures consolidation
-- `experiment_protocol`
-- `run_manifest`
-- `results_summary`
-- Thesis Chapter 4 experiment-material consolidation
+- Step 5B external archive transfer / verification（Google Drive + 4 TB HDD）
+- Experiment A2：Plant1 → Plant2、Linear Formal、NOT STARTED / PENDING
+- Repository archival／backup 狀態依既定 governance 後續處理；本 README 不宣稱未驗證之 backup 已完成
 
 ---
 
