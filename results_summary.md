@@ -1,728 +1,259 @@
 # Solar LSTM Results Summary
 
-**文件版本：** v1.0
+**文件版本：** v2.0
 
-**建立日期：** 2026-08-18
+**更新日期：** 2026-09-14
 
 **適用專案：** LSTM研究與實驗－SolarEnergy 太陽能發電預測（智慧能源）
 
-**文件性質：** 正式實驗結果摘要（Formal Results Summary）
+**文件性質：** Formal Results Summary / Experiment Governance Summary
 
-**目前狀態：** Experiment A 之 Corrected R2 / R2.5 已完成整理；Experiment A2 與 Experiment B 尚未執行。
-
----
-
-## 1. 文件目的
-
-本文件集中整理 Solar Power Dataset 之 LSTM 與 Transfer Learning 正式實驗結果，作為：
-
-- 論文第四章實驗結果與分析素材
-- 後續 Experiment A2 / Experiment B 比較基準
-- Git / run manifest / prediction / metrics 證據鏈索引
-- Positive / Partial Positive / Mixed / Negative Transfer 判定依據
-- Legacy 與 Corrected 實驗結果區隔
-
-本文件不取代原始 `run_manifest.json`、`metrics_original.json`、prediction CSV、`selection.json`、
-`transfer_classification.json` 或 checkpoint provenance。
-
-若本文件與高優先序正式實驗檔案衝突，應以實際程式、正式 run manifest、
-original-scale metrics 與逐筆 prediction 為準。
+**目前狀態：** Experiment A（Plant1→Plant2）舊 Corrected R2/R2.5 已封存為 Mixed Result；Experiment B（Plant2→Plant1）Formal Linear run 已完成並封存為 Negative Transfer；Experiment B2 已完成 supplementary optimization，B2-P1 為 selected optimized strategy，數值型結果為 Supplementary Positive Transfer。Experiment B 模型開發已 CLOSED。Repository governance Steps 1–4 與 Step 5A 已完成；Step 5B external archive transfer 尚未開始。
 
 ---
 
-## 2. 正式結果使用原則
+## 1. 文件目的與證據優先序
 
-### 2.1 正式指標
+本文件集中整理 Solar Power Dataset 之 LSTM / Transfer Learning 正式結果，並區分 Legacy、Corrected R2/R2.5、Linear Formal Experiment B 與 Post-Test Supplementary Experiment B2。
 
-正式比較以 Target scaler inverse transform 後之 **original-scale metrics** 為主：
-
-- MAE
-- MSE
-- RMSE
-- R²
-
-Normalized-scale metrics 僅作訓練診斷與除錯，不與 original-scale metrics 混表。
-
-### 2.2 Transfer Learning 判定
-
-**Positive Transfer：**
-
-相較相同 Target Dataset、相同資料切分與相同 experimental protocol 之 Without-TL baseline：
-
-- MAE 下降
-- MSE 下降
-- RMSE 下降
-- R² 改善
-
-四項同時成立時，判定為 **Positive Transfer**。
-
-**Partial Positive Transfer：** 誤差指標改善，但 R² 未同步改善或仍為負值。
-
-**Negative Transfer：** 主要評估指標整體退步。
-
-**Mixed Result：** 不同 metrics 呈現不同方向，無法支持整體 Positive 或 Negative 判定。
+本文件不取代 raw data、實際執行程式、run manifest、scaler/checkpoint artifacts、prediction CSV、metrics JSON、selection / authorization / final state 或 test reuse disclosure。若內容衝突，優先依據：實際程式與資料 → split/scaler 程式 → params/scaler/checkpoint/predictions → original-scale metrics → training log → results summary / protocol / README。
 
 ---
 
-## 3. Dataset 與 Formal Prediction Task
+## 2. Current Data Contract
 
-### 3.1 Dataset
+正式預測目標：`DC_POWER`
 
-- Plant 1
-- Plant 2
+正式輸入特徵：
 
-### 3.2 正式預測目標
+- `TIME_SIN`
+- `TIME_COS`
+- `IRRADIATION`
+- `AMBIENT_TEMPERATURE`
+- `MODULE_TEMPERATURE`
 
-```text
-DC_POWER
-```
+Sequence：`window=5`、`horizon=1`、frequency=`15 minutes`，亦即過去 75 分鐘預測下一個 15 分鐘時間點。
 
-本研究以太陽光電系統之直流側發電功率作為預測目標。
+Source profile rows：Train 2088 / Validation 523 / Test 653；sequences：2083 / 518 / 648。
 
-### 3.3 正式模型輸入特徵
+Target profile rows：Train 521 / Validation 131 / Test 2612；sequences：516 / 126 / 2607。
 
-```text
-TIME_SIN
-TIME_COS
-IRRADIATION
-AMBIENT_TEMPERATURE
-MODULE_TEMPERATURE
-```
-
-### 3.4 Sequence 設定
-
-```text
-window  = 5
-horizon = 1
-frequency = 15 minutes
-```
-
-即：
-
-```text
-過去 5 筆資料（75 分鐘）
-→
-預測下一個 15 分鐘時間點
-```
+Feature scaler 與 target scaler 分開，皆只使用各 profile 的 Training split fit；Validation/Test transform only；各 split 內獨立建 sequence；正式 metrics 為 target inverse-transform 後的 original-scale MAE / MSE / RMSE / R²。
 
 ---
 
-## 4. Corrected Data / Scaling Contract
+## 3. Experiment A — Plant1 → Plant2（Historical Corrected R2 / R2.5）
 
-正式 Corrected 流程採：
+### 3.1 R2 Formal Run
 
-- chronological split
-- Source / Target Profile 分離
-- split-isolated missing-value handling
-- feature scaler 與 target scaler 分離
-- scaler 僅使用 Training subset fit
-- Validation / Test 只 transform
-- no clipping
-- 各 split 獨立建立 sequence
-- Target scaler inverse transform 後計算正式 metrics
-- Source Test 保持獨立，不回併 Training / Validation
+Run ID：`20260814T150304Z_seed1234`
 
-### 4.1 Source Profile
+WOTL：MAE 2866.104160；MSE 13705909.923007；RMSE 3702.149365；R² 0.657072。
 
-```text
-Training   : 2088 rows
-Validation : 523 rows
-Test       : 653 rows
-```
+TL Freeze：MAE 2879.526879；MSE 24312780.909834；RMSE 4930.799216；R² 0.391683。
 
-Sequence counts：
+TL Full Fine-tuning：MAE 2405.355655；MSE 16887667.836972；RMSE 4109.460772；R² 0.577463。
 
-```text
-Training   : 2083
-Validation : 518
-Test       : 648
-```
+### 3.2 R2.5 Partial FT
 
-### 4.2 Target Profile
+Run ID：`20260816T073233Z_seed1234`
 
-```text
-Training   : 521 rows
-Validation : 131 rows
-Test       : 2612 rows
-```
+Strategy：`partial_target_adapters_last_lstm`；Legacy output activation = Sigmoid。
 
-Sequence counts：
+Final Test：MAE 2252.923495；MSE 14216235.103204；RMSE 3770.442295；R² 0.644303；n=2607。
 
-```text
-Training   : 516
-Validation : 126
-Test       : 2607
-```
+相較 WOTL：MAE 改善，但 MSE / RMSE / R² 未同步改善，因此正式分類為 **Mixed Result**。
+
+Experiment A Test 已揭露，原 run 保留、不得覆寫；不得再以同一 Test 反覆調整 activation / LR / layers / BN / scaler / architecture 後重新宣稱為 untouched confirmatory result。
+
+### 3.3 Experiment A2 — Linear Formal Status
+
+Direction：Plant1 → Plant2
+
+Protocol：Linear Formal / `solar-linear-v1.0`
+
+Status：**NOT STARTED / PENDING**
+
+目前沒有 A2 formal training result、validation-selected result 或 Final Test result；不得新增 A2 metrics，也不得將 Historical Experiment A / R2 / R2.5 指標改寫成 A2 Formal Linear 結果。
 
 ---
 
-# 5. Experiment A — Plant1 → Plant2
+## 4. Linear Formal Experiment B — Plant2 → Plant1
 
-## 5.1 實驗方向
+### 4.1 Formal Contract
 
-```text
-Source = Plant1
-Target = Plant2
-```
+Protocol：`solar-linear-v1.0`
 
-目前已完成之正式結果包含 Corrected R2 與 R2.5 Partial Fine-tuning。
+Direction：Plant2 → Plant1
 
----
+Source：Plant2 `source_profile`
 
-## 5.2 R2 Formal Run
+Target：Plant1 `target_profile`
 
-**Run ID：**
+Output activation：**Linear**
 
-```text
-20260814T150304Z_seed1234
-```
+Formal run ID：`20260821T041718Z_seed1234`
 
-R2 為 Corrected Legacy Reproduction，主要保留既有 Legacy LSTM 架構與歷史策略，
-同時採用 Corrected preprocessing、Training-only scaler、正確 prediction alignment
-與 original-scale evaluation。
+Formal namespace：`reports/Solar Energy Result/Linear_Formal/Experiment_B/20260821T041718Z_seed1234/`
 
-R2 Target 方法：
+Source / WOTL / Partial FT 均使用相同 Linear output、相同 Target split、features、window/horizon、scaler flow、batch size、optimizer/loss、callback policy、seed 與 original-scale evaluation；主要差異限於初始化權重、trainable layers 與預先登錄之 learning-rate candidate。
 
-- Without Transfer Learning
-- TL Freeze
-- TL Full Fine-tuning
+### 4.2 Locked Validation Selection
 
----
+Selected Source：`SRC_lr1e-4`，epoch 500，SHA-256 `5cd3db4501d6c6720fbdd8ee3cce692b01cecb82619574f8c6944a8795182d91`。
 
-## 5.3 R2 Target Test — Original-Scale Metrics
+Selected WOTL：`WOTL_lr1e-4`，epoch 499，SHA-256 `b8162994b7138cc619a79811b470c05087e329e5087813f4229cf0819a3a56b6`。
 
-| Method | MAE | MSE | RMSE | R² | Best Epoch | Epochs Completed | Result Interpretation |
-|---|---:|---:|---:|---:|---:|---:|---|
-| Without TL | 2866.104160 | 13705909.923007 | 3702.149365 | 0.657072 | 292 | 302 | Baseline |
-| TL Freeze | 2879.526879 | 24312780.909834 | 4930.799216 | 0.391683 | 500 | 500 | Negative / no overall improvement |
-| TL Full Fine-tuning | 2405.355655 | 16887667.836972 | 4109.460772 | 0.577463 | 83 | 93 | Not Positive overall |
+Selected Formal PFT：`PFT_lr3e-5`，epoch 4，SHA-256 `1d14bdb481a362e8e974d42f44bc83dffa7034b4ea3e19ac30196c316463dc37`。
 
-### 5.3.1 Without TL
+Test 在 selection 完成後才經 one-time gate 存取；`test_metrics_used_for_selection=false`。
 
-```text
-MAE  = 2866.104160
-MSE  = 13705909.923007
-RMSE = 3702.149365
-R²   = 0.657072
-```
+### 4.3 Formal Final Test
 
-此組作為 Experiment A 主要 baseline。
+WOTL：MAE **28,769.9078**；MSE **1,392,464,754.3387**；RMSE **37,315.7441**；R² **0.820814**。
 
-### 5.3.2 TL Freeze
+Formal PFT：MAE **36,009.4171**；MSE **2,149,426,000.9080**；RMSE **46,361.9025**；R² **0.723406**。
 
-```text
-MAE  = 2879.526879
-MSE  = 24312780.909834
-RMSE = 4930.799216
-R²   = 0.391683
-```
+四項主要指標相較 WOTL 整體退步，因此：
 
-相較 Without TL，四項主要指標均未呈現整體改善，因此不支持 Positive Transfer。
+> **Formal Experiment B classification = Negative Transfer**
 
-### 5.3.3 TL Full Fine-tuning
-
-```text
-MAE  = 2405.355655
-MSE  = 16887667.836972
-RMSE = 4109.460772
-R²   = 0.577463
-```
-
-MAE 低於 Without TL，但 MSE、RMSE 與 R² 未同步改善，因此不判定為 Positive Transfer。
+Formal B 為歷史正式 Final Test，必須永久保留，不得被 B2 覆寫或重新命名。
 
 ---
 
-# 6. R2.5 Partial Fine-tuning — Experiment A
+## 5. Experiment B2 — Post-Test Supplementary / Exploratory Tuning
 
-## 6.1 Formal Run
+### 5.1 Governance
 
-**Run ID：**
+Run ID：`20260822T120239Z_seed1234`
 
-```text
-20260816T073233Z_seed1234
-```
+Plant1 Test 已於 Formal B 揭露，因此 B2 明確定位為 **Post-Test Supplementary / Exploratory Tuning**；`formal_final_test_replacement=false`、`plant1_test_reused=true`。
 
-**Strategy ID：**
+B2 的研究用途是 method-development / optimized-strategy evidence，而非新的 untouched confirmatory Final Test。
 
-```text
-partial_target_adapters_last_lstm
-```
+### 5.2 Candidate Design
 
-正式名稱：
+- B2-P1：Last LSTM + target output head，LR=`1e-5`
+- B2-P2：Last LSTM + target output head，LR=`3e-6`
+- B2-P3：Output head only，LR=`1e-5`
 
-```text
-Partial Fine-tuning / Partial FT
-```
+共同設定：Linear output、BatchNormalization frozen、batch=128、MSE、max epochs=500、shuffle=False、seed=1234。
 
-而非 Full Fine-tuning。
+### 5.3 Selected Candidate — B2-P1
 
----
+Transferred layers：1,2,3,4,5
 
-## 6.2 Layer / Parameter Contract
+Trainable layers：4,6
 
-Layer topology：
+Frozen layers：1,2,3,5
 
-```text
-0 Input
-1 TimeDistributed(Dense10)
-2 LSTM60
-3 BatchNormalization
-4 LSTM60
-5 BatchNormalization
-6 Dense1(sigmoid)
-```
+BatchNormalization：Frozen
 
-Trainable layers：
+Output activation：Linear
 
-```text
-1, 4, 6
-```
+正式名稱：**Partial Fine-tuning / Partial FT**（不得稱 Full Fine-tuning）。
 
-Frozen layers：
+Total params：46,681；trainable params：29,101；trainable ratio：約 62.34%。
 
-```text
-2, 3, 5
-```
+Best epoch：500；best validation loss：0.096119724214077。
 
-BatchNormalization：
+Validation original-scale：MAE 19,442.8612；MSE 810,674,279.2778；RMSE 28,472.3424；R² 0.920729；n=126。
 
-```text
-Layer 3 frozen
-Layer 5 frozen
-```
+Selected B2-P1 checkpoint SHA-256：`a666b15cdbc3af8cf25d79f3af2080f4869ac5658a2d15d0370033da20fbabf1`。
 
-Parameter counts：
+Execution Git HEAD：`2148396d00a904f457ec5a64d6b80369303970ca`。
 
-```text
-Trainable params     = 29161
-Non-trainable params = 17520
-Total params         = 46681
-Trainable percentage = 62.468670%
-```
+### 5.4 Supplementary Test Comparison
 
-Run manifest 已驗證：
+| Method | MAE ↓ | MSE ↓ | RMSE ↓ | R² ↑ | n |
+|---|---:|---:|---:|---:|---:|
+| WOTL | 28,769.9078 | 1,392,464,754.3387 | 37,315.7441 | 0.820814 | 2607 |
+| B2-P1 Optimized TL | 12,964.0142 | 550,250,743.1286 | 23,457.4241 | 0.929192 | 2607 |
 
-- trainable layers 有實際更新
-- frozen LSTM layer 未更新
-- frozen BatchNormalization states 未更新
-- Test 未在 Phase D model selection 中使用
+Relative change：MAE −54.939%；MSE −60.484%；RMSE −37.138%；R² +0.108378 absolute。
+
+數值型四項判定條件均成立，因此：
+
+> **B2-P1 classification = Supplementary Positive Transfer**
+
+### 5.5 Diagnostic Limitations
+
+Raw / unclipped prediction：WOTL negative count=21；B2-P1 negative count=610。此為 Linear output 缺乏非負物理限制之模型限制；不得透過事後 clipping 改寫正式 metrics。
+
+本結果為 single seed / single split / single Test interval，論文不得宣稱 statistically significant、stable improvement、universally effective 或 proven best。
 
 ---
 
-## 6.3 Phase D — Validation Selection
+## 6. Figure / Thesis Evidence
 
-```text
-Status = PASS
-Best epoch = 500
-Epochs completed = 500
-Best validation loss = 0.1819697022
-Final learning rate ≈ 1.0e-7
-```
+Read-only thesis figure post-processing 已完成；未重新 training、未 model.predict、未重新選 checkpoint、未 clipping、未修改 Formal artifacts。
 
-Validation original-scale metrics：
+十張 raw figures：WOTL/B2-P1 Learning Curve、Prediction Plot、YY Plot、Residual Plot、Error Histogram；另有 `metrics_recheck.json` 與 `figure_manifest.json`。
 
-| Metric | Value |
-|---|---:|
-| MAE | 3702.256024 |
-| MSE | 39303185.752356 |
-| RMSE | 6269.225291 |
-| R² | 0.020418 |
-| Samples | 126 |
+Test alignment：2,607 rows；timestamp identical；y_true identical；metrics recalculation PASS。
 
-Selection contract：
-
-```text
-selection_locked = true
-selection_basis = original_scale_validation
-test_metrics_used_for_selection = false
-```
-
-Selected checkpoint：
-
-```text
-candidate/partial_target_adapters_last_lstm/checkpoint_epoch_0500.hdf5
-```
-
-Selected checkpoint SHA-256：
-
-```text
-4dca61375c80d609f73ffc44e4cf829a4d1b20aab7e91e22f38072257e4679a6
-```
-
-Source checkpoint SHA-256：
-
-```text
-8aa299e09c58c2ce77473ba317bdaf9fe374310a453b61718b605022356ad6aa
-```
+第四章 Solar Plant2→Plant1 已完成 WOTL、Optimized TL、original-scale metrics、B2-P1 Supplementary Positive Transfer、Learning/Prediction/YY/Residual/Histogram 分析與 Cross-reference audit。
 
 ---
 
-# 7. R2.5 Phase E — Final Target Test
+## 7. Current Closure Status
 
-## 7.1 Test Integrity
+### Scientific / Model-Development Closure
 
-```text
-Status = PASS
-Target Test accessed = true
-Test access count = 1
-Test metrics used for selection = false
-Test metrics used for training = false
-Post-test tuning allowed = false
-Test sequence count = 2607
-```
+**Experiment B = SEALED / CLOSED**
 
-Experiment A 之 Plant2 Target Test 已於此階段揭露。
+- Formal B preserved = Negative Transfer
+- B2 selected strategy = B2-P1
+- B2 numerical result = Supplementary Positive Transfer
+- NO MORE TUNING
+- NO MORE TEST ACCESS FOR MODEL DEVELOPMENT
+- NO MORE B2 CANDIDATE SEARCH
 
-## 7.2 Partial FT Final Test — Original-Scale Metrics
+允許：read-only audit、論文引用、已有 prediction descriptive analysis、SHA/provenance verification、documentation、oral-defense QA。
 
-| Metric | Value |
-|---|---:|
-| MAE | 2252.923495 |
-| MSE | 14216235.103204 |
-| RMSE | 3770.442295 |
-| R² | 0.644303 |
-| Samples | 2607 |
+### Repository / Archival Closure
 
-## 7.3 Partial FT vs Without TL
+- Step 1 = COMPLETE
+- Step 2 = COMPLETE
+- Step 3 = COMPLETE
+- Step 4 = COMPLETE
+- Step 5A = COMPLETE
+- Step 5B transfer = NOT STARTED
 
-| Metric | Without TL | Partial FT | Direction | Relative Change |
-|---|---:|---:|---|---:|
-| MAE | 2866.104160 | 2252.923495 | Improved | 21.394221% improvement |
-| MSE | 13705909.923007 | 14216235.103204 | Deteriorated | 3.723395% worse |
-| RMSE | 3702.149365 | 3770.442295 | Deteriorated | 1.844683% worse |
-| R² | 0.657072 | 0.644303 | Deteriorated | 1.943253% decrease |
-
-Numerical delta：
-
-```text
-ΔMAE  = -613.180665
-ΔMSE  = +510325.180197
-ΔRMSE = +68.292930
-ΔR²   = -0.012769
-```
+本次變更前，Step 5B 的唯一阻塞為 documentation dirty-file gate repair。本次 controlled commit 完成後該文件阻塞即解除，但 external archive transfer 仍須另行執行與驗證；本文件修復本身不代表 archive backup、Google Drive upload 或外接 HDD archive 已完成。
 
 ---
 
-# 8. Experiment A Transfer Classification
+## 8. Evidence Index — Experiment B
 
-正式 Phase E classification：
+Formal B：
 
-```text
-classification = observed_mixed
-rules_applied_to = original_scale_test
-thesis_interpretation = Mixed Result
-```
+`reports/Solar Energy Result/Linear_Formal/Experiment_B/20260821T041718Z_seed1234/`
 
-因此目前 Experiment A 原始 Corrected Legacy / R2.5 結果正式判定為：
+主要 evidence：`run_manifest.json`、`selection/`、Source/WOTL/PFT candidate records、`final_test/` predictions / metrics / authorization / final state。
 
-> **Mixed Result**
+B2：
 
-原因：
+`reports/Solar Energy Result/Linear_Supplementary/Experiment_B2/20260822T120239Z_seed1234/`
 
-- MAE 有明顯下降
-- MSE 未下降
-- RMSE 未下降
-- R² 未改善
+主要 evidence：`run_manifest.json`、`test_reuse_disclosure.json`、`baseline/`、`candidates/B2-P1/`、`summary/`、Optimized Strategy/Result Card。
 
-因此不符合本專案 Positive Transfer 的四項同步改善標準。
+Thesis figures：
+
+`reports/Solar Energy Result/Thesis_Figures/Experiment_B2_Plant2_to_Plant1/`
 
 ---
 
-# 9. Experiment A Current Interpretation
+## 9. Update Rules
 
-於本次資料切分與實驗設定下，
-Partial Fine-tuning Candidate B 相較 Without-TL baseline 呈現較低 MAE，
-但 MSE、RMSE 與 R² 未同步改善。
-
-因此目前只能確認：
-
-> Partial Fine-tuning 在平均絕對誤差層面呈現改善，
-> 但尚不足以支持整體 Positive Transfer Learning。
-
-不得寫成：
-
-- Transfer Learning 全面成功
-- TL 穩定優於 Without TL
-- 統計顯著改善
-- Experiment A 已證明 Positive Transfer
+1. Formal B 與 B2 永久分開記錄。
+2. 不刪除、不覆寫不利結果。
+3. 不把 B2 說成新的 untouched Final Test。
+4. 不以 Plant1 Test 再做 model development。
+5. 若 repository audit 發現 artifact 缺漏，只做 archival / documentation 修復；任何會改變模型、prediction 或 metrics 的操作須另行核准。
+6. Experiment A 後續新工作不得自動沿用 B2 的 Test-guided tuning；應先完成其資料與 scaler handoff / preflight。
 
 ---
 
-# 10. Experiment A Seal Status
-
-目前原始 Experiment A：
-
-```text
-Direction = Plant1 → Plant2
-Output activation = Sigmoid
-Final Test = revealed
-Final classification = Mixed Result
-Status = SEALED
-```
-
-Phase E 明確記錄：
-
-```text
-post_test_tuning_allowed = false
-```
-
-因此不得以既有 Plant2 Test 作為反覆調整 learning rate、trainable layers、
-BN strategy、epoch count、activation、scaler 或 architecture 之模型選擇依據。
-
-舊 Experiment A 結果應完整保留，不覆寫、不刪除、不重新命名為 Positive Transfer。
-
----
-
-# 11. Output Activation Audit
-
-目前 R2 / R2.5 實際執行之 Legacy architecture output：
-
-```text
-Dense(1, activation="sigmoid")
-```
-
-Training-only MinMax scaling 下，Validation / Test target 可能合法超出 `[0,1]`。
-
-因此 Sigmoid 的輸出上限可能形成高峰預測限制。
-
-目前只能視為：
-
-> 已確認之 architecture limitation / future protocol consideration
-
-不得直接宣稱：
-
-> Experiment A Mixed Result 是由 Sigmoid 所造成。
-
-因目前尚未完成 activation-controlled comparison。
-
----
-
-# 12. Next Formal Research Targets
-
-## 12.1 Experiment A2 — Plant1 → Plant2
-
-目前狀態：
-
-```text
-Pending
-```
-
-研究目標：
-
-> 建立新的受控 experimental protocol，以可信方式爭取取得 Positive Transfer Learning。
-
-預定方向：
-
-```text
-Output activation = Linear（待 experiment_protocol.md 正式核准）
-Without TL = same Linear protocol
-TL / Partial FT = same Linear protocol
-```
-
-舊 Experiment A Mixed Result 保留為歷史正式結果；
-A2 必須使用新的 run ID、manifest 與完整實驗證據鏈。
-
-## 12.2 Experiment B — Plant2 → Plant1
-
-目前狀態：
-
-```text
-Pending
-```
-
-方向：
-
-```text
-Source = Plant2
-Target = Plant1
-```
-
-研究目標：
-
-> 在 reciprocal transfer direction 下，取得可信之 Positive Transfer Learning 證據。
-
-Activation、Partial FT、Learning Rate 與 Test gate
-應於 `experiment_protocol.md` 中預先定義。
-
----
-
-# 13. Positive Transfer Research Goal
-
-本專案後續研究目標：
-
-```text
-Experiment A2：Plant1 → Plant2
-→ Positive Transfer
-
-Experiment B：Plant2 → Plant1
-→ Positive Transfer
-```
-
-正式判定標準不得因研究目標而降低：
-
-```text
-MAE_TL  < MAE_WithoutTL
-MSE_TL  < MSE_WithoutTL
-RMSE_TL < RMSE_WithoutTL
-R²_TL   > R²_WithoutTL
-```
-
-若實際結果未達標，應依 metrics 如實標記為 Partial Positive Transfer、
-Mixed Result 或 Negative Transfer。
-
----
-
-# 14. Evidence Index
-
-## 14.1 R2 Formal Experiment A
-
-```text
-reports/Solar Energy Result/R2/Experiment_A/
-└─ 20260814T150304Z_seed1234/
-   ├─ run_manifest.json
-   ├─ source/
-   ├─ target/
-   └─ target_comparison.csv
-```
-
-R2 principal comparison evidence：
-
-```text
-target_comparison.csv
-```
-
-## 14.2 R2.5 Partial FT
-
-```text
-reports/Solar Energy Result/R2.5/Experiment_A/Partial_FT/
-└─ 20260816T073233Z_seed1234/
-   ├─ run_manifest.json
-   ├─ selection.json
-   ├─ candidate/
-   │  └─ partial_target_adapters_last_lstm/
-   │     ├─ history.csv
-   │     ├─ validation_metrics_original.json
-   │     ├─ validation_predictions.csv
-   │     └─ training_curve.png
-   └─ final_test/
-      ├─ metrics_original.json
-      ├─ metrics_normalized.json
-      ├─ predictions_test.csv
-      ├─ comparison_to_without_tl.csv
-      ├─ transfer_classification.json
-      └─ final_test_manifest.json
-```
-
----
-
-# 15. Git Provenance
-
-重要 milestone：
-
-```text
-200baf6
-2026/08/16 R2.5 Phase D: formal Candidate B train validation
-```
-
-```text
-af03be5
-2026/08/17 R2.5 Phase E: add final Target Test and formal evidence
-```
-
-```text
-53f349e
-2026/08/17 docs: replace generic README with Solar experiment guide
-```
-
----
-
-# 16. Current Formal Conclusion
-
-截至 v1.0：
-
-### 已完成
-
-```text
-Experiment A
-Plant1 → Plant2
-Corrected R2 / R2.5
-Sigmoid output
-Partial Fine-tuning Candidate B
-Final Target Test completed
-```
-
-### 正式結果
-
-```text
-Without TL
-MAE  = 2866.104160
-MSE  = 13705909.923007
-RMSE = 3702.149365
-R²   = 0.657072
-```
-
-```text
-Partial FT
-MAE  = 2252.923495
-MSE  = 14216235.103204
-RMSE = 3770.442295
-R²   = 0.644303
-```
-
-### 正式判定
-
-```text
-Mixed Result
-```
-
-### 尚未完成
-
-```text
-Experiment A2
-Experiment B
-Linear-output controlled protocol
-Positive Transfer formal evidence
-```
-
----
-
-# 17. Research Boundary
-
-本文件不得：
-
-- 將未完成的 A2 / B 寫成完成
-- 將 Mixed Result 改稱 Positive Transfer
-- 使用 normalized metrics 取代 formal original-scale metrics
-- 自行推估不存在的正式數值
-- 覆寫舊 run
-- 省略不利結果
-- 將 single seed / single split 描述為穩定、普遍或統計顯著
-
-正式論文語氣應採：
-
-- 「於本次資料切分與實驗設定下」
-- 「呈現較低之 MAE」
-- 「誤差層面之部分改善」
-- 「Mixed Result」
-- 「初步呈現……趨勢」
-
----
-
-# 18. 後續更新規則
-
-當 Experiment A2 或 Experiment B 產生新正式 run 時：
-
-1. 保留 v1.0 既有 Experiment A 結果。
-2. 新增新的 Experiment section，不覆寫舊結果。
-3. 填入新的 run ID。
-4. 填入 original-scale MAE / MSE / RMSE / R²。
-5. 填入 Validation selection evidence。
-6. 填入 Final Test gate 狀態。
-7. 填入 Transfer classification。
-8. 更新 Git commit hash。
-9. 若為 Positive Transfer，明確標示所屬 protocol 與 Target Dataset。
-10. 不跨不同 Target Dataset 直接比較 MAE / RMSE 絕對值大小。
-
----
-
-**End of `results_summary.md` v1.0**
+**End of `results_summary.md` v2.0**
