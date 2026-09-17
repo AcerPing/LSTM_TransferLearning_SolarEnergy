@@ -8,7 +8,7 @@
 
 **文件性質：** 正式實驗執行規範（Formal Experiment Protocol）
 
-**目前狀態：** Experiment A 原始 Corrected R2 / R2.5 已完成並封存；Experiment A2 與 Experiment B 待執行。
+**目前狀態（執行狀態；不改寫下列 protocol rules）：** Experiment A historical Corrected R2 / R2.5 = SEALED；Experiment A2 Linear Formal = NOT STARTED / PENDING；Formal Experiment B = COMPLETED / SEALED（Formal classification = Negative Transfer）；Experiment B2 = COMPLETED（Post-Test Supplementary / Exploratory Tuning，selected candidate = B2-P1，B2-P1 classification = Supplementary Positive Transfer；not a new untouched confirmatory Final Test）；Experiment B model development = SEALED / CLOSED。
 
 ---
 
@@ -902,18 +902,32 @@ P12 results_summary.md update
 
 # 33. Current Protocol Status
 
+以下為目前執行與 closure 狀態；本文件前述章節仍是 pre-registered / protocol rules，不因已知實驗結果而回溯改寫。
+
 ```text
 results_summary.md v1
 = completed
 
-Experiment A original
-= completed / sealed / Mixed Result
+Experiment A historical Corrected R2 / R2.5
+= SEALED / Mixed Result
 
-Experiment A2
-= pending
+Experiment A2 Linear Formal
+= NOT STARTED / PENDING
 
-Experiment B
-= pending
+Formal Experiment B
+= COMPLETED / SEALED / Negative Transfer
+
+Experiment B2
+= COMPLETED / Post-Test Supplementary / Exploratory Tuning
+
+Experiment B2 selected candidate
+= B2-P1 / Supplementary Positive Transfer
+
+Experiment B model development
+= SEALED / CLOSED
+
+Repository evidence governance
+= COMPLETE / CLOSED (including Step 5B archive verification); canonical checkpoint archive inventory = reports/governance/Solar_LSTM_checkpoint_archive_inventory.csv; inventory SHA256 = 1302428fbebc6dd5fca70dd2d9d6d7d68f64b2fb4cd84ded05a1b4198cc86328; detailed governance execution history remains in governance artifacts/reports and is not duplicated here as an operations log.
 
 A2 revised activation
 = Linear
@@ -932,6 +946,9 @@ Positive Transfer criteria
 
 Target Test tuning
 = prohibited
+
+B2 confirmatory status
+= Post-Test Supplementary; not a new untouched confirmatory Final Test
 ```
 
 ---
