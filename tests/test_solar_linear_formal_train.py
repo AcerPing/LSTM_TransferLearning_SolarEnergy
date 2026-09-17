@@ -4,8 +4,12 @@ import csv
 import hashlib
 import inspect
 import json
+import os
+import shutil
+import subprocess
 import tempfile
 import unittest
+from dataclasses import replace
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
@@ -69,6 +73,8 @@ class SolarLinearFormalTrainTests(unittest.TestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)
+        self.addCleanup(self._cleanup_temporary_root)
+        self._baseline_repo_counter = 0
         base = Path(self.temporary.name)
         experiment_root = base / "Experiment_B"
         run_root = experiment_root / self.RUN_ID
@@ -111,6 +117,144 @@ class SolarLinearFormalTrainTests(unittest.TestCase):
             path_factory=lambda experiment_id, run_id: self.paths,
             destination_validator=lambda paths: None,
         )
+
+    def _cleanup_temporary_root(self):
+        root = Path(self.temporary.name)
+        if not root.exists():
+            return
+        for evidence in root.glob("synthetic-baseline-repo-*/evidence"):
+            shutil.rmtree(train._windows_extended_length_path(evidence))
+
+    def _approved_baseline_proof(self):
+        return train.ApprovedUntrackedBaselineProof(
+            baseline_path=train.A2_APPROVED_UNTRACKED_BASELINE_RELATIVE_PATH,
+            baseline_sha256=train.A2_APPROVED_UNTRACKED_BASELINE_SHA256,
+            baseline_schema_version=train.A2_APPROVED_UNTRACKED_BASELINE_SCHEMA_VERSION,
+            baseline_id=train.A2_APPROVED_UNTRACKED_BASELINE_ID,
+            baseline_source_head=train.A2_APPROVED_UNTRACKED_BASELINE_SOURCE_HEAD,
+            baseline_provenance_anchor=(
+                train.A2_APPROVED_UNTRACKED_BASELINE_PROVENANCE_ANCHOR
+            ),
+            baseline_row_count=train.A2_APPROVED_UNTRACKED_BASELINE_ROW_COUNT,
+            current_untracked_count=train.A2_APPROVED_UNTRACKED_BASELINE_ROW_COUNT,
+            identity_match_count=train.A2_APPROVED_UNTRACKED_BASELINE_ROW_COUNT,
+            extra_path_count=0,
+            missing_path_count=0,
+            mutated_path_count=0,
+            verified=True,
+        )
+
+    def _a2_paths(self):
+        run_root = Path(self.temporary.name) / "Experiment_A2" / self.RUN_ID
+        return FormalPathContract(
+            experiment_id="A2",
+            run_id=self.RUN_ID,
+            experiment_root=run_root.parent,
+            run_root=run_root,
+            protocol_manifest=run_root / "protocol_manifest.json",
+            source_candidates=run_root / "source_candidates",
+            target_wotl_candidates=run_root / "target_wotl_candidates",
+            target_partial_ft_candidates=run_root / "target_partial_ft_candidates",
+            selection=run_root / "selection",
+            final=run_root / "final",
+        )
+
+    def _synthetic_baseline_repo(
+        self,
+        *,
+        payloads=None,
+        rows=None,
+        header=None,
+        track_baseline=True,
+        default_row_updates=None,
+    ):
+        self._baseline_repo_counter += 1
+        root = Path(self.temporary.name) / (
+            f"synthetic-baseline-repo-{self._baseline_repo_counter}"
+        )
+        root.mkdir()
+        subprocess.run(
+            ["git", "init", "--quiet"],
+            cwd=root,
+            capture_output=True,
+            check=True,
+        )
+        payloads = (
+            [("evidence/payload.bin", b"approved-payload")]
+            if payloads is None
+            else list(payloads)
+        )
+        for relative_path, content in payloads:
+            payload = root / relative_path
+            io_payload = train._windows_extended_length_path(payload)
+            io_payload.parent.mkdir(parents=True, exist_ok=True)
+            io_payload.write_bytes(content)
+        baseline_id = "synthetic-approved-untracked-v1"
+        source_head = "b" * 40
+        provenance_anchor = "c" * 40
+        if rows is None:
+            rows = []
+            for relative_path, content in payloads:
+                row = {
+                    "schema_version": "1",
+                    "baseline_id": baseline_id,
+                    "baseline_source_head": source_head,
+                    "relative_path": relative_path,
+                    "size_bytes": str(len(content)),
+                    "sha256": hashlib.sha256(content).hexdigest(),
+                    "evidence_class": "SYNTHETIC_EVIDENCE",
+                    "governance_source": "synthetic:test",
+                    "approved_for_presence_during_formal_run": "true",
+                    "presence_policy": "required",
+                }
+                row.update(default_row_updates or {})
+                rows.append(row)
+        baseline_relative = train.A2_APPROVED_UNTRACKED_BASELINE_RELATIVE_PATH
+        baseline = root / baseline_relative
+        baseline.parent.mkdir(parents=True)
+        columns = tuple(header or train.APPROVED_UNTRACKED_BASELINE_COLUMNS)
+        with baseline.open("w", encoding="utf-8", newline="") as stream:
+            writer = csv.writer(stream, lineterminator="\n")
+            writer.writerow(columns)
+            for row in rows:
+                writer.writerow(
+                    [row.get(column, "") for column in train.APPROVED_UNTRACKED_BASELINE_COLUMNS]
+                )
+        if track_baseline:
+            subprocess.run(
+                ["git", "add", "--", baseline_relative],
+                cwd=root,
+                capture_output=True,
+                check=True,
+            )
+        return {
+            "root": root,
+            "baseline": baseline,
+            "baseline_sha256": hashlib.sha256(baseline.read_bytes()).hexdigest(),
+            "baseline_id": baseline_id,
+            "source_head": source_head,
+            "provenance_anchor": provenance_anchor,
+            "row_count": len(rows),
+            "payloads": payloads,
+            "rows": rows,
+        }
+
+    def _synthetic_policy(self, metadata, **overrides):
+        values = {
+            "A2_APPROVED_UNTRACKED_BASELINE_RELATIVE_PATH": (
+                train.A2_APPROVED_UNTRACKED_BASELINE_RELATIVE_PATH
+            ),
+            "A2_APPROVED_UNTRACKED_BASELINE_SHA256": metadata["baseline_sha256"],
+            "A2_APPROVED_UNTRACKED_BASELINE_SCHEMA_VERSION": 1,
+            "A2_APPROVED_UNTRACKED_BASELINE_ID": metadata["baseline_id"],
+            "A2_APPROVED_UNTRACKED_BASELINE_SOURCE_HEAD": metadata["source_head"],
+            "A2_APPROVED_UNTRACKED_BASELINE_ROW_COUNT": metadata["row_count"],
+            "A2_APPROVED_UNTRACKED_BASELINE_PROVENANCE_ANCHOR": metadata[
+                "provenance_anchor"
+            ],
+        }
+        values.update(overrides)
+        return patch.multiple(train, **values)
 
     def _profile(self, role="target"):
         counts = {
@@ -773,6 +917,10 @@ class SolarLinearFormalTrainTests(unittest.TestCase):
             path_factory=lambda experiment_id, run_id: a2_paths,
             destination_validator=lambda paths: None,
         )
+        a2_plan = replace(
+            a2_plan,
+            approved_untracked_baseline_proof=self._approved_baseline_proof(),
+        )
         dry_manifest, _ = protocol.build_protocol_manifest(
             "A2", a2_paths, train.protocol_git_identity(a2_plan)
         )
@@ -976,6 +1124,310 @@ class SolarLinearFormalTrainTests(unittest.TestCase):
         before = self._filesystem_snapshot(existing)
         train._candidate_plans(self.paths)
         self.assertEqual(self._filesystem_snapshot(existing), before)
+
+    def test_31_synthetic_approved_untracked_baseline_exact_match(self):
+        metadata = self._synthetic_baseline_repo()
+        with self._synthetic_policy(metadata):
+            proof = train.verify_a2_approved_untracked_baseline(
+                repository_root=metadata["root"]
+            )
+        self.assertTrue(proof.verified)
+        self.assertEqual(proof.identity_match_count, 1)
+        self.assertEqual(proof.current_untracked_count, 1)
+
+    def test_31a_windows_extended_length_path_adapter(self):
+        ordinary = Path.cwd()
+        if os.name != "nt":
+            self.assertIs(train._windows_extended_length_path(ordinary), ordinary)
+            return
+
+        local = Path(r"D:\repository\evidence.bin")
+        unc = Path(r"\\server\share\evidence.bin")
+        extended = Path(r"\\?\D:\repository\evidence.bin")
+        self.assertEqual(
+            str(train._windows_extended_length_path(local)),
+            r"\\?\D:\repository\evidence.bin",
+        )
+        self.assertEqual(
+            str(train._windows_extended_length_path(unc)),
+            r"\\?\UNC\server\share\evidence.bin",
+        )
+        self.assertEqual(train._windows_extended_length_path(extended), extended)
+
+    def test_31b_synthetic_approved_long_path_passes(self):
+        relative_path = "evidence/" + "/".join(
+            f"segment_{index:02d}_{'x' * 28}" for index in range(7)
+        ) + "/payload.bin"
+        metadata = self._synthetic_baseline_repo(
+            payloads=[(relative_path, b"approved-long-path")]
+        )
+        self.assertGreater(len(str(metadata["root"] / relative_path)), 260)
+        with self._synthetic_policy(metadata):
+            proof = train.verify_a2_approved_untracked_baseline(
+                repository_root=metadata["root"]
+            )
+        self.assertTrue(proof.verified)
+        self.assertEqual(proof.identity_match_count, 1)
+        self.assertEqual(proof.current_untracked_count, 1)
+
+    def test_31c_synthetic_long_path_mutation_fails_closed(self):
+        relative_path = "evidence/" + "/".join(
+            f"segment_{index:02d}_{'x' * 28}" for index in range(7)
+        ) + "/payload.bin"
+        metadata = self._synthetic_baseline_repo(
+            payloads=[(relative_path, b"approved-long-path")]
+        )
+        payload = train._windows_extended_length_path(
+            metadata["root"] / relative_path
+        )
+        payload.write_bytes(b"X" * len(b"approved-long-path"))
+        with self._synthetic_policy(metadata), self.assertRaises(
+            train.FormalTrainingError
+        ):
+            train.verify_a2_approved_untracked_baseline(
+                repository_root=metadata["root"]
+            )
+
+    def test_31d_synthetic_long_path_missing_fails_closed(self):
+        relative_path = "evidence/" + "/".join(
+            f"segment_{index:02d}_{'x' * 28}" for index in range(7)
+        ) + "/payload.bin"
+        metadata = self._synthetic_baseline_repo(
+            payloads=[(relative_path, b"approved-long-path")]
+        )
+        train._windows_extended_length_path(
+            metadata["root"] / relative_path
+        ).unlink()
+        with self._synthetic_policy(metadata), self.assertRaises(
+            train.FormalTrainingError
+        ):
+            train.verify_a2_approved_untracked_baseline(
+                repository_root=metadata["root"]
+            )
+
+    def test_32_synthetic_baseline_rejects_extra_untracked(self):
+        metadata = self._synthetic_baseline_repo()
+        extra = metadata["root"] / "evidence" / "extra.bin"
+        extra.write_bytes(b"not-approved")
+        with self._synthetic_policy(metadata), self.assertRaises(
+            train.FormalTrainingError
+        ):
+            train.verify_a2_approved_untracked_baseline(repository_root=metadata["root"])
+
+    def test_33_synthetic_baseline_rejects_missing_required_file(self):
+        metadata = self._synthetic_baseline_repo()
+        (metadata["root"] / metadata["payloads"][0][0]).unlink()
+        with self._synthetic_policy(metadata), self.assertRaises(
+            train.FormalTrainingError
+        ):
+            train.verify_a2_approved_untracked_baseline(repository_root=metadata["root"])
+
+    def test_34_synthetic_baseline_rejects_baseline_sha_tamper(self):
+        metadata = self._synthetic_baseline_repo()
+        with self._synthetic_policy(
+            metadata, A2_APPROVED_UNTRACKED_BASELINE_SHA256="0" * 64
+        ), self.assertRaises(train.FormalTrainingError):
+            train.verify_a2_approved_untracked_baseline(repository_root=metadata["root"])
+
+    def test_34a_synthetic_baseline_rejects_mutated_baseline_bytes(self):
+        metadata = self._synthetic_baseline_repo()
+        metadata["baseline"].write_bytes(metadata["baseline"].read_bytes() + b"\n")
+        with self._synthetic_policy(metadata), self.assertRaises(
+            train.FormalTrainingError
+        ):
+            train.verify_a2_approved_untracked_baseline(repository_root=metadata["root"])
+
+    def test_35_synthetic_baseline_rejects_same_size_payload_sha_mutation(self):
+        metadata = self._synthetic_baseline_repo()
+        payload = metadata["root"] / metadata["payloads"][0][0]
+        payload.write_bytes(b"X" * payload.stat().st_size)
+        with self._synthetic_policy(metadata), self.assertRaises(
+            train.FormalTrainingError
+        ):
+            train.verify_a2_approved_untracked_baseline(repository_root=metadata["root"])
+
+    def test_36_synthetic_baseline_rejects_payload_size_mutation(self):
+        metadata = self._synthetic_baseline_repo()
+        payload = metadata["root"] / metadata["payloads"][0][0]
+        payload.write_bytes(payload.read_bytes() + b"X")
+        with self._synthetic_policy(metadata), self.assertRaises(
+            train.FormalTrainingError
+        ):
+            train.verify_a2_approved_untracked_baseline(repository_root=metadata["root"])
+
+    def test_37_synthetic_baseline_rejects_duplicate_path(self):
+        content = b"duplicate"
+        path = "evidence/duplicate.bin"
+        row = {
+            "schema_version": "1",
+            "baseline_id": "synthetic-approved-untracked-v1",
+            "baseline_source_head": "b" * 40,
+            "relative_path": path,
+            "size_bytes": str(len(content)),
+            "sha256": hashlib.sha256(content).hexdigest(),
+            "evidence_class": "SYNTHETIC_EVIDENCE",
+            "governance_source": "synthetic:test",
+            "approved_for_presence_during_formal_run": "true",
+            "presence_policy": "required",
+        }
+        metadata = self._synthetic_baseline_repo(
+            payloads=[(path, content)], rows=[row, dict(row)]
+        )
+        with self._synthetic_policy(metadata), self.assertRaises(
+            train.FormalTrainingError
+        ):
+            train.verify_a2_approved_untracked_baseline(repository_root=metadata["root"])
+
+    def test_38_synthetic_baseline_rejects_case_collision(self):
+        content = b"collision"
+        rows = []
+        for path in ("evidence/A.bin", "evidence/a.bin"):
+            rows.append(
+                {
+                    "schema_version": "1",
+                    "baseline_id": "synthetic-approved-untracked-v1",
+                    "baseline_source_head": "b" * 40,
+                    "relative_path": path,
+                    "size_bytes": str(len(content)),
+                    "sha256": hashlib.sha256(content).hexdigest(),
+                    "evidence_class": "SYNTHETIC_EVIDENCE",
+                    "governance_source": "synthetic:test",
+                    "approved_for_presence_during_formal_run": "true",
+                    "presence_policy": "required",
+                }
+            )
+        metadata = self._synthetic_baseline_repo(payloads=[], rows=rows)
+        with self._synthetic_policy(metadata), self.assertRaises(
+            train.FormalTrainingError
+        ):
+            train.verify_a2_approved_untracked_baseline(repository_root=metadata["root"])
+
+    def test_39_synthetic_baseline_rejects_traversal_and_absolute_paths(self):
+        for invalid in ("../escape.bin", "C:/escape.bin"):
+            with self.subTest(invalid=invalid):
+                row = {
+                    "schema_version": "1",
+                    "baseline_id": "synthetic-approved-untracked-v1",
+                    "baseline_source_head": "b" * 40,
+                    "relative_path": invalid,
+                    "size_bytes": "1",
+                    "sha256": hashlib.sha256(b"x").hexdigest(),
+                    "evidence_class": "SYNTHETIC_EVIDENCE",
+                    "governance_source": "synthetic:test",
+                    "approved_for_presence_during_formal_run": "true",
+                    "presence_policy": "required",
+                }
+                metadata = self._synthetic_baseline_repo(payloads=[], rows=[row])
+                with self._synthetic_policy(metadata), self.assertRaises(
+                    train.FormalTrainingError
+                ):
+                    train.verify_a2_approved_untracked_baseline(
+                        repository_root=metadata["root"]
+                    )
+
+    def test_40_synthetic_baseline_rejects_untracked_baseline_artifact(self):
+        metadata = self._synthetic_baseline_repo(track_baseline=False)
+        with self._synthetic_policy(metadata), self.assertRaises(
+            train.FormalTrainingError
+        ):
+            train.verify_a2_approved_untracked_baseline(repository_root=metadata["root"])
+
+    def test_41_synthetic_baseline_rejects_malformed_schema(self):
+        metadata = self._synthetic_baseline_repo(
+            header=train.APPROVED_UNTRACKED_BASELINE_COLUMNS[:-1]
+        )
+        with self._synthetic_policy(metadata), self.assertRaises(
+            train.FormalTrainingError
+        ):
+            train.verify_a2_approved_untracked_baseline(repository_root=metadata["root"])
+
+    def test_42_synthetic_baseline_rejects_wrong_id_and_source_head(self):
+        for updates in (
+            {"baseline_id": "wrong-baseline"},
+            {"baseline_source_head": "d" * 40},
+        ):
+            with self.subTest(updates=updates):
+                metadata = self._synthetic_baseline_repo(default_row_updates=updates)
+                with self._synthetic_policy(metadata), self.assertRaises(
+                    train.FormalTrainingError
+                ):
+                    train.verify_a2_approved_untracked_baseline(
+                        repository_root=metadata["root"]
+                    )
+
+    def test_43_known_prefix_does_not_bypass_exact_baseline(self):
+        metadata = self._synthetic_baseline_repo()
+        extra = metadata["root"] / "notebook" / "修改紀錄" / "unapproved.md"
+        extra.parent.mkdir(parents=True)
+        extra.write_text("unapproved", encoding="utf-8")
+        self.assertTrue(any(extra.relative_to(metadata["root"]).as_posix().startswith(prefix) for prefix in train.KNOWN_UNTRACKED_PREFIXES))
+        with self._synthetic_policy(metadata), self.assertRaises(
+            train.FormalTrainingError
+        ):
+            train.verify_a2_approved_untracked_baseline(repository_root=metadata["root"])
+
+    def test_44_a2_exact_baseline_branch_and_dirty_head_gates(self):
+        proof = self._approved_baseline_proof()
+        paths = self._a2_paths()
+        a2_git = train.FormalGitProvenance(
+            head=self.GIT_HEAD,
+            branch="test",
+            tracked_dirty=False,
+            known_untracked_paths=(),
+            unknown_untracked_paths=("exact-baseline-authorized.bin",),
+        )
+        with patch.object(
+            train, "verify_a2_approved_untracked_baseline", return_value=proof
+        ) as verifier:
+            plan = train.prepare_formal_training_run(
+                "A2",
+                self.RUN_ID,
+                expected_git_head=self.GIT_HEAD,
+                execution_scope=protocol.FormalExecutionScope.TRAIN_VALIDATION_ONLY,
+                git_provenance=a2_git,
+                environment=self.environment,
+                path_factory=lambda experiment_id, run_id: paths,
+                destination_validator=lambda value: None,
+            )
+        verifier.assert_called_once_with()
+        self.assertIs(plan.approved_untracked_baseline_proof, proof)
+
+        for broken in (
+            replace(a2_git, tracked_dirty=True),
+            replace(a2_git, head="f" * 40),
+        ):
+            with self.subTest(broken=broken), patch.object(
+                train, "verify_a2_approved_untracked_baseline", return_value=proof
+            ), self.assertRaises(train.FormalTrainingError):
+                train.prepare_formal_training_run(
+                    "A2",
+                    self.RUN_ID,
+                    expected_git_head=self.GIT_HEAD,
+                    execution_scope=protocol.FormalExecutionScope.TRAIN_VALIDATION_ONLY,
+                    git_provenance=broken,
+                    environment=self.environment,
+                    path_factory=lambda experiment_id, run_id: paths,
+                    destination_validator=lambda value: None,
+                )
+
+    def test_45_non_a2_path_retains_legacy_provenance_validator(self):
+        with patch.object(
+            train, "validate_formal_git_provenance"
+        ) as legacy, patch.object(
+            train, "verify_a2_approved_untracked_baseline"
+        ) as baseline:
+            plan = train.prepare_formal_training_run(
+                "B",
+                self.RUN_ID,
+                expected_git_head=self.GIT_HEAD,
+                git_provenance=self.git,
+                environment=self.environment,
+                path_factory=lambda experiment_id, run_id: self.paths,
+                destination_validator=lambda paths: None,
+            )
+        legacy.assert_called_once_with(self.git, expected_git_head=self.GIT_HEAD)
+        baseline.assert_not_called()
+        self.assertIsNone(plan.approved_untracked_baseline_proof)
 
 
 if __name__ == "__main__":

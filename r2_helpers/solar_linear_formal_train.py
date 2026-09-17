@@ -16,14 +16,17 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 import contextlib
 import csv
 import hashlib
+import io
 import json
 import math
 import platform
 import random
+import stat
 import subprocess
+import unicodedata
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from types import MappingProxyType
 from typing import Any, Callable, Iterator, Mapping, Sequence
 from unittest.mock import patch
@@ -44,6 +47,13 @@ from r2_config.solar_linear import (
     LinearExperimentSpec,
 )
 from r2_config.solar_linear_formal import (
+    A2_APPROVED_UNTRACKED_BASELINE_ID,
+    A2_APPROVED_UNTRACKED_BASELINE_PROVENANCE_ANCHOR,
+    A2_APPROVED_UNTRACKED_BASELINE_RELATIVE_PATH,
+    A2_APPROVED_UNTRACKED_BASELINE_ROW_COUNT,
+    A2_APPROVED_UNTRACKED_BASELINE_SCHEMA_VERSION,
+    A2_APPROVED_UNTRACKED_BASELINE_SHA256,
+    A2_APPROVED_UNTRACKED_BASELINE_SOURCE_HEAD,
     FORMAL_CALLBACK_POLICY,
     FORMAL_DEVICE_POLICY,
     FORMAL_PROTOCOL_VERSION,
@@ -152,6 +162,23 @@ class FormalGitProvenance:
 
 
 @dataclass(frozen=True)
+class ApprovedUntrackedBaselineProof:
+    baseline_path: str
+    baseline_sha256: str
+    baseline_schema_version: int
+    baseline_id: str
+    baseline_source_head: str
+    baseline_provenance_anchor: str
+    baseline_row_count: int
+    current_untracked_count: int
+    identity_match_count: int
+    extra_path_count: int
+    missing_path_count: int
+    mutated_path_count: int
+    verified: bool
+
+
+@dataclass(frozen=True)
 class FormalCandidatePlan:
     lifecycle: str
     candidate_id: str
@@ -169,6 +196,7 @@ class FormalTrainingPlan:
     git: FormalGitProvenance
     environment: FormalEnvironment
     candidates: Mapping[str, tuple[FormalCandidatePlan, ...]]
+    approved_untracked_baseline_proof: ApprovedUntrackedBaselineProof | None = None
     training_epochs_executed: int = 0
 
 
@@ -313,11 +341,15 @@ def set_reproducibility(seed: int = LINEAR_SEED) -> None:
     _require(not tf.config.list_physical_devices("GPU"), "TensorFlow exposes a GPU")
 
 
-def _git_bytes(*arguments: str) -> bytes:
-    safe_arg = f"safe.directory={REPOSITORY_ROOT.as_posix()}"
+def _git_bytes(
+    *arguments: str,
+    repository_root: Path = REPOSITORY_ROOT,
+) -> bytes:
+    root = Path(repository_root).resolve()
+    safe_arg = f"safe.directory={root.as_posix()}"
     completed = subprocess.run(
         ["git", "-c", safe_arg, *arguments],
-        cwd=REPOSITORY_ROOT,
+        cwd=root,
         capture_output=True,
         check=False,
     )
@@ -362,6 +394,246 @@ def validate_formal_git_provenance(
     _require(not provenance.unknown_untracked_paths, "Unexpected untracked paths present")
 
 
+APPROVED_UNTRACKED_BASELINE_COLUMNS = (
+    "schema_version",
+    "baseline_id",
+    "baseline_source_head",
+    "relative_path",
+    "size_bytes",
+    "sha256",
+    "evidence_class",
+    "governance_source",
+    "approved_for_presence_during_formal_run",
+    "presence_policy",
+)
+
+
+def _normalize_approved_untracked_path(value: str) -> str:
+    _require(isinstance(value, str) and bool(value), "Baseline path is empty")
+    _require("\\" not in value, "Baseline path must use forward slashes")
+    normalized = unicodedata.normalize("NFC", value)
+    _require(normalized == value, "Baseline path is not Unicode NFC")
+    _require(not value.startswith("./"), "Baseline path has a leading ./")
+    _require(
+        not (len(value) >= 3 and value[1] == ":" and value[2] == "/"),
+        "Baseline path is absolute",
+    )
+    path = PurePosixPath(value)
+    _require(not path.is_absolute(), "Baseline path is absolute")
+    _require(".." not in path.parts, "Baseline path contains traversal")
+    _require("." not in path.parts, "Baseline path contains a dot segment")
+    _require(path.as_posix() == value, "Baseline path is not normalized")
+    return value
+
+
+def _windows_extended_length_path(path: Path) -> Path:
+    """Return a Windows extended-length path for filesystem I/O only."""
+
+    if os.name != "nt":
+        return path
+    value = str(path)
+    if value.startswith("\\\\?\\"):
+        return path
+    _require(path.is_absolute(), "Windows filesystem I/O path is not absolute")
+    if value.startswith("\\\\"):
+        return Path("\\\\?\\UNC\\" + value[2:])
+    return Path("\\\\?\\" + value)
+
+
+def _safe_payload_path(repository_root: Path, relative_path: str) -> Path:
+    candidate = repository_root.joinpath(*PurePosixPath(relative_path).parts)
+    _require(
+        candidate.is_relative_to(repository_root),
+        f"Approved untracked path escaped repository: {relative_path}",
+    )
+    io_candidate = _windows_extended_length_path(candidate)
+    try:
+        metadata = io_candidate.lstat()
+    except FileNotFoundError as exc:
+        raise FormalTrainingError(
+            f"Approved untracked file is missing: {relative_path}"
+        ) from exc
+    except OSError as exc:
+        raise FormalTrainingError(
+            f"Cannot inspect approved untracked file: {relative_path}"
+        ) from exc
+    reparse_flag = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0)
+    file_attributes = getattr(metadata, "st_file_attributes", 0)
+    _require(
+        not stat.S_ISLNK(metadata.st_mode),
+        f"Approved untracked file is a symlink: {relative_path}",
+    )
+    _require(
+        not reparse_flag or not (file_attributes & reparse_flag),
+        f"Approved untracked file is a reparse point: {relative_path}",
+    )
+    _require(stat.S_ISREG(metadata.st_mode), f"Approved untracked path is not a regular file: {relative_path}")
+    return io_candidate
+
+
+def verify_a2_approved_untracked_baseline(
+    *,
+    repository_root: Path = REPOSITORY_ROOT,
+) -> ApprovedUntrackedBaselineProof:
+    """Prove the exact committed A2 approved-untracked set and byte identities."""
+
+    root = Path(repository_root).resolve()
+    baseline_relative = _normalize_approved_untracked_path(
+        A2_APPROVED_UNTRACKED_BASELINE_RELATIVE_PATH
+    )
+    baseline_path = root.joinpath(*PurePosixPath(baseline_relative).parts)
+    _require(baseline_path.exists(), "Approved untracked baseline is missing")
+    baseline_metadata = baseline_path.lstat()
+    reparse_flag = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0)
+    baseline_attributes = getattr(baseline_metadata, "st_file_attributes", 0)
+    _require(not baseline_path.is_symlink(), "Approved untracked baseline is a symlink")
+    _require(
+        not reparse_flag or not (baseline_attributes & reparse_flag),
+        "Approved untracked baseline is a reparse point",
+    )
+    _require(stat.S_ISREG(baseline_metadata.st_mode), "Approved untracked baseline is not a regular file")
+    _require(
+        baseline_path.resolve().is_relative_to(root),
+        "Approved untracked baseline escaped repository",
+    )
+    tracked = _git_bytes(
+        "ls-files",
+        "--error-unmatch",
+        "--",
+        baseline_relative,
+        repository_root=root,
+    ).decode("utf-8").strip()
+    _require(tracked == baseline_relative, "Approved untracked baseline is not tracked")
+    baseline_bytes = baseline_path.read_bytes()
+    _require(
+        hashlib.sha256(baseline_bytes).hexdigest()
+        == A2_APPROVED_UNTRACKED_BASELINE_SHA256,
+        "Approved untracked baseline SHA256 mismatch",
+    )
+    _require(not baseline_bytes.startswith(b"\xef\xbb\xbf"), "Baseline must not contain a BOM")
+    try:
+        baseline_text = baseline_bytes.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise FormalTrainingError("Baseline is not valid UTF-8") from exc
+    _require("\r" not in baseline_text, "Baseline must use LF line endings")
+    reader = csv.reader(io.StringIO(baseline_text, newline=""))
+    records = list(reader)
+    _require(bool(records), "Baseline CSV is empty")
+    _require(
+        tuple(records[0]) == APPROVED_UNTRACKED_BASELINE_COLUMNS,
+        "Baseline CSV schema/header mismatch",
+    )
+    _require(all(record for record in records[1:]), "Baseline CSV contains a blank row")
+    rows = records[1:]
+    _require(
+        len(rows) == A2_APPROVED_UNTRACKED_BASELINE_ROW_COUNT,
+        "Baseline row count mismatch",
+    )
+
+    identities: dict[str, tuple[int, str]] = {}
+    casefolded: dict[str, str] = {}
+    for record in rows:
+        _require(
+            len(record) == len(APPROVED_UNTRACKED_BASELINE_COLUMNS),
+            "Baseline CSV row width mismatch",
+        )
+        row = dict(zip(APPROVED_UNTRACKED_BASELINE_COLUMNS, record))
+        _require(
+            row["schema_version"]
+            == str(A2_APPROVED_UNTRACKED_BASELINE_SCHEMA_VERSION),
+            "Baseline schema version mismatch",
+        )
+        _require(row["baseline_id"] == A2_APPROVED_UNTRACKED_BASELINE_ID, "Baseline ID mismatch")
+        _require(
+            row["baseline_source_head"]
+            == A2_APPROVED_UNTRACKED_BASELINE_SOURCE_HEAD,
+            "Baseline source HEAD mismatch",
+        )
+        _require(
+            row["approved_for_presence_during_formal_run"] == "true",
+            "Baseline row is not approved for formal presence",
+        )
+        _require(row["presence_policy"] == "required", "Baseline presence policy mismatch")
+        relative_path = _normalize_approved_untracked_path(row["relative_path"])
+        _require(relative_path not in identities, "Duplicate baseline relative_path")
+        folded = relative_path.casefold()
+        _require(folded not in casefolded, "Case-insensitive baseline path collision")
+        casefolded[folded] = relative_path
+        try:
+            size_bytes = int(row["size_bytes"])
+        except ValueError as exc:
+            raise FormalTrainingError("Baseline size_bytes is invalid") from exc
+        _require(size_bytes >= 0, "Baseline size_bytes is negative")
+        digest = row["sha256"]
+        _require(
+            len(digest) == 64
+            and digest == digest.lower()
+            and all(character in "0123456789abcdef" for character in digest),
+            "Baseline payload SHA256 is invalid",
+        )
+        identities[relative_path] = (size_bytes, digest)
+
+    raw_untracked = _git_bytes(
+        "ls-files",
+        "--others",
+        "--exclude-standard",
+        "-z",
+        repository_root=root,
+    )
+    try:
+        untracked_entries = raw_untracked.decode("utf-8").split("\0")
+    except UnicodeDecodeError as exc:
+        raise FormalTrainingError("Git untracked path output is not valid UTF-8") from exc
+    current_paths: set[str] = set()
+    current_casefolded: set[str] = set()
+    for entry in untracked_entries:
+        if not entry:
+            continue
+        normalized = _normalize_approved_untracked_path(entry)
+        _require(normalized not in current_paths, "Duplicate current untracked path")
+        folded = normalized.casefold()
+        _require(folded not in current_casefolded, "Current untracked case collision")
+        current_paths.add(normalized)
+        current_casefolded.add(folded)
+
+    baseline_paths = set(identities)
+    extra_paths = current_paths - baseline_paths
+    missing_paths = baseline_paths - current_paths
+    _require(not extra_paths, "Unapproved untracked paths are present")
+    _require(not missing_paths, "Required approved untracked paths are missing")
+
+    identity_matches = 0
+    mutated_paths = 0
+    for relative_path, (expected_size, expected_sha256) in identities.items():
+        payload = _safe_payload_path(root, relative_path)
+        size_matches = payload.stat().st_size == expected_size
+        sha_matches = hashlib.sha256(payload.read_bytes()).hexdigest() == expected_sha256
+        if size_matches and sha_matches:
+            identity_matches += 1
+        else:
+            mutated_paths += 1
+    _require(mutated_paths == 0, "Approved untracked payload identity mismatch")
+    _require(
+        identity_matches == A2_APPROVED_UNTRACKED_BASELINE_ROW_COUNT,
+        "Approved untracked identity match count mismatch",
+    )
+    return ApprovedUntrackedBaselineProof(
+        baseline_path=baseline_relative,
+        baseline_sha256=A2_APPROVED_UNTRACKED_BASELINE_SHA256,
+        baseline_schema_version=A2_APPROVED_UNTRACKED_BASELINE_SCHEMA_VERSION,
+        baseline_id=A2_APPROVED_UNTRACKED_BASELINE_ID,
+        baseline_source_head=A2_APPROVED_UNTRACKED_BASELINE_SOURCE_HEAD,
+        baseline_provenance_anchor=A2_APPROVED_UNTRACKED_BASELINE_PROVENANCE_ANCHOR,
+        baseline_row_count=A2_APPROVED_UNTRACKED_BASELINE_ROW_COUNT,
+        current_untracked_count=len(current_paths),
+        identity_match_count=identity_matches,
+        extra_path_count=len(extra_paths),
+        missing_path_count=len(missing_paths),
+        mutated_path_count=mutated_paths,
+        verified=True,
+    )
+
+
 def candidate_root(
     paths: FormalPathContract,
     lifecycle: str,
@@ -404,6 +676,7 @@ def prepare_formal_training_run(
     run_id: str,
     *,
     expected_git_head: str,
+    execution_scope: FormalExecutionScope | str = FormalExecutionScope.FULL_SELECTION,
     git_provenance: FormalGitProvenance | None = None,
     environment: FormalEnvironment | None = None,
     path_factory: Callable[[str, str], FormalPathContract] = formal_path_contract,
@@ -413,7 +686,16 @@ def prepare_formal_training_run(
     _require(bool(RUN_ID_PATTERN.fullmatch(run_id)), "Invalid Formal run ID")
     git = git_provenance or collect_formal_git_provenance()
     runtime = environment or collect_formal_environment()
-    validate_formal_git_provenance(git, expected_git_head=expected_git_head)
+    scope = _coerce_execution_scope(execution_scope)
+    approved_untracked_baseline_proof = None
+    if experiment_id == "A2" and scope is FormalExecutionScope.TRAIN_VALIDATION_ONLY:
+        _require(git.head == expected_git_head, "Formal Git HEAD mismatch")
+        _require(bool(git.branch), "Detached/unknown Formal Git branch")
+        _require(not git.tracked_dirty, "Tracked working tree is dirty")
+        approved_untracked_baseline_proof = verify_a2_approved_untracked_baseline()
+        _require(approved_untracked_baseline_proof.verified, "A2 baseline proof failed")
+    else:
+        validate_formal_git_provenance(git, expected_git_head=expected_git_head)
     validate_formal_environment(runtime)
     paths = path_factory(experiment_id, run_id)
     destination_validator(paths)
@@ -426,6 +708,7 @@ def prepare_formal_training_run(
         git=git,
         environment=runtime,
         candidates=_candidate_plans(paths),
+        approved_untracked_baseline_proof=approved_untracked_baseline_proof,
     )
 
 
@@ -1087,6 +1370,8 @@ def formal_manifest_for_training(
     )
     if scope is FormalExecutionScope.TRAIN_VALIDATION_ONLY:
         _require(plan.experiment_id == "A2", "TRAIN_VALIDATION_ONLY is A2-only")
+        proof = plan.approved_untracked_baseline_proof
+        _require(proof is not None and proof.verified, "A2 approved-untracked proof is missing")
         manifest.update(
             {
                 "step10a_scope": scope.value,
@@ -1104,6 +1389,19 @@ def formal_manifest_for_training(
                     plan.paths.run_root / SOURCE_DEPENDENCY_SELECTION_FILENAME
                 ),
                 "source_dependency_selection_sha256": None,
+                "approved_untracked_baseline_path": proof.baseline_path,
+                "approved_untracked_baseline_sha256": proof.baseline_sha256,
+                "approved_untracked_baseline_schema_version": proof.baseline_schema_version,
+                "approved_untracked_baseline_id": proof.baseline_id,
+                "approved_untracked_baseline_source_head": proof.baseline_source_head,
+                "approved_untracked_baseline_provenance_anchor": proof.baseline_provenance_anchor,
+                "approved_untracked_baseline_row_count": proof.baseline_row_count,
+                "approved_untracked_current_count": proof.current_untracked_count,
+                "approved_untracked_identity_matches": proof.identity_match_count,
+                "approved_untracked_extra_paths": proof.extra_path_count,
+                "approved_untracked_missing_paths": proof.missing_path_count,
+                "approved_untracked_mutated_paths": proof.mutated_path_count,
+                "approved_untracked_verified": proof.verified,
             }
         )
     validate_protocol_manifest(manifest)
@@ -1340,6 +1638,7 @@ def run_formal_train_validation(
         experiment_id,
         run_id,
         expected_git_head=expected_git_head,
+        execution_scope=scope,
     )
     if not execute_training:
         return plan

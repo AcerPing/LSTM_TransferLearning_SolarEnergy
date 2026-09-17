@@ -8,8 +8,17 @@ from pathlib import Path
 from unittest.mock import patch
 
 from r2_config.solar_linear import LINEAR_EXPERIMENTS, LINEAR_FORMAL_BASE
-from r2_config.solar_linear_formal import FORMAL_PROTOCOL_VERSION
-from r2_config.solar_linear_formal import FORMAL_LINEAR_LAYER_CLASSES
+from r2_config.solar_linear_formal import (
+    A2_APPROVED_UNTRACKED_BASELINE_ID,
+    A2_APPROVED_UNTRACKED_BASELINE_PROVENANCE_ANCHOR,
+    A2_APPROVED_UNTRACKED_BASELINE_RELATIVE_PATH,
+    A2_APPROVED_UNTRACKED_BASELINE_ROW_COUNT,
+    A2_APPROVED_UNTRACKED_BASELINE_SCHEMA_VERSION,
+    A2_APPROVED_UNTRACKED_BASELINE_SHA256,
+    A2_APPROVED_UNTRACKED_BASELINE_SOURCE_HEAD,
+    FORMAL_LINEAR_LAYER_CLASSES,
+    FORMAL_PROTOCOL_VERSION,
+)
 from r2_helpers import solar_linear_formal as formal
 
 
@@ -225,6 +234,35 @@ class SolarLinearFormalProtocolTests(unittest.TestCase):
                     self.a2.paths.run_root / "source_dependency_selection.json"
                 ),
                 "source_dependency_selection_sha256": "a" * 64 if completed else None,
+                "approved_untracked_baseline_path": (
+                    A2_APPROVED_UNTRACKED_BASELINE_RELATIVE_PATH
+                ),
+                "approved_untracked_baseline_sha256": (
+                    A2_APPROVED_UNTRACKED_BASELINE_SHA256
+                ),
+                "approved_untracked_baseline_schema_version": (
+                    A2_APPROVED_UNTRACKED_BASELINE_SCHEMA_VERSION
+                ),
+                "approved_untracked_baseline_id": A2_APPROVED_UNTRACKED_BASELINE_ID,
+                "approved_untracked_baseline_source_head": (
+                    A2_APPROVED_UNTRACKED_BASELINE_SOURCE_HEAD
+                ),
+                "approved_untracked_baseline_provenance_anchor": (
+                    A2_APPROVED_UNTRACKED_BASELINE_PROVENANCE_ANCHOR
+                ),
+                "approved_untracked_baseline_row_count": (
+                    A2_APPROVED_UNTRACKED_BASELINE_ROW_COUNT
+                ),
+                "approved_untracked_current_count": (
+                    A2_APPROVED_UNTRACKED_BASELINE_ROW_COUNT
+                ),
+                "approved_untracked_identity_matches": (
+                    A2_APPROVED_UNTRACKED_BASELINE_ROW_COUNT
+                ),
+                "approved_untracked_extra_paths": 0,
+                "approved_untracked_missing_paths": 0,
+                "approved_untracked_mutated_paths": 0,
+                "approved_untracked_verified": True,
                 "selection_locked": False,
                 "checkpoint_locked": False,
                 "test_accessed": False,
@@ -250,6 +288,18 @@ class SolarLinearFormalProtocolTests(unittest.TestCase):
         bad["target_test_accessed"] = True
         with self.assertRaises(formal.FormalProtocolError):
             formal.validate_protocol_manifest(bad)
+
+        for field_name, value in (
+            ("approved_untracked_verified", False),
+            ("approved_untracked_identity_matches", 3466),
+            ("approved_untracked_extra_paths", 1),
+            ("approved_untracked_baseline_sha256", "0" * 64),
+        ):
+            with self.subTest(field_name=field_name):
+                tampered = dict(completed)
+                tampered[field_name] = value
+                with self.assertRaises(formal.FormalProtocolError):
+                    formal.validate_protocol_manifest(tampered)
 
     def test_11c_step10a_intermediate_stage_cannot_authorize_final_test(self):
         manifest = self._step10a_manifest(completed=True)

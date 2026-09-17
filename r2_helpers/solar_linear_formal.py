@@ -30,6 +30,13 @@ from r2_config.solar_linear import (
     REPOSITORY_ROOT,
 )
 from r2_config.solar_linear_formal import (
+    A2_APPROVED_UNTRACKED_BASELINE_ID,
+    A2_APPROVED_UNTRACKED_BASELINE_PROVENANCE_ANCHOR,
+    A2_APPROVED_UNTRACKED_BASELINE_RELATIVE_PATH,
+    A2_APPROVED_UNTRACKED_BASELINE_ROW_COUNT,
+    A2_APPROVED_UNTRACKED_BASELINE_SCHEMA_VERSION,
+    A2_APPROVED_UNTRACKED_BASELINE_SHA256,
+    A2_APPROVED_UNTRACKED_BASELINE_SOURCE_HEAD,
     FORMAL_CALLBACK_POLICY,
     FORMAL_DEVICE_POLICY,
     FORMAL_LIFECYCLES,
@@ -120,6 +127,19 @@ STEP10A_PROTOCOL_MANIFEST_FIELDS = (
     "executed_candidate_ids",
     "source_dependency_selection_path",
     "source_dependency_selection_sha256",
+    "approved_untracked_baseline_path",
+    "approved_untracked_baseline_sha256",
+    "approved_untracked_baseline_schema_version",
+    "approved_untracked_baseline_id",
+    "approved_untracked_baseline_source_head",
+    "approved_untracked_baseline_provenance_anchor",
+    "approved_untracked_baseline_row_count",
+    "approved_untracked_current_count",
+    "approved_untracked_identity_matches",
+    "approved_untracked_extra_paths",
+    "approved_untracked_missing_paths",
+    "approved_untracked_mutated_paths",
+    "approved_untracked_verified",
 )
 REQUIRED_SELECTION_FIELDS = (
     "protocol_version",
@@ -680,6 +700,64 @@ def validate_protocol_manifest(manifest: Mapping[str, Any]) -> None:
             "Step10A maximum epochs changed",
         )
         _require(manifest["shuffle"] is False, "Step10A shuffle must be false")
+        _require(
+            manifest["approved_untracked_baseline_path"]
+            == A2_APPROVED_UNTRACKED_BASELINE_RELATIVE_PATH,
+            "Step10A approved-untracked baseline path mismatch",
+        )
+        _require(
+            manifest["approved_untracked_baseline_sha256"]
+            == A2_APPROVED_UNTRACKED_BASELINE_SHA256,
+            "Step10A approved-untracked baseline SHA mismatch",
+        )
+        _require(
+            manifest["approved_untracked_baseline_schema_version"]
+            == A2_APPROVED_UNTRACKED_BASELINE_SCHEMA_VERSION,
+            "Step10A approved-untracked schema version mismatch",
+        )
+        _require(
+            manifest["approved_untracked_baseline_id"]
+            == A2_APPROVED_UNTRACKED_BASELINE_ID,
+            "Step10A approved-untracked baseline ID mismatch",
+        )
+        _require(
+            manifest["approved_untracked_baseline_source_head"]
+            == A2_APPROVED_UNTRACKED_BASELINE_SOURCE_HEAD,
+            "Step10A approved-untracked source HEAD mismatch",
+        )
+        _require(
+            manifest["approved_untracked_baseline_provenance_anchor"]
+            == A2_APPROVED_UNTRACKED_BASELINE_PROVENANCE_ANCHOR,
+            "Step10A approved-untracked provenance anchor mismatch",
+        )
+        _require(
+            manifest["approved_untracked_baseline_row_count"]
+            == A2_APPROVED_UNTRACKED_BASELINE_ROW_COUNT,
+            "Step10A approved-untracked row count mismatch",
+        )
+        _require(
+            manifest["approved_untracked_current_count"]
+            == A2_APPROVED_UNTRACKED_BASELINE_ROW_COUNT,
+            "Step10A approved-untracked current count mismatch",
+        )
+        _require(
+            manifest["approved_untracked_identity_matches"]
+            == A2_APPROVED_UNTRACKED_BASELINE_ROW_COUNT,
+            "Step10A approved-untracked identity count mismatch",
+        )
+        for field_name in (
+            "approved_untracked_extra_paths",
+            "approved_untracked_missing_paths",
+            "approved_untracked_mutated_paths",
+        ):
+            _require(
+                manifest[field_name] == 0,
+                f"Step10A approved-untracked mismatch count is nonzero: {field_name}",
+            )
+        _require(
+            manifest["approved_untracked_verified"] is True,
+            "Step10A approved-untracked proof is not verified",
+        )
         for field_name in (
             "source_test_authorized",
             "source_test_accessed",
