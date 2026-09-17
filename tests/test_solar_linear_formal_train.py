@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 import hashlib
 import inspect
 import json
@@ -118,11 +119,18 @@ class SolarLinearFormalTrainTests(unittest.TestCase):
         }[role]
 
         def split(rows, sequences):
+            sample_index = np.arange(sequences, dtype=np.int64)
             return SimpleNamespace(
                 split_data=SimpleNamespace(row_count=rows),
                 sequences=SimpleNamespace(
                     X_seq=np.zeros((sequences, 5, 5), dtype=float),
                     y_seq=np.linspace(0.1, 0.9, sequences),
+                    sample_index=sample_index,
+                    target_row_index=sample_index + 5,
+                    target_timestamp=(
+                        np.datetime64("2099-01-01T00:00")
+                        + sample_index * np.timedelta64(15, "m")
+                    ),
                     count=sequences,
                 ),
             )
@@ -347,6 +355,60 @@ class SolarLinearFormalTrainTests(unittest.TestCase):
         self.assertAlmostEqual(metrics.original_mse, 1.0)
         self.assertAlmostEqual(metrics.original_rmse, 1.0)
         self.assertEqual(model.calls[0][1]["batch_size"], 128)
+
+    def test_14a_validation_prediction_evidence_is_aligned_and_recomputable(self):
+        validation = self._profile().validation
+        prediction = validation.sequences.y_seq + 0.01
+        evidence = train.evaluate_validation_candidate_with_evidence(
+            PredictModel(prediction), validation, IdentityScale()
+        )
+        candidate_root = Path(self.temporary.name) / "validation-evidence"
+        candidate_root.mkdir()
+        train.write_validation_prediction_evidence(candidate_root, evidence)
+
+        expected_columns = [
+            "sample_index",
+            "target_index",
+            "timestamp",
+            "y_true",
+            "y_pred",
+        ]
+        rows_by_scale = {}
+        for scale in ("normalized", "original_scale"):
+            path = candidate_root / f"validation_predictions_{scale}.csv"
+            with path.open("r", encoding="utf-8", newline="") as stream:
+                reader = csv.DictReader(stream)
+                self.assertEqual(reader.fieldnames, expected_columns)
+                rows_by_scale[scale] = list(reader)
+        normalized = rows_by_scale["normalized"]
+        original = rows_by_scale["original_scale"]
+        self.assertEqual(len(normalized), 126)
+        self.assertEqual(
+            [row["target_index"] for row in normalized],
+            [row["target_index"] for row in original],
+        )
+        self.assertEqual(
+            [row["timestamp"] for row in normalized],
+            [row["timestamp"] for row in original],
+        )
+        self.assertAlmostEqual(
+            float(original[0]["y_true"]),
+            float(normalized[0]["y_true"]) * 100.0,
+        )
+        errors = np.asarray(
+            [float(row["y_true"]) - float(row["y_pred"]) for row in normalized]
+        )
+        metrics = json.loads(
+            (candidate_root / "validation_metrics_normalized.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertAlmostEqual(metrics["mse"], float(np.mean(np.square(errors))))
+        self.assertEqual(metrics["evaluation_split"], "validation")
+        self.assertIn(
+            'candidate_manifest["evaluation_split"] = "validation"',
+            inspect.getsource(train._execute_candidate),
+        )
 
     def test_15_validation_candidate_score_fields(self):
         source_plan = self.plan.candidates["wotl"][0]
@@ -687,6 +749,219 @@ class SolarLinearFormalTrainTests(unittest.TestCase):
             any(path.name in train.FORBIDDEN_SPLIT_FILENAMES for path in result.accessed_files)
         )
         self.assertTrue(result.plan.paths.run_root.is_relative_to(Path(self.temporary.name)))
+
+    def test_29a_a2_train_validation_only_stops_before_global_selection(self):
+        run_root = Path(self.temporary.name) / "Experiment_A2" / self.RUN_ID
+        a2_paths = FormalPathContract(
+            experiment_id="A2",
+            run_id=self.RUN_ID,
+            experiment_root=run_root.parent,
+            run_root=run_root,
+            protocol_manifest=run_root / "protocol_manifest.json",
+            source_candidates=run_root / "source_candidates",
+            target_wotl_candidates=run_root / "target_wotl_candidates",
+            target_partial_ft_candidates=run_root / "target_partial_ft_candidates",
+            selection=run_root / "selection",
+            final=run_root / "final",
+        )
+        a2_plan = train.prepare_formal_training_run(
+            "A2",
+            self.RUN_ID,
+            expected_git_head=self.GIT_HEAD,
+            git_provenance=self.git,
+            environment=self.environment,
+            path_factory=lambda experiment_id, run_id: a2_paths,
+            destination_validator=lambda paths: None,
+        )
+        dry_manifest, _ = protocol.build_protocol_manifest(
+            "A2", a2_paths, train.protocol_git_identity(a2_plan)
+        )
+        source_profile = self._profile("source")
+        target_profile = self._profile("target")
+        source_input = Path(self.temporary.name) / "a2-source-training.csv"
+        target_input = Path(self.temporary.name) / "a2-target-training.csv"
+        source_input.write_text("synthetic", encoding="utf-8")
+        target_input.write_text("synthetic", encoding="utf-8")
+        loss_by_candidate = {
+            "SRC_lr1e-4": 0.20,
+            "SRC_lr3e-5": 0.30,
+            "WOTL_lr1e-4": 0.25,
+            "WOTL_lr3e-5": 0.35,
+            "PFT_lr1e-5": 0.22,
+            "PFT_lr3e-5": 0.32,
+        }
+        sha_by_candidate = {
+            identifier: str(index) * 64
+            for index, identifier in enumerate(loss_by_candidate, start=1)
+        }
+        partial_sources = []
+
+        def score(candidate_plan):
+            directory = {
+                "source": "source_candidates",
+                "wotl": "target_wotl_candidates",
+                "partial_ft": "target_partial_ft_candidates",
+            }[candidate_plan.lifecycle]
+            checkpoint_path = (
+                LINEAR_EXPERIMENTS["A2"].output_root
+                / self.RUN_ID
+                / directory
+                / candidate_plan.candidate_id
+                / "checkpoint_epoch_0002.hdf5"
+            )
+            return protocol.ValidationCandidateScore(
+                protocol_version=FORMAL_PROTOCOL_VERSION,
+                experiment_id="A2",
+                run_id=self.RUN_ID,
+                git_head=self.GIT_HEAD,
+                target_protocol_fingerprint=protocol.target_protocol_fingerprint("A2"),
+                lifecycle=candidate_plan.lifecycle,
+                candidate_id=candidate_plan.candidate_id,
+                learning_rate=candidate_plan.learning_rate,
+                best_epoch=2,
+                validation_loss=loss_by_candidate[candidate_plan.candidate_id],
+                validation_original_mae=10.0,
+                validation_original_rmse=12.0,
+                validation_original_r2=0.8,
+                trainable_params=(
+                    29161 if candidate_plan.lifecycle == "partial_ft" else 46681
+                ),
+                checkpoint_path=checkpoint_path,
+                checkpoint_sha256=sha_by_candidate[candidate_plan.candidate_id],
+                checkpoint_sha256_verified=True,
+            )
+
+        def load_role(spec, role, accessed):
+            del spec
+            accessed.append(
+                source_input.resolve() if role == "source" else target_input.resolve()
+            )
+            return source_profile if role == "source" else target_profile
+
+        def build_model(candidate_plan, *, locked_source_model=None):
+            if candidate_plan.lifecycle == "partial_ft":
+                partial_sources.append(locked_source_model)
+            return f"model:{candidate_plan.candidate_id}"
+
+        def execute_candidate(**kwargs):
+            candidate_plan = kwargs["candidate_plan"]
+            candidate_score = score(candidate_plan)
+            checkpoint = train.BestCheckpoint(
+                best_epoch=2,
+                best_val_loss=candidate_score.validation_loss,
+                path=candidate_score.checkpoint_path,
+                sha256=candidate_score.checkpoint_sha256,
+                sha256_verified=True,
+            )
+            return train.CandidateRunResult(
+                plan=candidate_plan,
+                completed_epochs=2,
+                score=candidate_score,
+                metrics=train.ValidationMetrics(
+                    candidate_score.validation_loss,
+                    0.1,
+                    0.1,
+                    0.8,
+                    10.0,
+                    144.0,
+                    12.0,
+                    0.8,
+                    1,
+                ),
+                checkpoint=checkpoint,
+                reloaded_model=(
+                    "selected-source-model"
+                    if candidate_plan.candidate_id == "SRC_lr1e-4"
+                    else f"reloaded:{candidate_plan.candidate_id}"
+                ),
+                state_audit=None,
+            )
+
+        architecture = protocol.SourceArchitectureEvidence(
+            activation="linear",
+            git_head=self.GIT_HEAD,
+            layer_classes=protocol.FORMAL_LINEAR_LAYER_CLASSES,
+            input_shape=(5, 5),
+            output_shape=(1,),
+            total_params=46681,
+            formal_eligible=True,
+        )
+        with patch.dict(
+            train.os.environ,
+            {"SOLAR_RUN_FORMAL": "1", "PYTHONHASHSEED": "1234"},
+        ), patch.object(
+            train, "prepare_formal_training_run", return_value=a2_plan
+        ), patch.object(
+            train, "set_reproducibility"
+        ), patch.object(
+            train, "build_protocol_manifest", return_value=(dry_manifest, ())
+        ), patch.object(
+            train, "load_role_training_validation", side_effect=load_role
+        ), patch.object(
+            train, "build_candidate_model", side_effect=build_model
+        ), patch.object(
+            train, "_execute_candidate", side_effect=execute_candidate
+        ), patch.object(
+            train, "_source_architecture", return_value=architecture
+        ), patch.object(
+            train, "build_selection_record"
+        ) as global_selection, patch.object(
+            train, "lock_manifest_after_selection"
+        ) as selection_lock:
+            result = train.run_formal_train_validation(
+                "A2",
+                self.RUN_ID,
+                expected_git_head=self.GIT_HEAD,
+                execute_training=True,
+                execution_scope=protocol.FormalExecutionScope.TRAIN_VALIDATION_ONLY,
+            )
+
+        self.assertIsInstance(result, train.FormalTrainingValidationResult)
+        self.assertEqual(
+            tuple(
+                item.plan.candidate_id
+                for item in (
+                    *result.source_results,
+                    *result.wotl_results,
+                    *result.partial_ft_results,
+                )
+            ),
+            tuple(
+                identifier
+                for lifecycle in ("source", "wotl", "partial_ft")
+                for identifier, _ in candidate_registry()[lifecycle]
+            ),
+        )
+        global_selection.assert_not_called()
+        selection_lock.assert_not_called()
+        self.assertFalse(a2_paths.selection.exists())
+        self.assertFalse(a2_paths.final.exists())
+        self.assertEqual(partial_sources, ["selected-source-model"] * 2)
+        dependency = json.loads(
+            result.source_dependency_selection_path.read_text(encoding="utf-8")
+        )
+        self.assertEqual(dependency["selected_source_candidate_id"], "SRC_lr1e-4")
+        self.assertFalse(dependency["source_test_accessed"])
+        self.assertFalse(dependency["target_test_accessed"])
+        self.assertEqual(
+            dependency["selector_tolerances"],
+            {
+                "absolute_tolerance": 1e-12,
+                "validation_diagnostic_rtol": 1e-9,
+                "validation_loss_rtol": 1e-6,
+            },
+        )
+        completed = json.loads(result.manifest_path.read_text(encoding="utf-8"))
+        self.assertEqual(
+            completed["protocol_stage"],
+            protocol.ProtocolStage.FORMAL_TRAINING_VALIDATION_COMPLETE_AWAITING_STEP_10B.value,
+        )
+        self.assertTrue(completed["training_validation_completed"])
+        self.assertFalse(completed["selection_locked"])
+        self.assertFalse(completed["final_test_authorized"])
+        self.assertFalse(
+            any(path.name in train.FORBIDDEN_SPLIT_FILENAMES for path in result.accessed_files)
+        )
 
     def test_30_filesystem_safety_with_absent_or_existing_simulated_root(self):
         base = Path(self.temporary.name)

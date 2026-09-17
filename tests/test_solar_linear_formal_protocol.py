@@ -5,6 +5,7 @@ import inspect
 import unittest
 from dataclasses import replace
 from pathlib import Path
+from unittest.mock import patch
 
 from r2_config.solar_linear import LINEAR_EXPERIMENTS, LINEAR_FORMAL_BASE
 from r2_config.solar_linear_formal import FORMAL_PROTOCOL_VERSION
@@ -197,6 +198,71 @@ class SolarLinearFormalProtocolTests(unittest.TestCase):
                 replace(self._source_provenance(), source_checkpoint_sha256_verified=False),
                 expected_git_head="1" * 40,
             )
+
+    def _step10a_manifest(self, *, completed):
+        manifest = dict(self.a2.manifest)
+        expected_ids = tuple(
+            identifier
+            for lifecycle in formal.FORMAL_LIFECYCLES
+            for identifier, _ in formal.candidate_registry()[lifecycle]
+        )
+        manifest.update(
+            {
+                "dry_run": False,
+                "formal_eligible": True,
+                "step10a_scope": formal.FormalExecutionScope.TRAIN_VALIDATION_ONLY.value,
+                "maximum_epochs": formal.FORMAL_CALLBACK_POLICY.maximum_epochs,
+                "shuffle": False,
+                "source_test_authorized": False,
+                "source_test_accessed": False,
+                "target_test_authorized": False,
+                "target_test_accessed": False,
+                "final_test_authorized": False,
+                "final_test_executed": False,
+                "training_validation_completed": completed,
+                "executed_candidate_ids": expected_ids if completed else (),
+                "source_dependency_selection_path": str(
+                    self.a2.paths.run_root / "source_dependency_selection.json"
+                ),
+                "source_dependency_selection_sha256": "a" * 64 if completed else None,
+                "selection_locked": False,
+                "checkpoint_locked": False,
+                "test_accessed": False,
+                "test_authorized": False,
+                "test_metrics_used_for_selection": False,
+                "protocol_stage": (
+                    formal.ProtocolStage.FORMAL_TRAINING_VALIDATION_COMPLETE_AWAITING_STEP_10B.value
+                    if completed
+                    else formal.ProtocolStage.CONFIG_LOCKED_AWAITING_TRAINING.value
+                ),
+            }
+        )
+        return manifest
+
+    def test_11b_step10a_manifest_intermediate_stage_is_conditional(self):
+        initial = self._step10a_manifest(completed=False)
+        completed = self._step10a_manifest(completed=True)
+        formal.validate_protocol_manifest(initial)
+        formal.validate_protocol_manifest(completed)
+        formal.validate_protocol_manifest(self.b.manifest)
+        self.assertNotIn("step10a_scope", self.b.manifest)
+        bad = dict(completed)
+        bad["target_test_accessed"] = True
+        with self.assertRaises(formal.FormalProtocolError):
+            formal.validate_protocol_manifest(bad)
+
+    def test_11c_step10a_intermediate_stage_cannot_authorize_final_test(self):
+        manifest = self._step10a_manifest(completed=True)
+        with patch.object(formal, "validate_selection_record"):
+            with self.assertRaisesRegex(
+                formal.FormalProtocolError,
+                "Manifest protocol stage cannot authorize Final Test",
+            ):
+                formal.authorize_final_test(
+                    manifest,
+                    object(),
+                    human_authorized=True,
+                )
 
     def test_12_phase_iii_source_contains_no_training_or_inference_call(self):
         for module in (formal, __import__("r2_config.solar_linear_formal", fromlist=["*"])):

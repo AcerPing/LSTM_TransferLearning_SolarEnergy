@@ -48,6 +48,9 @@ from r2_config.solar_linear_formal import (
     FORMAL_DEVICE_POLICY,
     FORMAL_PROTOCOL_VERSION,
     RUN_ID_PATTERN,
+    VALIDATION_DIAGNOSTIC_TIE_RTOL,
+    VALIDATION_LOSS_TIE_RTOL,
+    VALIDATION_TIE_ATOL,
     FormalPathContract,
     candidate_registry,
     formal_path_contract,
@@ -56,6 +59,7 @@ from r2_config.solar_linear_formal import (
 from r2_helpers import solar_data
 from r2_helpers.solar_data import TrainingValidationProfile, TrainingValidationSplit
 from r2_helpers.solar_linear_formal import (
+    FormalExecutionScope,
     GitIdentity,
     ProtocolStage,
     SelectionRecord,
@@ -99,6 +103,16 @@ KNOWN_UNTRACKED_PREFIXES = (
     "notebook/修改紀錄/",
     "notebook/執行紀錄/",
     "reports/Solar Energy Result/R2/Experiment_A/20260814T103322Z_seed1234/",
+)
+SOURCE_DEPENDENCY_SELECTION_FILENAME = "source_dependency_selection.json"
+SOURCE_DEPENDENCY_SELECTION_BASIS = (
+    "lowest_validation_loss_within_tolerance",
+    "lowest_validation_original_rmse_within_tolerance",
+    "lowest_validation_original_mae_within_tolerance",
+    "highest_validation_original_r2_within_tolerance",
+    "fewer_trainable_parameters",
+    "lower_learning_rate",
+    "lexical_candidate_id",
 )
 
 
@@ -173,6 +187,18 @@ class ValidationMetrics:
 
 
 @dataclass(frozen=True)
+class ValidationPredictionEvidence:
+    metrics: ValidationMetrics
+    sample_index: np.ndarray
+    target_index: np.ndarray
+    timestamp: np.ndarray
+    y_true_normalized: np.ndarray
+    y_pred_normalized: np.ndarray
+    y_true_original: np.ndarray
+    y_pred_original: np.ndarray
+
+
+@dataclass(frozen=True)
 class BestCheckpoint:
     best_epoch: int
     best_val_loss: float
@@ -214,6 +240,23 @@ class FormalTrainingResult:
     manifest_path: Path
     accessed_files: tuple[Path, ...]
     total_training_epochs_executed: int
+
+
+@dataclass(frozen=True)
+class FormalTrainingValidationResult:
+    """A2 Step10A completion evidence before Target global selection."""
+
+    plan: FormalTrainingPlan
+    source_results: tuple[CandidateRunResult, ...]
+    wotl_results: tuple[CandidateRunResult, ...]
+    partial_ft_results: tuple[CandidateRunResult, ...]
+    source_provenance: SourceCheckpointProvenance
+    source_dependency_selection_path: Path
+    source_dependency_selection_sha256: str
+    manifest_path: Path
+    accessed_files: tuple[Path, ...]
+    total_training_epochs_executed: int
+    execution_scope: FormalExecutionScope = FormalExecutionScope.TRAIN_VALIDATION_ONLY
 
 
 class LearningRateRecorder(Callback):
@@ -583,17 +626,43 @@ def _r2(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     return 1.0 - residual / total
 
 
-def evaluate_validation_candidate(
+def evaluate_validation_candidate_with_evidence(
     model: Any,
     validation: TrainingValidationSplit,
     target_scaler: Any,
-) -> ValidationMetrics:
+) -> ValidationPredictionEvidence:
     y_true = np.asarray(validation.sequences.y_seq, dtype=float).reshape(-1)
     prediction = np.asarray(
         model.predict(validation.sequences.X_seq, batch_size=LINEAR_BATCH_SIZE, verbose=0),
         dtype=float,
     ).reshape(-1)
     _require(len(prediction) == len(y_true) > 0, "Validation prediction alignment mismatch")
+    _require(np.isfinite(y_true).all(), "Validation target contains NaN/Inf")
+    _require(np.isfinite(prediction).all(), "Validation prediction contains NaN/Inf")
+    sample_index = np.asarray(validation.sequences.sample_index, dtype=np.int64).reshape(-1)
+    target_index = np.asarray(
+        validation.sequences.target_row_index, dtype=np.int64
+    ).reshape(-1)
+    timestamp = np.asarray(validation.sequences.target_timestamp).reshape(-1)
+    _require(
+        len(sample_index)
+        == len(target_index)
+        == len(timestamp)
+        == len(y_true),
+        "Validation index/timestamp alignment mismatch",
+    )
+    _require(
+        np.array_equal(sample_index, np.arange(len(y_true), dtype=np.int64)),
+        "Validation sample index is not contiguous",
+    )
+    _require(
+        len(target_index) == 1 or bool(np.all(np.diff(target_index) > 0)),
+        "Validation target index is not strictly increasing",
+    )
+    _require(
+        len({str(value) for value in timestamp}) == len(timestamp),
+        "Validation target timestamp contains duplicates",
+    )
     normalized_error = y_true - prediction
     normalized_mse = float(np.mean(np.square(normalized_error)))
     normalized_mae = float(np.mean(np.abs(normalized_error)))
@@ -605,9 +674,14 @@ def evaluate_validation_candidate(
         target_scaler.inverse_transform(prediction.reshape(-1, 1)), dtype=float
     ).reshape(-1)
     _require(original_true.shape == original_prediction.shape, "Original-scale shape mismatch")
+    _require(np.isfinite(original_true).all(), "Original Validation target contains NaN/Inf")
+    _require(
+        np.isfinite(original_prediction).all(),
+        "Original Validation prediction contains NaN/Inf",
+    )
     original_error = original_true - original_prediction
     original_mse = float(np.mean(np.square(original_error)))
-    return ValidationMetrics(
+    metrics = ValidationMetrics(
         normalized_loss=normalized_mse,
         normalized_mae=normalized_mae,
         normalized_rmse=normalized_rmse,
@@ -618,6 +692,28 @@ def evaluate_validation_candidate(
         original_r2=_r2(original_true, original_prediction),
         prediction_count=len(prediction),
     )
+    return ValidationPredictionEvidence(
+        metrics=metrics,
+        sample_index=sample_index.copy(),
+        target_index=target_index.copy(),
+        timestamp=timestamp.copy(),
+        y_true_normalized=y_true.copy(),
+        y_pred_normalized=prediction.copy(),
+        y_true_original=original_true.copy(),
+        y_pred_original=original_prediction.copy(),
+    )
+
+
+def evaluate_validation_candidate(
+    model: Any,
+    validation: TrainingValidationSplit,
+    target_scaler: Any,
+) -> ValidationMetrics:
+    """Backward-compatible metrics-only view of Validation evaluation."""
+
+    return evaluate_validation_candidate_with_evidence(
+        model, validation, target_scaler
+    ).metrics
 
 
 def build_validation_score(
@@ -737,10 +833,237 @@ def _write_lr_history(path: Path, values: Sequence[float]) -> None:
             writer.writerow((index, value))
 
 
+def _timestamp_text(value: Any) -> str:
+    if isinstance(value, np.datetime64):
+        return np.datetime_as_string(value, unit="s")
+    if hasattr(value, "isoformat"):
+        return str(value.isoformat())
+    return str(value)
+
+
+def _write_validation_prediction_csv(
+    path: Path,
+    evidence: ValidationPredictionEvidence,
+    *,
+    original_scale: bool,
+) -> None:
+    y_true = (
+        evidence.y_true_original
+        if original_scale
+        else evidence.y_true_normalized
+    )
+    y_pred = (
+        evidence.y_pred_original
+        if original_scale
+        else evidence.y_pred_normalized
+    )
+    with path.open("x", encoding="utf-8", newline="") as stream:
+        writer = csv.writer(stream)
+        writer.writerow(("sample_index", "target_index", "timestamp", "y_true", "y_pred"))
+        for values in zip(
+            evidence.sample_index,
+            evidence.target_index,
+            evidence.timestamp,
+            y_true,
+            y_pred,
+        ):
+            sample_index, target_index, timestamp, actual, predicted = values
+            writer.writerow(
+                (
+                    int(sample_index),
+                    int(target_index),
+                    _timestamp_text(timestamp),
+                    float(actual),
+                    float(predicted),
+                )
+            )
+
+
+def write_validation_prediction_evidence(
+    candidate_root: Path,
+    evidence: ValidationPredictionEvidence,
+) -> None:
+    """Persist additive Validation-only evidence beneath one candidate root."""
+
+    _write_validation_prediction_csv(
+        candidate_root / "validation_predictions_normalized.csv",
+        evidence,
+        original_scale=False,
+    )
+    _write_validation_prediction_csv(
+        candidate_root / "validation_predictions_original_scale.csv",
+        evidence,
+        original_scale=True,
+    )
+    _write_json_exclusive(
+        candidate_root / "validation_metrics_normalized.json",
+        {
+            "mae": evidence.metrics.normalized_mae,
+            "mse": evidence.metrics.normalized_loss,
+            "rmse": evidence.metrics.normalized_rmse,
+            "r2": evidence.metrics.normalized_r2,
+            "prediction_count": evidence.metrics.prediction_count,
+            "scale": "normalized",
+            "evaluation_split": "validation",
+        },
+    )
+
+
+def source_dependency_selection_mapping(
+    selected_result: CandidateRunResult,
+    provenance: SourceCheckpointProvenance,
+) -> Mapping[str, Any]:
+    _require(selected_result.plan.lifecycle == "source", "Source dependency is not Source")
+    _require(
+        selected_result.score.candidate_id == provenance.source_candidate_id,
+        "Source dependency candidate/provenance mismatch",
+    )
+    _require(
+        selected_result.score.experiment_id == provenance.experiment_id
+        and selected_result.score.run_id == provenance.source_run_id,
+        "Source dependency run identity mismatch",
+    )
+    _require(
+        selected_result.checkpoint.sha256 == provenance.source_checkpoint_sha256,
+        "Source dependency checkpoint/provenance mismatch",
+    )
+    payload = {
+        "protocol_version": FORMAL_PROTOCOL_VERSION,
+        "experiment_id": provenance.experiment_id,
+        "run_id": provenance.source_run_id,
+        "selected_source_candidate_id": provenance.source_candidate_id,
+        "best_epoch": selected_result.checkpoint.best_epoch,
+        "selection_basis": SOURCE_DEPENDENCY_SELECTION_BASIS,
+        "selector_tolerances": {
+            "validation_loss_rtol": VALIDATION_LOSS_TIE_RTOL,
+            "validation_diagnostic_rtol": VALIDATION_DIAGNOSTIC_TIE_RTOL,
+            "absolute_tolerance": VALIDATION_TIE_ATOL,
+        },
+        "source_validation_loss": selected_result.score.validation_loss,
+        "source_validation_metrics_original_scale": {
+            "mae": selected_result.metrics.original_mae,
+            "mse": selected_result.metrics.original_mse,
+            "rmse": selected_result.metrics.original_rmse,
+            "r2": selected_result.metrics.original_r2,
+            "prediction_count": selected_result.metrics.prediction_count,
+            "unit": selected_result.metrics.unit,
+        },
+        "source_checkpoint_path": str(provenance.source_checkpoint_path),
+        "source_checkpoint_sha256": provenance.source_checkpoint_sha256,
+        "source_checkpoint_sha256_verified": (
+            provenance.source_checkpoint_sha256_verified
+        ),
+        "selection_locked": True,
+        "validation_only": True,
+        "source_test_accessed": False,
+        "target_test_accessed": False,
+        "test_metrics_used_for_selection": False,
+    }
+    validate_source_dependency_selection(payload)
+    return MappingProxyType(payload)
+
+
+def validate_source_dependency_selection(payload: Mapping[str, Any]) -> None:
+    required = {
+        "protocol_version",
+        "experiment_id",
+        "run_id",
+        "selected_source_candidate_id",
+        "best_epoch",
+        "selection_basis",
+        "selector_tolerances",
+        "source_validation_loss",
+        "source_validation_metrics_original_scale",
+        "source_checkpoint_path",
+        "source_checkpoint_sha256",
+        "source_checkpoint_sha256_verified",
+        "selection_locked",
+        "validation_only",
+        "source_test_accessed",
+        "target_test_accessed",
+        "test_metrics_used_for_selection",
+    }
+    _require(required.issubset(payload), "Source dependency record is incomplete")
+    _require(payload["protocol_version"] == FORMAL_PROTOCOL_VERSION, "Source protocol mismatch")
+    _require(payload["experiment_id"] == "A2", "Step10A Source dependency is A2-only")
+    _require(
+        payload["selected_source_candidate_id"]
+        in {identifier for identifier, _ in candidate_registry()["source"]},
+        "Unregistered Source dependency candidate",
+    )
+    _require(tuple(payload["selection_basis"]) == SOURCE_DEPENDENCY_SELECTION_BASIS, "Source selection basis changed")
+    tolerances = payload["selector_tolerances"]
+    _require(
+        isinstance(tolerances, Mapping)
+        and tolerances.get("validation_loss_rtol") == VALIDATION_LOSS_TIE_RTOL
+        and tolerances.get("validation_diagnostic_rtol")
+        == VALIDATION_DIAGNOSTIC_TIE_RTOL
+        and tolerances.get("absolute_tolerance") == VALIDATION_TIE_ATOL,
+        "Source selector tolerances changed",
+    )
+    metrics = payload["source_validation_metrics_original_scale"]
+    _require(
+        isinstance(metrics, Mapping)
+        and all(key in metrics for key in ("mae", "mse", "rmse", "r2")),
+        "Source Validation metrics are incomplete",
+    )
+    _require(
+        all(
+            math.isfinite(float(metrics[key]))
+            for key in ("mae", "mse", "rmse", "r2")
+        ),
+        "Source Validation metrics contain NaN/Inf",
+    )
+    _require(
+        isinstance(payload["source_checkpoint_sha256"], str)
+        and len(payload["source_checkpoint_sha256"]) == 64
+        and all(character in "0123456789abcdef" for character in payload["source_checkpoint_sha256"]),
+        "Source dependency SHA is invalid",
+    )
+    for field_name in (
+        "selection_locked",
+        "validation_only",
+        "source_checkpoint_sha256_verified",
+    ):
+        _require(payload[field_name] is True, f"Source dependency field must be true: {field_name}")
+    for field_name in (
+        "source_test_accessed",
+        "target_test_accessed",
+        "test_metrics_used_for_selection",
+    ):
+        _require(payload[field_name] is False, f"Source dependency field must be false: {field_name}")
+
+
+def write_and_reload_source_dependency_selection(
+    selected_result: CandidateRunResult,
+    provenance: SourceCheckpointProvenance,
+    path: Path,
+) -> tuple[Mapping[str, Any], str]:
+    payload = source_dependency_selection_mapping(selected_result, provenance)
+    _write_json_exclusive(path, payload)
+    loaded = json.loads(path.read_text(encoding="utf-8"))
+    validate_source_dependency_selection(loaded)
+    digest = _sha256(path)
+    _require(_sha256(path) == digest, "Source dependency artifact SHA verification failed")
+    return MappingProxyType(loaded), digest
+
+
+def _coerce_execution_scope(
+    value: FormalExecutionScope | str,
+) -> FormalExecutionScope:
+    try:
+        return value if isinstance(value, FormalExecutionScope) else FormalExecutionScope(value)
+    except ValueError as exc:
+        raise FormalTrainingError(f"Unknown Formal execution scope: {value}") from exc
+
+
 def formal_manifest_for_training(
     plan: FormalTrainingPlan,
     base_manifest: Mapping[str, Any],
+    *,
+    execution_scope: FormalExecutionScope | str = FormalExecutionScope.FULL_SELECTION,
 ) -> Mapping[str, Any]:
+    scope = _coerce_execution_scope(execution_scope)
     manifest = _jsonable(base_manifest)
     _require(manifest["run_id"] == plan.run_id, "Manifest/plan run mismatch")
     _require(manifest["experiment_id"] == plan.experiment_id, "Manifest/plan experiment mismatch")
@@ -762,8 +1085,72 @@ def formal_manifest_for_training(
             "unknown_untracked_paths": plan.git.unknown_untracked_paths,
         }
     )
+    if scope is FormalExecutionScope.TRAIN_VALIDATION_ONLY:
+        _require(plan.experiment_id == "A2", "TRAIN_VALIDATION_ONLY is A2-only")
+        manifest.update(
+            {
+                "step10a_scope": scope.value,
+                "maximum_epochs": FORMAL_CALLBACK_POLICY.maximum_epochs,
+                "shuffle": False,
+                "source_test_authorized": False,
+                "source_test_accessed": False,
+                "target_test_authorized": False,
+                "target_test_accessed": False,
+                "final_test_authorized": False,
+                "final_test_executed": False,
+                "training_validation_completed": False,
+                "executed_candidate_ids": (),
+                "source_dependency_selection_path": str(
+                    plan.paths.run_root / SOURCE_DEPENDENCY_SELECTION_FILENAME
+                ),
+                "source_dependency_selection_sha256": None,
+            }
+        )
     validate_protocol_manifest(manifest)
     return MappingProxyType(manifest)
+
+
+def complete_step10a_manifest(
+    manifest: Mapping[str, Any],
+    *,
+    executed_candidate_ids: Sequence[str],
+    source_dependency_selection_path: Path,
+    source_dependency_selection_sha256: str,
+) -> Mapping[str, Any]:
+    completed = _jsonable(manifest)
+    _require(
+        completed.get("step10a_scope")
+        == FormalExecutionScope.TRAIN_VALIDATION_ONLY.value,
+        "Manifest is not an A2 Step10A manifest",
+    )
+    _require(
+        Path(completed["source_dependency_selection_path"]).resolve()
+        == source_dependency_selection_path.resolve(),
+        "Source dependency path changed before Step10A completion",
+    )
+    completed.update(
+        {
+            "training_validation_completed": True,
+            "executed_candidate_ids": tuple(executed_candidate_ids),
+            "source_dependency_selection_sha256": (
+                source_dependency_selection_sha256
+            ),
+            "selection_locked": False,
+            "checkpoint_locked": False,
+            "test_accessed": False,
+            "test_metrics_used_for_selection": False,
+            "test_authorized": False,
+            "source_test_accessed": False,
+            "target_test_accessed": False,
+            "final_test_authorized": False,
+            "final_test_executed": False,
+            "protocol_stage": (
+                ProtocolStage.FORMAL_TRAINING_VALIDATION_COMPLETE_AWAITING_STEP_10B.value
+            ),
+        }
+    )
+    validate_protocol_manifest(completed)
+    return MappingProxyType(completed)
 
 
 def lock_manifest_after_selection(
@@ -834,6 +1221,7 @@ def _execute_candidate(
     model: Any,
     candidate_accessed_files: Sequence[Path],
     locked_source_provenance: SourceCheckpointProvenance | None = None,
+    persist_validation_evidence: bool = False,
 ) -> CandidateRunResult:
     candidate_plan.candidate_root.mkdir(parents=True, exist_ok=False)
     before = snapshot_weight_layers(model) if candidate_plan.lifecycle == "partial_ft" else None
@@ -844,11 +1232,12 @@ def _execute_candidate(
     )
     checkpoint = select_best_checkpoint(history, candidate_plan.candidate_root)
     reloaded = reload_best_checkpoint(checkpoint)
-    metrics = evaluate_validation_candidate(
+    validation_evidence = evaluate_validation_candidate_with_evidence(
         reloaded,
         profile.validation,
         profile.scalers.target_scaler,
     )
+    metrics = validation_evidence.metrics
     state_audit = None
     if before is not None:
         _require(locked_source_provenance is not None, "PFT locked Source provenance missing")
@@ -875,6 +1264,11 @@ def _execute_candidate(
         candidate_plan.candidate_root / "validation_metrics_original_scale.json",
         asdict(metrics),
     )
+    if persist_validation_evidence:
+        write_validation_prediction_evidence(
+            candidate_plan.candidate_root,
+            validation_evidence,
+        )
     _write_json_exclusive(
         candidate_plan.candidate_root / "access_log.json",
         {
@@ -885,29 +1279,32 @@ def _execute_candidate(
             "test_accessed": False,
         },
     )
+    candidate_manifest = {
+        "protocol_version": FORMAL_PROTOCOL_VERSION,
+        "experiment_id": formal_plan.experiment_id,
+        "run_id": formal_plan.run_id,
+        "git_head": formal_plan.git.head,
+        "lifecycle": candidate_plan.lifecycle,
+        "candidate_id": candidate_plan.candidate_id,
+        "initial_learning_rate": candidate_plan.learning_rate,
+        "completed_epochs": len(history["val_loss"]),
+        "best_epoch": checkpoint.best_epoch,
+        "checkpoint_sha256": checkpoint.sha256,
+        "validation_only": True,
+        "test_accessed": False,
+        "test_metrics_used": False,
+        "locked_source_checkpoint_sha256": (
+            locked_source_provenance.source_checkpoint_sha256
+            if locked_source_provenance is not None
+            else None
+        ),
+        "partial_ft_state_audit": asdict(state_audit) if state_audit else None,
+    }
+    if persist_validation_evidence:
+        candidate_manifest["evaluation_split"] = "validation"
     _write_json_exclusive(
         candidate_plan.candidate_root / "candidate_manifest.json",
-        {
-            "protocol_version": FORMAL_PROTOCOL_VERSION,
-            "experiment_id": formal_plan.experiment_id,
-            "run_id": formal_plan.run_id,
-            "git_head": formal_plan.git.head,
-            "lifecycle": candidate_plan.lifecycle,
-            "candidate_id": candidate_plan.candidate_id,
-            "initial_learning_rate": candidate_plan.learning_rate,
-            "completed_epochs": len(history["val_loss"]),
-            "best_epoch": checkpoint.best_epoch,
-            "checkpoint_sha256": checkpoint.sha256,
-            "validation_only": True,
-            "test_accessed": False,
-            "test_metrics_used": False,
-            "locked_source_checkpoint_sha256": (
-                locked_source_provenance.source_checkpoint_sha256
-                if locked_source_provenance is not None
-                else None
-            ),
-            "partial_ft_state_audit": asdict(state_audit) if state_audit else None,
-        },
+        candidate_manifest,
     )
     return CandidateRunResult(
         plan=candidate_plan,
@@ -932,9 +1329,13 @@ def run_formal_train_validation(
     *,
     expected_git_head: str,
     execute_training: bool = False,
-) -> FormalTrainingPlan | FormalTrainingResult:
+    execution_scope: FormalExecutionScope | str = FormalExecutionScope.FULL_SELECTION,
+) -> FormalTrainingPlan | FormalTrainingResult | FormalTrainingValidationResult:
     """Prepare a run, or explicitly execute six Training/Validation candidates."""
 
+    scope = _coerce_execution_scope(execution_scope)
+    if scope is FormalExecutionScope.TRAIN_VALIDATION_ONLY:
+        _require(experiment_id == "A2", "TRAIN_VALIDATION_ONLY is A2-only")
     plan = prepare_formal_training_run(
         experiment_id,
         run_id,
@@ -950,7 +1351,11 @@ def run_formal_train_validation(
     with record_data_access(manifest_accessed):
         base_manifest, _ = build_protocol_manifest(experiment_id, plan.paths, identity)
     accessed.extend(manifest_accessed)
-    manifest = formal_manifest_for_training(plan, base_manifest)
+    manifest = formal_manifest_for_training(
+        plan,
+        base_manifest,
+        execution_scope=scope,
+    )
     plan.paths.run_root.mkdir(parents=True, exist_ok=False)
     manifest_path = plan.paths.protocol_manifest
     _write_json_exclusive(manifest_path, manifest)
@@ -969,6 +1374,9 @@ def run_formal_train_validation(
                 profile=source_profile,
                 model=model,
                 candidate_accessed_files=source_accessed,
+                persist_validation_evidence=(
+                    scope is FormalExecutionScope.TRAIN_VALIDATION_ONLY
+                ),
             )
         )
     source_scores = tuple(result.score for result in source_results)
@@ -993,6 +1401,19 @@ def run_formal_train_validation(
         == source_provenance.source_candidate_id,
         "Selected Source provenance/result mismatch",
     )
+    source_dependency_selection_path: Path | None = None
+    source_dependency_selection_sha256: str | None = None
+    if scope is FormalExecutionScope.TRAIN_VALIDATION_ONLY:
+        source_dependency_selection_path = (
+            plan.paths.run_root / SOURCE_DEPENDENCY_SELECTION_FILENAME
+        )
+        _, source_dependency_selection_sha256 = (
+            write_and_reload_source_dependency_selection(
+                locked_source_result,
+                source_provenance,
+                source_dependency_selection_path,
+            )
+        )
 
     # Target Training/Validation bytes are not opened until Source selection
     # and provenance have both been locked.
@@ -1010,6 +1431,9 @@ def run_formal_train_validation(
                 profile=target_profile,
                 model=build_candidate_model(candidate),
                 candidate_accessed_files=target_accessed,
+                persist_validation_evidence=(
+                    scope is FormalExecutionScope.TRAIN_VALIDATION_ONLY
+                ),
             )
         )
 
@@ -1027,7 +1451,51 @@ def run_formal_train_validation(
                 ),
                 candidate_accessed_files=target_accessed,
                 locked_source_provenance=source_provenance,
+                persist_validation_evidence=(
+                    scope is FormalExecutionScope.TRAIN_VALIDATION_ONLY
+                ),
             )
+        )
+
+    _require(
+        FORBIDDEN_SPLIT_FILENAMES.isdisjoint(path.name for path in accessed),
+        "Forbidden split appeared in Formal access audit",
+    )
+    all_results = (*source_results, *wotl_results, *partial_results)
+    total_training_epochs = sum(result.completed_epochs for result in all_results)
+    _require(total_training_epochs > 0, "Formal execution reported zero training epochs")
+    if scope is FormalExecutionScope.TRAIN_VALIDATION_ONLY:
+        _require(
+            source_dependency_selection_path is not None
+            and source_dependency_selection_sha256 is not None,
+            "Step10A Source dependency evidence is missing",
+        )
+        completed_manifest = complete_step10a_manifest(
+            manifest,
+            executed_candidate_ids=tuple(
+                result.plan.candidate_id for result in all_results
+            ),
+            source_dependency_selection_path=source_dependency_selection_path,
+            source_dependency_selection_sha256=(
+                source_dependency_selection_sha256
+            ),
+        )
+        _write_json_replace(manifest_path, completed_manifest)
+        _require(not plan.paths.selection.exists(), "Step10A created a Target selection path")
+        _require(not plan.paths.final.exists(), "Step10A created a Final Test path")
+        return FormalTrainingValidationResult(
+            plan=plan,
+            source_results=tuple(source_results),
+            wotl_results=tuple(wotl_results),
+            partial_ft_results=tuple(partial_results),
+            source_provenance=source_provenance,
+            source_dependency_selection_path=source_dependency_selection_path,
+            source_dependency_selection_sha256=(
+                source_dependency_selection_sha256
+            ),
+            manifest_path=manifest_path,
+            accessed_files=tuple(dict.fromkeys(accessed)),
+            total_training_epochs_executed=total_training_epochs,
         )
 
     selection = build_selection_record(
@@ -1046,15 +1514,6 @@ def run_formal_train_validation(
     write_and_reload_selection(selection, selection_path)
     locked_manifest = lock_manifest_after_selection(manifest, selection)
     _write_json_replace(manifest_path, locked_manifest)
-    _require(
-        FORBIDDEN_SPLIT_FILENAMES.isdisjoint(path.name for path in accessed),
-        "Forbidden split appeared in Formal access audit",
-    )
-    total_training_epochs = sum(
-        result.completed_epochs
-        for result in (*source_results, *wotl_results, *partial_results)
-    )
-    _require(total_training_epochs > 0, "Formal execution reported zero training epochs")
     return FormalTrainingResult(
         plan=plan,
         source_results=tuple(source_results),

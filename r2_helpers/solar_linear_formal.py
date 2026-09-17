@@ -106,6 +106,21 @@ REQUIRED_PROTOCOL_MANIFEST_FIELDS = (
     "dry_run",
     "protocol_stage",
 )
+STEP10A_PROTOCOL_MANIFEST_FIELDS = (
+    "step10a_scope",
+    "maximum_epochs",
+    "shuffle",
+    "source_test_authorized",
+    "source_test_accessed",
+    "target_test_authorized",
+    "target_test_accessed",
+    "final_test_authorized",
+    "final_test_executed",
+    "training_validation_completed",
+    "executed_candidate_ids",
+    "source_dependency_selection_path",
+    "source_dependency_selection_sha256",
+)
 REQUIRED_SELECTION_FIELDS = (
     "protocol_version",
     "experiment_id",
@@ -306,11 +321,19 @@ class SourceArchitectureEvidence:
 
 class ProtocolStage(str, Enum):
     CONFIG_LOCKED_AWAITING_TRAINING = "config_locked_awaiting_training"
+    FORMAL_TRAINING_VALIDATION_COMPLETE_AWAITING_STEP_10B = (
+        "formal_training_validation_complete_awaiting_step_10b"
+    )
     SELECTION_LOCKED_AWAITING_TEST_AUTHORIZATION = (
         "selection_locked_awaiting_test_authorization"
     )
     TEST_AUTHORIZED = "test_authorized"
     TEST_COMPLETED = "test_completed"
+
+
+class FormalExecutionScope(str, Enum):
+    FULL_SELECTION = "FULL_SELECTION"
+    TRAIN_VALIDATION_ONLY = "TRAIN_VALIDATION_ONLY"
 
 
 @dataclass(frozen=True)
@@ -631,6 +654,103 @@ def validate_protocol_manifest(manifest: Mapping[str, Any]) -> None:
     _require(isinstance(manifest["formal_eligible"], bool), "formal_eligible must be boolean")
     if manifest["dry_run"]:
         _require(manifest["formal_eligible"] is False, "Dry-run cannot be formal eligible")
+
+    stage = manifest["protocol_stage"]
+    if isinstance(stage, ProtocolStage):
+        stage = stage.value
+    step10a_stage = (
+        ProtocolStage.FORMAL_TRAINING_VALIDATION_COMPLETE_AWAITING_STEP_10B.value
+    )
+    if "step10a_scope" in manifest or stage == step10a_stage:
+        missing_step10a = [
+            field for field in STEP10A_PROTOCOL_MANIFEST_FIELDS if field not in manifest
+        ]
+        _require(
+            not missing_step10a,
+            f"Step10A protocol manifest missing fields: {missing_step10a}",
+        )
+        _require(manifest["experiment_id"] == "A2", "Step10A scope is A2-only")
+        _require(
+            manifest["step10a_scope"]
+            == FormalExecutionScope.TRAIN_VALIDATION_ONLY.value,
+            "Invalid Step10A execution scope",
+        )
+        _require(
+            manifest["maximum_epochs"] == FORMAL_CALLBACK_POLICY.maximum_epochs,
+            "Step10A maximum epochs changed",
+        )
+        _require(manifest["shuffle"] is False, "Step10A shuffle must be false")
+        for field_name in (
+            "source_test_authorized",
+            "source_test_accessed",
+            "target_test_authorized",
+            "target_test_accessed",
+            "final_test_authorized",
+            "final_test_executed",
+        ):
+            _require(
+                manifest[field_name] is False,
+                f"Step10A hard-lock field must remain false: {field_name}",
+            )
+        dependency_path = manifest["source_dependency_selection_path"]
+        _require(
+            isinstance(dependency_path, str)
+            and Path(dependency_path).name == "source_dependency_selection.json",
+            "Step10A Source dependency path is invalid",
+        )
+        _require(
+            Path(dependency_path).resolve().is_relative_to(Path(run_root).resolve()),
+            "Step10A Source dependency path escaped the run root",
+        )
+        if stage == step10a_stage:
+            expected_ids = tuple(
+                identifier
+                for lifecycle in FORMAL_LIFECYCLES
+                for identifier, _ in candidate_registry()[lifecycle]
+            )
+            _require(
+                manifest["training_validation_completed"] is True,
+                "Step10A completion flag is not set",
+            )
+            _require(
+                tuple(manifest["executed_candidate_ids"]) == expected_ids,
+                "Step10A executed candidate registry mismatch",
+            )
+            _require(
+                isinstance(manifest["source_dependency_selection_sha256"], str)
+                and bool(
+                    SHA256_PATTERN.fullmatch(
+                        manifest["source_dependency_selection_sha256"]
+                    )
+                ),
+                "Step10A Source dependency SHA is invalid",
+            )
+            _require(
+                manifest["selection_locked"] is False,
+                "Step10A cannot lock Target selection",
+            )
+            _require(
+                manifest["checkpoint_locked"] is False,
+                "Step10A cannot lock the Target checkpoint pair",
+            )
+            _require(manifest["test_authorized"] is False, "Step10A cannot authorize Test")
+        else:
+            _require(
+                stage == ProtocolStage.CONFIG_LOCKED_AWAITING_TRAINING.value,
+                "Step10A manifest has an invalid pre-completion stage",
+            )
+            _require(
+                manifest["training_validation_completed"] is False,
+                "Unfinished Step10A manifest reports completion",
+            )
+            _require(
+                tuple(manifest["executed_candidate_ids"]) == (),
+                "Unfinished Step10A manifest reports executed candidates",
+            )
+            _require(
+                manifest["source_dependency_selection_sha256"] is None,
+                "Unfinished Step10A manifest has a Source dependency SHA",
+            )
 
 
 def candidate_checkpoint_pattern(
