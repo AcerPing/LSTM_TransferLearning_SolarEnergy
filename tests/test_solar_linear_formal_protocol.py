@@ -5,6 +5,7 @@ import inspect
 import unittest
 from dataclasses import replace
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
 from r2_config.solar_linear import LINEAR_EXPERIMENTS, LINEAR_FORMAL_BASE
@@ -20,6 +21,7 @@ from r2_config.solar_linear_formal import (
     FORMAL_PROTOCOL_VERSION,
 )
 from r2_helpers import solar_linear_formal as formal
+from r2_helpers import solar_linear_formal_train as formal_train
 
 
 def _filesystem_snapshot(path: Path):
@@ -313,6 +315,97 @@ class SolarLinearFormalProtocolTests(unittest.TestCase):
                     object(),
                     human_authorized=True,
                 )
+
+    def test_11d_step10a_locked_stage_and_canonical_transition_validate(self):
+        completed = self._step10a_manifest(completed=True)
+        formal.validate_protocol_manifest(completed)
+        selection = SimpleNamespace(
+            experiment_id="A2",
+            run_id=completed["run_id"],
+        )
+        with patch.object(formal_train, "validate_selection_record"):
+            locked = formal_train.lock_manifest_after_selection(completed, selection)
+        formal.validate_protocol_manifest(locked)
+        self.assertEqual(
+            locked["protocol_stage"],
+            formal.ProtocolStage.SELECTION_LOCKED_AWAITING_TEST_AUTHORIZATION.value,
+        )
+        self.assertTrue(locked["config_locked"])
+        self.assertTrue(locked["selection_locked"])
+        self.assertTrue(locked["checkpoint_locked"])
+
+    def test_11e_step10a_locked_stage_rejects_lock_and_test_flag_tampering(self):
+        locked = self._step10a_manifest(completed=True)
+        locked.update(
+            {
+                "protocol_stage": (
+                    formal.ProtocolStage.SELECTION_LOCKED_AWAITING_TEST_AUTHORIZATION.value
+                ),
+                "selection_locked": True,
+                "checkpoint_locked": True,
+            }
+        )
+        formal.validate_protocol_manifest(locked)
+        for field_name, value in (
+            ("config_locked", False),
+            ("selection_locked", False),
+            ("checkpoint_locked", False),
+            ("test_accessed", True),
+            ("test_metrics_used_for_selection", True),
+            ("test_authorized", True),
+            ("post_test_tuning_allowed", True),
+            ("source_test_accessed", True),
+            ("target_test_accessed", True),
+            ("final_test_authorized", True),
+            ("final_test_executed", True),
+        ):
+            with self.subTest(field_name=field_name):
+                tampered = dict(locked)
+                tampered[field_name] = value
+                with self.assertRaises(formal.FormalProtocolError):
+                    formal.validate_protocol_manifest(tampered)
+
+    def test_11f_step10a_locked_stage_rejects_baseline_proof_tampering(self):
+        locked = self._step10a_manifest(completed=True)
+        locked.update(
+            {
+                "protocol_stage": (
+                    formal.ProtocolStage.SELECTION_LOCKED_AWAITING_TEST_AUTHORIZATION.value
+                ),
+                "selection_locked": True,
+                "checkpoint_locked": True,
+            }
+        )
+        for field_name, value in (
+            ("approved_untracked_verified", False),
+            ("approved_untracked_identity_matches", 3466),
+            ("approved_untracked_missing_paths", 1),
+            ("approved_untracked_baseline_sha256", "0" * 64),
+        ):
+            with self.subTest(field_name=field_name):
+                tampered = dict(locked)
+                tampered[field_name] = value
+                with self.assertRaises(formal.FormalProtocolError):
+                    formal.validate_protocol_manifest(tampered)
+        missing = dict(locked)
+        del missing["approved_untracked_verified"]
+        with self.assertRaises(formal.FormalProtocolError):
+            formal.validate_protocol_manifest(missing)
+
+    def test_11g_step10a_scope_rejects_unapproved_future_stage(self):
+        manifest = self._step10a_manifest(completed=True)
+        manifest.update(
+            {
+                "protocol_stage": formal.ProtocolStage.TEST_AUTHORIZED.value,
+                "selection_locked": True,
+                "checkpoint_locked": True,
+            }
+        )
+        with self.assertRaisesRegex(
+            formal.FormalProtocolError,
+            "Step10A manifest has an invalid lifecycle stage",
+        ):
+            formal.validate_protocol_manifest(manifest)
 
     def test_12_phase_iii_source_contains_no_training_or_inference_call(self):
         for module in (formal, __import__("r2_config.solar_linear_formal", fromlist=["*"])):

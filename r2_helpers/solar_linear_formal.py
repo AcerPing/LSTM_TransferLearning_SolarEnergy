@@ -681,6 +681,9 @@ def validate_protocol_manifest(manifest: Mapping[str, Any]) -> None:
     step10a_stage = (
         ProtocolStage.FORMAL_TRAINING_VALIDATION_COMPLETE_AWAITING_STEP_10B.value
     )
+    selection_locked_stage = (
+        ProtocolStage.SELECTION_LOCKED_AWAITING_TEST_AUTHORIZATION.value
+    )
     if "step10a_scope" in manifest or stage == step10a_stage:
         missing_step10a = [
             field for field in STEP10A_PROTOCOL_MANIFEST_FIELDS if field not in manifest
@@ -780,7 +783,7 @@ def validate_protocol_manifest(manifest: Mapping[str, Any]) -> None:
             Path(dependency_path).resolve().is_relative_to(Path(run_root).resolve()),
             "Step10A Source dependency path escaped the run root",
         )
-        if stage == step10a_stage:
+        if stage in (step10a_stage, selection_locked_stage):
             expected_ids = tuple(
                 identifier
                 for lifecycle in FORMAL_LIFECYCLES
@@ -803,20 +806,26 @@ def validate_protocol_manifest(manifest: Mapping[str, Any]) -> None:
                 ),
                 "Step10A Source dependency SHA is invalid",
             )
-            _require(
-                manifest["selection_locked"] is False,
-                "Step10A cannot lock Target selection",
-            )
-            _require(
-                manifest["checkpoint_locked"] is False,
-                "Step10A cannot lock the Target checkpoint pair",
-            )
+            if stage == step10a_stage:
+                _require(
+                    manifest["selection_locked"] is False,
+                    "Step10A cannot lock Target selection",
+                )
+                _require(
+                    manifest["checkpoint_locked"] is False,
+                    "Step10A cannot lock the Target checkpoint pair",
+                )
+            else:
+                _require(
+                    manifest["selection_locked"] is True,
+                    "Locked Step10A selection flag is not set",
+                )
+                _require(
+                    manifest["checkpoint_locked"] is True,
+                    "Locked Step10A checkpoint flag is not set",
+                )
             _require(manifest["test_authorized"] is False, "Step10A cannot authorize Test")
-        else:
-            _require(
-                stage == ProtocolStage.CONFIG_LOCKED_AWAITING_TRAINING.value,
-                "Step10A manifest has an invalid pre-completion stage",
-            )
+        elif stage == ProtocolStage.CONFIG_LOCKED_AWAITING_TRAINING.value:
             _require(
                 manifest["training_validation_completed"] is False,
                 "Unfinished Step10A manifest reports completion",
@@ -829,6 +838,8 @@ def validate_protocol_manifest(manifest: Mapping[str, Any]) -> None:
                 manifest["source_dependency_selection_sha256"] is None,
                 "Unfinished Step10A manifest has a Source dependency SHA",
             )
+        else:
+            raise FormalProtocolError("Step10A manifest has an invalid lifecycle stage")
 
 
 def candidate_checkpoint_pattern(
