@@ -813,7 +813,7 @@ def _default_model_loader(path: Path) -> Any:
     from keras.models import load_model
     from r2_helpers.solar_linear_runtime import rmse
 
-    return load_model(str(path), custom_objects={"rmse": rmse}, compile=False)
+    return load_model(str(path), custom_objects={"rmse": rmse}, compile=True)
 
 
 def _default_model_validator(model: Any) -> None:

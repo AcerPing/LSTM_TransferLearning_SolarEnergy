@@ -247,6 +247,21 @@ class SolarLinearA2FinalTestTests(unittest.TestCase):
         with patch.dict(os.environ, {final.ENVIRONMENT_OPT_IN: "1"}):
             return final.execute_a2_final_test(authorization, **arguments)
 
+    def _contract_model(self):
+        from keras import backend
+        from r2_helpers.solar_linear_runtime import build_linear_without_tl_model
+
+        self.addCleanup(backend.clear_session)
+        return build_linear_without_tl_model(
+            output_dir=Path(self.temporary.name),
+            learning_rate=1e-4,
+        )
+
+    def _compiled_checkpoint(self):
+        path = Path(self.temporary.name) / "compiled_linear_model.hdf5"
+        self._contract_model().save(path)
+        return path
+
     def test_01_valid_read_only_preflight(self):
         result = self._preflight()
         self.assertTrue(result.structurally_ready)
@@ -606,6 +621,98 @@ class SolarLinearA2FinalTestTests(unittest.TestCase):
                 )
         self.assertEqual(calls, [])
         self.assertFalse((self.run_root / "final").exists())
+
+    def test_46_production_loader_requests_compiled_restore(self):
+        checkpoint = Path(self.temporary.name) / "model.hdf5"
+        sentinel = object()
+        with patch("keras.models.load_model", return_value=sentinel) as loader:
+            self.assertIs(final._default_model_loader(checkpoint), sentinel)
+        _, kwargs = loader.call_args
+        self.assertTrue(kwargs["compile"])
+        self.assertEqual(set(kwargs["custom_objects"]), {"rmse"})
+
+    def test_47_production_loader_does_not_use_compile_false(self):
+        source = inspect.getsource(final._default_model_loader)
+        self.assertIn("compile=True", source)
+        self.assertNotIn("compile=False", source)
+
+    def test_48_compiled_temporary_checkpoint_passes_strict_validator(self):
+        checkpoint = self._compiled_checkpoint()
+        model = final._default_model_loader(checkpoint)
+        final._default_model_validator(model)
+        self.assertEqual(type(model.optimizer).__name__, "Adam")
+        loss_name = model.loss if isinstance(model.loss, str) else model.loss.__name__
+        self.assertIn(loss_name, ("mse", "mean_squared_error"))
+
+    def test_49_uncompiled_checkpoint_fails_compile_contract(self):
+        from keras.models import load_model
+        from r2_helpers.solar_linear_runtime import LinearRuntimeContractError, rmse, validate_linear_model
+
+        model = load_model(
+            str(self._compiled_checkpoint()),
+            custom_objects={"rmse": rmse},
+            compile=False,
+        )
+        with self.assertRaisesRegex(LinearRuntimeContractError, "Optimizer must be Adam"):
+            validate_linear_model(model)
+
+    def test_50_production_loader_does_not_access_target_test(self):
+        sentinel = object()
+        with patch("keras.models.load_model", return_value=sentinel), patch.object(
+            final,
+            "load_locked_a2_target_test",
+            side_effect=AssertionError("Target Test loader must not be called"),
+        ) as test_loader:
+            self.assertIs(final._default_model_loader(Path("synthetic.hdf5")), sentinel)
+        test_loader.assert_not_called()
+
+    def test_51_production_loader_creates_no_final_output_root(self):
+        before = sorted(str(path.relative_to(self.run_root)) for path in self.run_root.rglob("*") if path.is_file())
+        with patch("keras.models.load_model", return_value=object()):
+            final._default_model_loader(Path("synthetic.hdf5"))
+        after = sorted(str(path.relative_to(self.run_root)) for path in self.run_root.rglob("*") if path.is_file())
+        self.assertEqual(before, after)
+        self.assertFalse((self.run_root / "final").exists())
+
+    def test_52_model_validation_precedes_test_access_started(self):
+        test_calls = []
+
+        def reject_model(model):
+            raise final.A2FinalTestError("synthetic model validation failure")
+
+        with self.assertRaisesRegex(final.A2FinalTestError, "model validation failure"):
+            self._execute(
+                self._authorize(),
+                test_loader=lambda: test_calls.append(1),
+                model_validator=reject_model,
+            )
+        self.assertEqual(test_calls, [])
+        self.assertFalse((self.run_root / "final").exists())
+
+    def test_53_wrong_optimizer_is_still_rejected(self):
+        from keras.optimizers import SGD
+        from r2_helpers.solar_linear_runtime import LinearRuntimeContractError, validate_linear_model
+
+        model = self._contract_model()
+        model.compile(optimizer=SGD(learning_rate=1e-4), loss="mse")
+        with self.assertRaisesRegex(LinearRuntimeContractError, "Optimizer must be Adam"):
+            validate_linear_model(model)
+
+    def test_54_wrong_loss_is_still_rejected(self):
+        from keras.optimizers import Adam
+        from r2_helpers.solar_linear_runtime import LinearRuntimeContractError, validate_linear_model
+
+        model = self._contract_model()
+        model.compile(optimizer=Adam(learning_rate=1e-4), loss="mae")
+        with self.assertRaisesRegex(LinearRuntimeContractError, "Loss must be MSE"):
+            validate_linear_model(model)
+
+    def test_55_experiment_b_helper_remains_unchanged(self):
+        b_helper = Path(__file__).resolve().parents[1] / "r2_helpers" / "solar_linear_final_test.py"
+        self.assertEqual(
+            final._sha256(b_helper),
+            "ce8f08b98cf38c8a2b90638a354494a9c2b514fc2b44680248a5d1741d4cf9a2",
+        )
 
 
 if __name__ == "__main__":
