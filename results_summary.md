@@ -2,19 +2,19 @@
 
 **文件版本：** v2.0
 
-**更新日期：** 2026-09-14
+**更新日期：** 2026-09-20
 
 **適用專案：** LSTM研究與實驗－SolarEnergy 太陽能發電預測（智慧能源）
 
 **文件性質：** Formal Results Summary / Experiment Governance Summary
 
-**目前狀態：** Experiment A（Plant1→Plant2）舊 Corrected R2/R2.5 已封存為 Mixed Result；Experiment B（Plant2→Plant1）Formal Linear run 已完成並封存為 Negative Transfer；Experiment B2 已完成 supplementary optimization，B2-P1 為 selected optimized strategy，數值型結果為 Supplementary Positive Transfer。Experiment B 模型開發已 CLOSED；repository governance Step 1–5A 已完成；Step 5B 尚未完成，external archive transfer / verification 尚待完成。
+**目前狀態：** Experiment A（Plant1→Plant2）舊 Corrected R2/R2.5 已封存為 Mixed Result；Experiment A2（Plant1→Plant2）Linear Formal 已完成並接受為 Positive Transfer；Experiment B（Plant2→Plant1）Formal Linear run 已完成並封存為 Negative Transfer；Experiment B2 已完成 supplementary optimization，B2-P1 為 selected optimized strategy，數值型結果為 Supplementary Positive Transfer。Experiment B 模型開發已 CLOSED；repository governance Step 1–5A 已完成；Step 5B 尚未完成，external archive transfer / verification 尚待完成。
 
 ---
 
 ## 1. 文件目的與證據優先序
 
-本文件集中整理 Solar Power Dataset 之 LSTM / Transfer Learning 正式結果，並區分 Legacy、Corrected R2/R2.5、Linear Formal Experiment B 與 Post-Test Supplementary Experiment B2。
+本文件集中整理 Solar Power Dataset 之 LSTM / Transfer Learning 正式結果，並區分 Legacy、Corrected R2/R2.5、Linear Formal Experiment A2、Linear Formal Experiment B 與 Post-Test Supplementary Experiment B2。
 
 本文件不取代 raw data、實際執行程式、run manifest、scaler/checkpoint artifacts、prediction CSV、metrics JSON、selection / authorization / final state 或 test reuse disclosure。若內容衝突，優先依據：實際程式與資料 → split/scaler 程式 → params/scaler/checkpoint/predictions → original-scale metrics → training log → results summary / protocol / README。
 
@@ -67,9 +67,25 @@ Experiment A Test 已揭露，原 run 保留、不得覆寫；不得再以同一
 
 Direction：Plant1 → Plant2  
 Protocol：Linear Formal / `solar-linear-v1.0`  
-Status：**NOT STARTED / PENDING**
+Run ID：`20260918T051937Z_seed1234`
 
-目前沒有 A2 formal training result、validation-selected result 或 Final Test result；不得新增 A2 metrics，也不得將 Historical Experiment A / R2 / R2.5 指標改寫成 A2 Formal Linear 結果。
+Status：**COMPLETED / ACCEPTED**
+
+Formal classification：**Positive Transfer**
+
+Locked Validation-only comparison：`WOTL_lr1e-4` vs `PFT_lr3e-5`。候選選擇未使用 current A2 Target Test metrics；完成鎖定後，Plant2 Target Test 僅正式執行一次，`test_access_count=1`、`post_test_tuning_allowed=false`，不得重跑 Test 或依結果調參。
+
+| Original-scale metric | Without TL | Partial Fine-tuning |
+|---|---:|---:|
+| MAE (kW) | 2908.859887498984 | 1601.8604031239606 |
+| MSE (kW²) | 12556225.83245452 | 6617057.209112146 |
+| RMSE (kW) | 3543.4765178359116 | 2572.3641284064247 |
+| R² | 0.6858374551041306 | 0.8344381854646958 |
+| Negative predictions | 1508 / 2607 | 683 / 2607 |
+
+相較 Without TL，Partial Fine-tuning 的 MAE、MSE、RMSE 分別降低 **44.931675%**、**47.300588%**、**27.405639%**，R² 絕對增加 **0.148601**；negative-prediction count 降低 54.708223%。所有正式 metrics 均使用 raw/unclipped predictions；負值數量僅為診斷資訊，不作事後 clipping。
+
+本結果為 revised controlled follow-up evidence。Plant2 Test 曾於較早期 Historical Experiment A 被揭露；因此 A2 不宣稱為研究歷史中 untouched Test。結果僅適用於本次 single seed、single split 與 single Test interval，不代表跨 seeds 或其他資料條件下之統計顯著、穩定或普遍優勢。`DC_POWER` unit label 依正式 artifacts 記為 kW（MSE 為 kW²），本次未進行數值單位轉換；既有物理尺度疑義仍保留。
 
 ---
 
@@ -187,6 +203,14 @@ Test alignment：2,607 rows；timestamp identical；y_true identical；metrics r
 ## 7. Current Closure Status
 
 ### Scientific / Model-Development Closure  
+**Experiment A2 = COMPLETED / ACCEPTED / Positive Transfer**
+
+- Validation-only candidate selection
+- Final Plant2 Target Test completed once after lock
+- Historical Plant2 Test exposure retained and disclosed
+- POST-TEST TUNING PROHIBITED
+- TARGET TEST RERUN PROHIBITED
+
 **Experiment B = SEALED / CLOSED**
 
 - Formal B preserved = Negative Transfer  
@@ -203,7 +227,13 @@ Test alignment：2,607 rows；timestamp identical；y_true identical；metrics r
 
 ---
 
-## 8. Evidence Index — Experiment B
+## 8. Evidence Index — Experiments A2 / B
+
+Experiment A2：
+
+`reports/Solar Energy Result/Linear_Formal/Experiment_A2/20260918T051937Z_seed1234/`
+
+主要 evidence：`protocol_manifest.json`、`selection/selection.json`、locked Source/WOTL/PFT candidate records，以及 `final/` 內 authorization、final state、access log、predictions、original-scale metrics 與 comparison artifacts。
 
 Formal B：  
 `reports/Solar Energy Result/Linear_Formal/Experiment_B/20260821T041718Z_seed1234/`
@@ -228,6 +258,7 @@ Thesis figures：
 4. 不以 Plant1 Test 再做 model development。  
 5. 若 repository audit 發現 artifact 缺漏，只做 archival / documentation 修復；任何會改變模型、prediction 或 metrics 的操作須另行核准。  
 6. Experiment A 後續新工作不得自動沿用 B2 的 Test-guided tuning；應先完成其資料與 scaler handoff / preflight。
+7. Experiment A2 accepted result 不得因後續文件整理而重跑 Test、重選 checkpoint、調參或改寫 Historical Experiment A。
 
 ---
 

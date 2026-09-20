@@ -8,7 +8,7 @@
 
 **文件性質：** 正式實驗執行規範（Formal Experiment Protocol）
 
-**目前狀態（執行狀態；不改寫下列 protocol rules）：** Experiment A historical Corrected R2 / R2.5 = SEALED；Experiment A2 Linear Formal = NOT STARTED / PENDING；Formal Experiment B = COMPLETED / SEALED（Formal classification = Negative Transfer）；Experiment B2 = COMPLETED（Post-Test Supplementary / Exploratory Tuning，selected candidate = B2-P1，B2-P1 classification = Supplementary Positive Transfer；not a new untouched confirmatory Final Test）；Experiment B model development = SEALED / CLOSED。
+**目前狀態（執行狀態；不改寫下列 protocol rules）：** Experiment A historical Corrected R2 / R2.5 = SEALED；Experiment A2 Linear Formal = COMPLETED / ACCEPTED（Formal classification = Positive Transfer；Final Target Test completed once；post-Test tuning prohibited；historical Plant2 Test exposure retained）；Formal Experiment B = COMPLETED / SEALED（Formal classification = Negative Transfer）；Experiment B2 = COMPLETED（Post-Test Supplementary / Exploratory Tuning，selected candidate = B2-P1，B2-P1 classification = Supplementary Positive Transfer；not a new untouched confirmatory Final Test）；Experiment B model development = SEALED / CLOSED。
 
 ---
 
@@ -905,14 +905,23 @@ P12 results_summary.md update
 以下為目前執行與 closure 狀態；本文件前述章節仍是 pre-registered / protocol rules，不因已知實驗結果而回溯改寫。
 
 ```text
-results_summary.md v1
-= completed
+results_summary.md
+= A2 accepted formal result adopted (current canonical document version v2.0)
 
 Experiment A historical Corrected R2 / R2.5
 = SEALED / Mixed Result
 
 Experiment A2 Linear Formal
-= NOT STARTED / PENDING
+= COMPLETED / ACCEPTED / Positive Transfer
+
+Experiment A2 Final Target Test
+= COMPLETED ONCE / test_access_count = 1
+
+Experiment A2 post-Test tuning
+= PROHIBITED
+
+Experiment A2 historical Plant2 Test exposure
+= RETAINED / DISCLOSED
 
 Formal Experiment B
 = COMPLETED / SEALED / Negative Transfer
@@ -926,8 +935,14 @@ Experiment B2 selected candidate
 Experiment B model development
 = SEALED / CLOSED
 
-Repository evidence governance
-= COMPLETE / CLOSED (including Step 5B archive verification); canonical checkpoint archive inventory = reports/governance/Solar_LSTM_checkpoint_archive_inventory.csv; inventory SHA256 = 1302428fbebc6dd5fca70dd2d9d6d7d68f64b2fb4cd84ded05a1b4198cc86328; detailed governance execution history remains in governance artifacts/reports and is not duplicated here as an operations log.
+Repository governance Step 1–5A
+= COMPLETE
+
+Repository governance Step 5B
+= NOT COMPLETE
+
+External archive transfer / verification
+= PENDING / NOT COMPLETE
 
 A2 revised activation
 = Linear

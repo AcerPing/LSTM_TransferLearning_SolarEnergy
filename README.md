@@ -758,10 +758,30 @@ Linear Formal / solar-linear-v1.0
 Status：
 
 ```text
-NOT STARTED / PENDING
+COMPLETED / ACCEPTED
+Formal original-scale result = ACCEPTED
+Formal classification = Positive Transfer
+Post-Test tuning = PROHIBITED
+Target Test rerun = PROHIBITED
 ```
 
-目前沒有 A2 formal training result、validation-selected result 或 Final Test result；Historical Experiment A / R2 / R2.5 不得改寫為 A2 Formal Linear 結果。
+Formal run：`20260918T051937Z_seed1234`；locked Validation-only comparison：`WOTL_lr1e-4` vs `PFT_lr3e-5`。
+
+| Original-scale metric | Without TL | Partial Fine-tuning |
+|---|---:|---:|
+| MAE (kW) | 2908.859887 | 1601.860403 |
+| MSE (kW²) | 12556225.832455 | 6617057.209112 |
+| RMSE (kW) | 3543.476518 | 2572.364128 |
+| R² | 0.685837 | 0.834438 |
+| Negative predictions | 1508 / 2607 | 683 / 2607 |
+
+相較 Without TL，Partial Fine-tuning 的 MAE、MSE、RMSE 分別降低 44.931675%、47.300588%、27.405639%，R² 絕對增加 0.148601。正式 metrics 使用 raw/unclipped predictions；負值數量僅為診斷資訊。
+
+候選選擇僅使用 Training / Validation；Plant2 Target Test 於鎖定後正式執行一次。Plant2 Test 曾在較早期 Historical Experiment A 被揭露，因此 A2 是 revised controlled follow-up evidence，不是研究歷史中 untouched confirmatory Test。結果限於本次 single seed、single split 與 single Test interval，不得據此宣稱統計顯著、跨 seeds 穩定或普遍優勢。
+
+Evidence：`reports/Solar Energy Result/Linear_Formal/Experiment_A2/20260918T051937Z_seed1234/`
+
+Historical Experiment A / R2 / R2.5 仍維持原有 Mixed Result，不由 A2 覆寫。
 
 ---
 
@@ -1078,6 +1098,7 @@ af03be5
 8. Linear Formal Experiment B 已完成並判定為 Negative Transfer；B2 為 Post-Test Supplementary / Exploratory Tuning，B2-P1 僅可表述為 Supplementary Positive Transfer，不得視為新的 untouched confirmatory Test。
 9. Legacy、Corrected R2/R2.5、Linear Formal 與 Supplementary results 同時存在，必須明確分離，不得混用。
 10. Normalized-scale metrics 與 original-scale metrics 必須明確區分。
+11. Experiment A2 為 single seed、single split、single Test interval 的 revised controlled follow-up；Plant2 Test 曾於較早期 Experiment A 被揭露，不得描述為完整研究歷史中 untouched Test。
 
 ---
 
@@ -1090,6 +1111,7 @@ af03be5
 - 「初步呈現改善趨勢」
 - 「誤差層面之部分改善」
 - 「Mixed Result」
+- 「於本次正式設定下呈現 Positive Transfer」
 
 不應使用：
 
@@ -1126,6 +1148,8 @@ af03be5
 - Phase D formal Train / Validation
 - Phase E one-time Target Test
 - Experiment A transfer classification
+- Experiment A2 Linear Formal（Plant1 → Plant2）：COMPLETED / ACCEPTED
+- Experiment A2 formal classification：Positive Transfer
 - Linear Formal Experiment B（Plant2 → Plant1）：Formal classification = Negative Transfer
 - Experiment B2：Post-Test Supplementary / Exploratory Tuning
 - B2-P1：Supplementary Positive Transfer
@@ -1135,7 +1159,7 @@ af03be5
 ## Next
 
 - Step 5B external archive transfer / verification（Google Drive + 4 TB HDD）
-- Experiment A2：Plant1 → Plant2、Linear Formal、NOT STARTED / PENDING
+- Experiment A2 documentation adoption：COMPLETED / ACCEPTED
 - Repository archival／backup 狀態依既定 governance 後續處理；本 README 不宣稱未驗證之 backup 已完成
 
 ---
