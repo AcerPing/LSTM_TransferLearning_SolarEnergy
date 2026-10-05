@@ -1,0 +1,364 @@
+{
+  "schema_version": 1,
+  "script_version": "1.0.0",
+  "generated_at_utc": "2026-10-01T16:20:19.114586+00:00",
+  "mode": "thesis-only controlled post-processing",
+  "identity": {
+    "experiment": "A",
+    "internal_experiment_id": "A2",
+    "direction": "Plant1_to_Plant2",
+    "source": "Plant1",
+    "target": "Plant2",
+    "target_name": "DC_POWER",
+    "documented_unit": "kW",
+    "run_id": "20260918T051937Z_seed1234",
+    "selected_wotl": "WOTL_lr1e-4",
+    "selected_pft": "PFT_lr3e-5"
+  },
+  "guard_verification": {
+    "sha256_guards": {
+      "reports/Solar Energy Result/Linear_Formal/Experiment_A2/20260918T051937Z_seed1234/target_wotl_candidates/WOTL_lr1e-4/history.csv": {
+        "expected_sha256": "9c3ee9bcf68b6878e03def9c0f86464df7e4844695a4480dbcb3be0dcb1e1731",
+        "actual_sha256": "9c3ee9bcf68b6878e03def9c0f86464df7e4844695a4480dbcb3be0dcb1e1731",
+        "passed": true
+      },
+      "reports/Solar Energy Result/Linear_Formal/Experiment_A2/20260918T051937Z_seed1234/target_partial_ft_candidates/PFT_lr3e-5/history.csv": {
+        "expected_sha256": "627744e4d578df58e740271452ea027b51d8f03c78d6eb4f4797b5f87a6ef00e",
+        "actual_sha256": "627744e4d578df58e740271452ea027b51d8f03c78d6eb4f4797b5f87a6ef00e",
+        "passed": true
+      },
+      "reports/Solar Energy Result/Linear_Formal/Experiment_A2/20260918T051937Z_seed1234/final/predictions.csv": {
+        "expected_sha256": "12fce7ec5852b428439a09c4fc3b2e3254a6345ef7948c17077b5e38bf08dcaa",
+        "actual_sha256": "12fce7ec5852b428439a09c4fc3b2e3254a6345ef7948c17077b5e38bf08dcaa",
+        "passed": true
+      }
+    },
+    "final_state_guard": {
+      "passed": true,
+      "state": "TEST_COMPLETED",
+      "test_access_count": 1,
+      "post_test_tuning_allowed": false
+    },
+    "selection_guard": {
+      "passed": true,
+      "selected_wotl": "WOTL_lr1e-4",
+      "selected_pft": "PFT_lr3e-5",
+      "selection_locked": true
+    },
+    "protocol_guard": {
+      "passed": true,
+      "direction": "Plant1_to_Plant2",
+      "source": "Plant1",
+      "target": "Plant2"
+    },
+    "exclusive_create_guard": true
+  },
+  "input_files": {
+    "wotl_history": {
+      "absolute_path": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\LSTM_TransferLearning_SolarEnergy\\reports\\Solar Energy Result\\Linear_Formal\\Experiment_A2\\20260918T051937Z_seed1234\\target_wotl_candidates\\WOTL_lr1e-4\\history.csv",
+      "relative_path": "reports/Solar Energy Result/Linear_Formal/Experiment_A2/20260918T051937Z_seed1234/target_wotl_candidates/WOTL_lr1e-4/history.csv",
+      "sha256": "9c3ee9bcf68b6878e03def9c0f86464df7e4844695a4480dbcb3be0dcb1e1731",
+      "size_bytes": 124053,
+      "last_modified_utc": "2026-09-18T05:22:09.609208+00:00"
+    },
+    "pft_history": {
+      "absolute_path": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\LSTM_TransferLearning_SolarEnergy\\reports\\Solar Energy Result\\Linear_Formal\\Experiment_A2\\20260918T051937Z_seed1234\\target_partial_ft_candidates\\PFT_lr3e-5\\history.csv",
+      "relative_path": "reports/Solar Energy Result/Linear_Formal/Experiment_A2/20260918T051937Z_seed1234/target_partial_ft_candidates/PFT_lr3e-5/history.csv",
+      "sha256": "627744e4d578df58e740271452ea027b51d8f03c78d6eb4f4797b5f87a6ef00e",
+      "size_bytes": 125376,
+      "last_modified_utc": "2026-09-18T05:23:40.807386+00:00"
+    },
+    "predictions": {
+      "absolute_path": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\LSTM_TransferLearning_SolarEnergy\\reports\\Solar Energy Result\\Linear_Formal\\Experiment_A2\\20260918T051937Z_seed1234\\final\\predictions.csv",
+      "relative_path": "reports/Solar Energy Result/Linear_Formal/Experiment_A2/20260918T051937Z_seed1234/final/predictions.csv",
+      "sha256": "12fce7ec5852b428439a09c4fc3b2e3254a6345ef7948c17077b5e38bf08dcaa",
+      "size_bytes": 442311,
+      "last_modified_utc": "2026-09-20T02:52:49.803283+00:00"
+    },
+    "final_state": {
+      "absolute_path": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\LSTM_TransferLearning_SolarEnergy\\reports\\Solar Energy Result\\Linear_Formal\\Experiment_A2\\20260918T051937Z_seed1234\\final\\final_state.json",
+      "relative_path": "reports/Solar Energy Result/Linear_Formal/Experiment_A2/20260918T051937Z_seed1234/final/final_state.json",
+      "sha256": "9e11f60197afdfb228f49537603a439ad16e9229de2f74aaad155b09c68d2714",
+      "size_bytes": 2655,
+      "last_modified_utc": "2026-09-20T02:52:49.811312+00:00"
+    },
+    "selection": {
+      "absolute_path": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\LSTM_TransferLearning_SolarEnergy\\reports\\Solar Energy Result\\Linear_Formal\\Experiment_A2\\20260918T051937Z_seed1234\\selection\\selection.json",
+      "relative_path": "reports/Solar Energy Result/Linear_Formal/Experiment_A2/20260918T051937Z_seed1234/selection/selection.json",
+      "sha256": "77bd471ca34883a2b6aa042bae5e977e32dedafa3d6234706c6a67c617b56012",
+      "size_bytes": 9442,
+      "last_modified_utc": "2026-09-19T07:44:20.390640+00:00"
+    },
+    "protocol_manifest": {
+      "absolute_path": "D:\\HoChePing\\北科大_碩班_AI學程\\期刊研究\\使用LSTM模型預測福壽雞隻重量\\Code程式碼\\LSTM_TransferLearning_SolarEnergy\\reports\\Solar Energy Result\\Linear_Formal\\Experiment_A2\\20260918T051937Z_seed1234\\protocol_manifest.json",
+      "relative_path": "reports/Solar Energy Result/Linear_Formal/Experiment_A2/20260918T051937Z_seed1234/protocol_manifest.json",
+      "sha256": "a0363075b7d00fc925635fcc639e88a9a7cbfa763871ab28a57bab844cda8496",
+      "size_bytes": 528045,
+      "last_modified_utc": "2026-09-19T07:44:20.406587+00:00"
+    }
+  },
+  "data_schema": {
+    "wotl_history_rows": 500,
+    "pft_history_rows": 500,
+    "history_columns": [
+      "epoch",
+      "loss",
+      "mse",
+      "rmse",
+      "mae",
+      "mape",
+      "msle",
+      "val_loss",
+      "val_mse",
+      "val_rmse",
+      "val_mae",
+      "val_mape",
+      "val_msle",
+      "lr"
+    ],
+    "history_epoch_column": "epoch",
+    "history_loss_column": "loss",
+    "history_validation_loss_column": "val_loss",
+    "predictions_rows": 2607,
+    "predictions_columns": [
+      "timestamp",
+      "y_true_original",
+      "wotl_pred_original",
+      "partial_ft_pred_original",
+      "wotl_residual",
+      "partial_ft_residual",
+      "y_true_normalized",
+      "wotl_pred_normalized",
+      "partial_ft_pred_normalized"
+    ],
+    "timestamp_column": "timestamp",
+    "y_true_original_column": "y_true_original",
+    "wotl_prediction_original_column": "wotl_pred_original",
+    "pft_prediction_original_column": "partial_ft_pred_original",
+    "wotl_residual_column": "wotl_residual",
+    "pft_residual_column": "partial_ft_residual",
+    "timestamp_first": "2020-05-21T20:15:00.000000000",
+    "timestamp_last": "2020-06-17T23:45:00.000000000",
+    "timestamp_interval_minutes": 15,
+    "learning_curve_scale": "training scale",
+    "prediction_figure_scale": "original",
+    "residual_definition": "y_true_original - y_pred_original",
+    "residual_x_axis": "predicted original-scale DC_POWER"
+  },
+  "visual_style": {
+    "dpi": 300,
+    "font_family": "DejaVu Sans",
+    "layout": "tight_layout with bbox_inches=tight",
+    "learning_curve_figsize_inches": [
+      10,
+      5.5
+    ],
+    "prediction_figsize_inches": [
+      12,
+      5.8
+    ],
+    "yy_plot_figsize_inches": [
+      6.5,
+      6.5
+    ],
+    "residual_figsize_inches": [
+      8.5,
+      5.8
+    ],
+    "histogram_figsize_inches": [
+      8.5,
+      5.8
+    ],
+    "histogram_bins": 50
+  },
+  "figures": [
+    {
+      "output_path": "reports/Solar Energy Result/Thesis_Figures/Experiment_A_Plant1_to_Plant2/learning_curve/wotl_learning_curve.png",
+      "figure_type": "learning_curve",
+      "candidate_id": "WOTL_lr1e-4",
+      "target": "Plant2",
+      "source_files": [
+        "reports/Solar Energy Result/Linear_Formal/Experiment_A2/20260918T051937Z_seed1234/target_wotl_candidates/WOTL_lr1e-4/history.csv"
+      ],
+      "figure_title": "Experiment A | Plant1 → Plant2 | Plant2 Target\nWOTL_lr1e-4 Learning Curve",
+      "x_axis": "Epoch",
+      "y_axis": "Compiled Loss (training scale)",
+      "source_scale": "training scale",
+      "sha256": "06d7a8d63aa636dc42c1a724ce01e7acc93f45be6d1516d5c38e6ed0c92b79bb",
+      "size_bytes": 171148,
+      "created_at_utc": "2026-10-01T16:20:17.087881+00:00"
+    },
+    {
+      "output_path": "reports/Solar Energy Result/Thesis_Figures/Experiment_A_Plant1_to_Plant2/learning_curve/pft_learning_curve.png",
+      "figure_type": "learning_curve",
+      "candidate_id": "PFT_lr3e-5",
+      "target": "Plant2",
+      "source_files": [
+        "reports/Solar Energy Result/Linear_Formal/Experiment_A2/20260918T051937Z_seed1234/target_partial_ft_candidates/PFT_lr3e-5/history.csv"
+      ],
+      "figure_title": "Experiment A | Plant1 → Plant2 | Plant2 Target\nPFT_lr3e-5 Learning Curve",
+      "x_axis": "Epoch",
+      "y_axis": "Compiled Loss (training scale)",
+      "source_scale": "training scale",
+      "sha256": "0d197ad5b74600cd01c48b2c7ef3efd352f966bf1f818e4b8dd641dfabb4e9b5",
+      "size_bytes": 146282,
+      "created_at_utc": "2026-10-01T16:20:17.265663+00:00"
+    },
+    {
+      "output_path": "reports/Solar Energy Result/Thesis_Figures/Experiment_A_Plant1_to_Plant2/prediction/wotl_prediction_plot_original_scale.png",
+      "figure_type": "prediction_plot",
+      "candidate_id": "WOTL_lr1e-4",
+      "target": "Plant2",
+      "source_files": [
+        "reports/Solar Energy Result/Linear_Formal/Experiment_A2/20260918T051937Z_seed1234/final/predictions.csv"
+      ],
+      "figure_title": "Experiment A | Plant1 → Plant2 | Plant2 Target\nWOTL_lr1e-4 Actual vs. Predicted (Original Scale)",
+      "x_axis": "Timestamp",
+      "y_axis": "DC_POWER (kW, original scale)",
+      "source_scale": "original",
+      "sha256": "777bf12a24d0fc3c428a30f72fd4f7839b1c393e792c02e74462c65f605b471c",
+      "size_bytes": 623686,
+      "created_at_utc": "2026-10-01T16:20:17.507983+00:00"
+    },
+    {
+      "output_path": "reports/Solar Energy Result/Thesis_Figures/Experiment_A_Plant1_to_Plant2/prediction/pft_prediction_plot_original_scale.png",
+      "figure_type": "prediction_plot",
+      "candidate_id": "PFT_lr3e-5",
+      "target": "Plant2",
+      "source_files": [
+        "reports/Solar Energy Result/Linear_Formal/Experiment_A2/20260918T051937Z_seed1234/final/predictions.csv"
+      ],
+      "figure_title": "Experiment A | Plant1 → Plant2 | Plant2 Target\nPFT_lr3e-5 Actual vs. Predicted (Original Scale)",
+      "x_axis": "Timestamp",
+      "y_axis": "DC_POWER (kW, original scale)",
+      "source_scale": "original",
+      "sha256": "eee95cd2f95270156fd2669670e964f05f043259c7f271fbf3d8ee8b3fb5c460",
+      "size_bytes": 622785,
+      "created_at_utc": "2026-10-01T16:20:17.786848+00:00"
+    },
+    {
+      "output_path": "reports/Solar Energy Result/Thesis_Figures/Experiment_A_Plant1_to_Plant2/yy_plot/wotl_yy_plot_original_scale.png",
+      "figure_type": "yy_plot",
+      "candidate_id": "WOTL_lr1e-4",
+      "target": "Plant2",
+      "source_files": [
+        "reports/Solar Energy Result/Linear_Formal/Experiment_A2/20260918T051937Z_seed1234/final/predictions.csv"
+      ],
+      "figure_title": "Experiment A | Plant1 → Plant2 | Plant2 Target\nWOTL_lr1e-4 Observed vs. Predicted (Original Scale)",
+      "x_axis": "Observed DC_POWER (kW, original scale)",
+      "y_axis": "Predicted DC_POWER (kW, original scale)",
+      "source_scale": "original",
+      "sha256": "eac8420b426dc447cfc7d7531141cc02f906b4737753c40d07fae1fa86e121e1",
+      "size_bytes": 437963,
+      "created_at_utc": "2026-10-01T16:20:18.039434+00:00"
+    },
+    {
+      "output_path": "reports/Solar Energy Result/Thesis_Figures/Experiment_A_Plant1_to_Plant2/yy_plot/pft_yy_plot_original_scale.png",
+      "figure_type": "yy_plot",
+      "candidate_id": "PFT_lr3e-5",
+      "target": "Plant2",
+      "source_files": [
+        "reports/Solar Energy Result/Linear_Formal/Experiment_A2/20260918T051937Z_seed1234/final/predictions.csv"
+      ],
+      "figure_title": "Experiment A | Plant1 → Plant2 | Plant2 Target\nPFT_lr3e-5 Observed vs. Predicted (Original Scale)",
+      "x_axis": "Observed DC_POWER (kW, original scale)",
+      "y_axis": "Predicted DC_POWER (kW, original scale)",
+      "source_scale": "original",
+      "sha256": "9a835b0c45a05fcb24c47953fb70a0760f4ecce9f3326390e8ca3faea32785a1",
+      "size_bytes": 453091,
+      "created_at_utc": "2026-10-01T16:20:18.231731+00:00"
+    },
+    {
+      "output_path": "reports/Solar Energy Result/Thesis_Figures/Experiment_A_Plant1_to_Plant2/residual/wotl_residual_plot_original_scale.png",
+      "figure_type": "residual_plot",
+      "candidate_id": "WOTL_lr1e-4",
+      "target": "Plant2",
+      "source_files": [
+        "reports/Solar Energy Result/Linear_Formal/Experiment_A2/20260918T051937Z_seed1234/final/predictions.csv"
+      ],
+      "figure_title": "Experiment A | Plant1 → Plant2 | Plant2 Target\nWOTL_lr1e-4 Residual Plot (Original Scale)",
+      "x_axis": "Predicted DC_POWER (kW, original scale)",
+      "y_axis": "Residual = True - Predicted (kW, original scale)",
+      "source_scale": "original",
+      "sha256": "395d2a72bf184a0946a4136322dc111a12696758f833ce701f73df79f30f0a04",
+      "size_bytes": 438598,
+      "created_at_utc": "2026-10-01T16:20:18.410850+00:00",
+      "residual_definition": "y_true_original - y_pred_original"
+    },
+    {
+      "output_path": "reports/Solar Energy Result/Thesis_Figures/Experiment_A_Plant1_to_Plant2/residual/pft_residual_plot_original_scale.png",
+      "figure_type": "residual_plot",
+      "candidate_id": "PFT_lr3e-5",
+      "target": "Plant2",
+      "source_files": [
+        "reports/Solar Energy Result/Linear_Formal/Experiment_A2/20260918T051937Z_seed1234/final/predictions.csv"
+      ],
+      "figure_title": "Experiment A | Plant1 → Plant2 | Plant2 Target\nPFT_lr3e-5 Residual Plot (Original Scale)",
+      "x_axis": "Predicted DC_POWER (kW, original scale)",
+      "y_axis": "Residual = True - Predicted (kW, original scale)",
+      "source_scale": "original",
+      "sha256": "f6e8bbb31a5a0b84cbc090b3cd043a00403467aeb584721b050dc96a613d6a32",
+      "size_bytes": 431896,
+      "created_at_utc": "2026-10-01T16:20:18.590303+00:00",
+      "residual_definition": "y_true_original - y_pred_original"
+    },
+    {
+      "output_path": "reports/Solar Energy Result/Thesis_Figures/Experiment_A_Plant1_to_Plant2/histogram/wotl_error_histogram_original_scale.png",
+      "figure_type": "error_histogram",
+      "candidate_id": "WOTL_lr1e-4",
+      "target": "Plant2",
+      "source_files": [
+        "reports/Solar Energy Result/Linear_Formal/Experiment_A2/20260918T051937Z_seed1234/final/predictions.csv"
+      ],
+      "figure_title": "Experiment A | Plant1 → Plant2 | Plant2 Target\nWOTL_lr1e-4 Prediction Error Distribution (Original Scale)",
+      "x_axis": "Prediction Error = True - Predicted (kW, original scale)",
+      "y_axis": "Frequency",
+      "source_scale": "original",
+      "sha256": "424df4319653bed1163b2463b2e87251a98d3bba857411a5c82f89d4c63cf177",
+      "size_bytes": 109741,
+      "created_at_utc": "2026-10-01T16:20:18.837514+00:00",
+      "residual_definition": "y_true_original - y_pred_original"
+    },
+    {
+      "output_path": "reports/Solar Energy Result/Thesis_Figures/Experiment_A_Plant1_to_Plant2/histogram/pft_error_histogram_original_scale.png",
+      "figure_type": "error_histogram",
+      "candidate_id": "PFT_lr3e-5",
+      "target": "Plant2",
+      "source_files": [
+        "reports/Solar Energy Result/Linear_Formal/Experiment_A2/20260918T051937Z_seed1234/final/predictions.csv"
+      ],
+      "figure_title": "Experiment A | Plant1 → Plant2 | Plant2 Target\nPFT_lr3e-5 Prediction Error Distribution (Original Scale)",
+      "x_axis": "Prediction Error = True - Predicted (kW, original scale)",
+      "y_axis": "Frequency",
+      "source_scale": "original",
+      "sha256": "dcd5385d2ca22142a92306bbec868329840c2927b680833f504b0078cfd6a5b5",
+      "size_bytes": 109777,
+      "created_at_utc": "2026-10-01T16:20:19.034574+00:00",
+      "residual_definition": "y_true_original - y_pred_original"
+    }
+  ],
+  "runtime": {
+    "python": "3.10.11",
+    "numpy": "1.23.5",
+    "pandas": "2.2.3",
+    "matplotlib": "3.10.1",
+    "git_branch": "AcerPing",
+    "git_commit": "c2bc8b50761c9a69ffd62ef55459f0918f65ca10",
+    "tracked_dirty_status": "",
+    "script_path": "tools/generate_solar_a_thesis_figures.py",
+    "script_sha256": "feba7735adb4082f85644fad51cf7ed88d4b2b16716675c843f51f0f1ba30b88"
+  },
+  "provenance": {
+    "purpose": "thesis-only figure generation",
+    "training_executed": false,
+    "model_fit_executed": false,
+    "model_predict_executed": false,
+    "model_evaluate_executed": false,
+    "target_test_rerun": false,
+    "formal_metrics_recomputed": false,
+    "formal_metrics_overwritten": false,
+    "prediction_clipping_applied": false,
+    "predictions_modified": false,
+    "formal_run_root_modified": false
+  }
+}
