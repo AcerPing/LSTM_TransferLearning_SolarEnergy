@@ -1,0 +1,18 @@
+{
+  "best_epoch": 500,
+  "candidate_id": "WOTL_lr1e-4",
+  "checkpoint_sha256": "230ccb26aebb088ccb855ccdeaddc4f88f5a58f406a91632ce07b7ffda8a09d8",
+  "completed_epochs": 500,
+  "evaluation_split": "validation",
+  "experiment_id": "A2",
+  "git_head": "51c496e40750591fefc007d972fcf5c34dbc30bc",
+  "initial_learning_rate": 0.0001,
+  "lifecycle": "wotl",
+  "locked_source_checkpoint_sha256": null,
+  "partial_ft_state_audit": null,
+  "protocol_version": "solar-linear-v1.0",
+  "run_id": "20260918T051937Z_seed1234",
+  "test_accessed": false,
+  "test_metrics_used": false,
+  "validation_only": true
+}

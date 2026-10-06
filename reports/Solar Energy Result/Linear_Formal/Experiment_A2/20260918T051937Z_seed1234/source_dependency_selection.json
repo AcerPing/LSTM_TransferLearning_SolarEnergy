@@ -1,0 +1,38 @@
+{
+  "best_epoch": 500,
+  "experiment_id": "A2",
+  "protocol_version": "solar-linear-v1.0",
+  "run_id": "20260918T051937Z_seed1234",
+  "selected_source_candidate_id": "SRC_lr1e-4",
+  "selection_basis": [
+    "lowest_validation_loss_within_tolerance",
+    "lowest_validation_original_rmse_within_tolerance",
+    "lowest_validation_original_mae_within_tolerance",
+    "highest_validation_original_r2_within_tolerance",
+    "fewer_trainable_parameters",
+    "lower_learning_rate",
+    "lexical_candidate_id"
+  ],
+  "selection_locked": true,
+  "selector_tolerances": {
+    "absolute_tolerance": 1e-12,
+    "validation_diagnostic_rtol": 1e-09,
+    "validation_loss_rtol": 1e-06
+  },
+  "source_checkpoint_path": "D:\\HoChePing\\\u5317\u79d1\u5927_\u78a9\u73ed_AI\u5b78\u7a0b\\\u671f\u520a\u7814\u7a76\\\u4f7f\u7528LSTM\u6a21\u578b\u9810\u6e2c\u798f\u58fd\u96de\u96bb\u91cd\u91cf\\Code\u7a0b\u5f0f\u78bc\\LSTM_TransferLearning_SolarEnergy\\reports\\Solar Energy Result\\Linear_Formal\\Experiment_A2\\20260918T051937Z_seed1234\\source_candidates\\SRC_lr1e-4\\checkpoint_epoch_0500.hdf5",
+  "source_checkpoint_sha256": "6bbd2adebdc1652cf47665a97f7339466b13894df71270e93c397dc8ab1538c9",
+  "source_checkpoint_sha256_verified": true,
+  "source_test_accessed": false,
+  "source_validation_loss": 0.059372227638959885,
+  "source_validation_metrics_original_scale": {
+    "mae": 13856.28931989663,
+    "mse": 603723311.2018193,
+    "prediction_count": 518,
+    "r2": 0.9208654575851452,
+    "rmse": 24570.781656305102,
+    "unit": "DC_POWER (raw dataset scale; documented unit: kW)"
+  },
+  "target_test_accessed": false,
+  "test_metrics_used_for_selection": false,
+  "validation_only": true
+}

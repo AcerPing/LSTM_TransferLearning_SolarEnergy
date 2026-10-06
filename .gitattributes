@@ -12,3 +12,5 @@ reports/r2/R2_B_Plant2_to_Plant1_TL_Unfreeze_Sigmoid_seed1234_run01/checkpoints/
 "reports/Solar Energy Result/Linear_Formal/Experiment_B/20260821T041718Z_seed1234/target_wotl_candidates/WOTL_lr1e-4/checkpoint_epoch_0499.hdf5" filter=lfs diff=lfs merge=lfs -text
 "reports/Solar Energy Result/Linear_Formal/Experiment_B/20260821T041718Z_seed1234/target_partial_ft_candidates/PFT_lr3e-5/checkpoint_epoch_0004.hdf5" filter=lfs diff=lfs merge=lfs -text
 "reports/Solar Energy Result/Linear_Supplementary/Experiment_B2/20260822T120239Z_seed1234/candidates/B2-P1/checkpoints/checkpoint_epoch_0500.hdf5" filter=lfs diff=lfs merge=lfs -text
+"reports/Solar Energy Result/Linear_Formal/Experiment_A2/20260918T051937Z_seed1234/target_partial_ft_candidates/PFT_lr3e-5/history.csv" -text
+"reports/Solar Energy Result/Linear_Formal/Experiment_A2/20260918T051937Z_seed1234/target_wotl_candidates/WOTL_lr1e-4/history.csv" -text
